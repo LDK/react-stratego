@@ -1,0 +1,348 @@
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+}
+body {
+	--blue-button: #3777c7;
+	--blue-shadow: #275797;
+	--blue-highlight: #6797c7;
+	--blue-light: #d7e7f7;
+	--blue-grey: #373757;
+	--blue-dark: #171747;
+	--green-light: #d7f7e7;
+	--green-grey: #97B797;
+	--green-dark: #174717;
+	--white: #f7f7f7;
+	--red-button: rgb(199,55,55);
+	--red-button-glow: rgba(255,111,111,.5);
+	--red-shadow: #672727;
+	--red-highlight: #e78787;
+	--grey: #373737;
+	--blue-grey-light: #c7cee7;
+	--disabled-highlight: #676767;
+	--disabled-light: #c7c7c7;
+	--small-label-size: 12px;
+	--yellow-highlight: #c7c767;
+	--yellow-light: #f7f7d7;
+	--space-border: rgba(222,255,255,.3);
+	--midtone1: #79bd9a;
+	--midtone2: #a8dba8;
+	--highlight: #cff09e;
+	--dark: #3b8686;
+	--darker: #1b6666;
+}
+.status {
+  margin-bottom: 10px;
+}
+.anchor {
+	cursor: pointer;
+	text-decoration: none;
+}
+a.anchor:hover {
+	text-decoration: underline !important;
+}
+.status.row label {
+	min-width: 3rem;
+}
+.kbd-navigation .cell:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
+}
+
+.hidden {
+  
+ display: none;  
+}
+
+.pattern-bg {
+	background-color: var(--blue-grey-light);
+}
+
+.disabled span {
+	color: #676767;
+}
+div.contextMenu-wrapper a {
+	position: relative;
+	background-image: url(img/see-more-vertical.svg);
+	background-repeat: no-repeat;
+	background-size: 75%;
+	-webkit-appearance: none;
+	border-radius: 3rem;
+	background-position: center 75%;
+	background-color: transparent;
+	cursor: pointer;
+	outline: none !important;
+	height: 24px;
+	width: 18px;
+	display: inline-block;
+}
+div.contextMenu-wrapper select {
+	position: absolute;
+	z-index: 5;
+	overflow: auto;
+	cursor: pointer;
+}
+div.contextMenu-wrapper select option:hover {
+	color: white;
+	background-color: blue;
+}
+div.contextMenu-wrapper:not(.open) select {
+	display: none;
+	position: absolute;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	 -khtml-user-select: none; /* Konqueror HTML */
+	   -moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently
+								  supported by Chrome and Opera */
+}
+.dropZone {
+	height: 72px;
+	width: 100%;
+	background-color: var(--green-grey);
+	border: 2px dashed var(--green-light);
+/*	border-radius: 50%;*/
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	font-size: 12px;
+}
+.dropZone .icon {
+	opacity: 0.3;
+	height: 48px;
+	width: 64px;
+	position: relative;
+	top: -3px;
+	margin-bottom: -5px;
+}
+.dropZone.waveform .icon {
+	opacity: 1;
+}
+.dropZone .fileInput {
+	display: none;
+}
+.dropZone.highlight,
+.dropZone:hover {
+	background-color: var(--green-light);
+	border: 2px dashed  var(--green-dark);
+}
+
+.navigation.row {
+	background: var(--darker);
+	color: white;
+}
+.modal-wrapper {
+	position: absolute;
+	display: block;
+	width: 55%;
+	background: white;
+	height: 80%;
+	z-index: 3;
+	margin: 0px 15%;
+	border-radius: 1rem;
+	border: 1px solid #333;
+	opacity: 0;
+	transition: all .35s;
+	pointer-events: none;
+}
+.modal-container.open .modal-wrapper {
+	transition: all .35s;
+	opacity: 1;
+	pointer-events: auto;
+}
+.text-black {
+	color: #333;
+}
+.modal-container {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	transition: all .35s;
+}
+.modal-overlay {
+	opacity: 0;
+	pointer-events: none;
+	z-index: 2;
+	background-color: rgba(0,0,0,.66);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.modal-container.open {
+	transition: all .35s;
+	pointer-events: auto;
+}
+.modal-container.open .modal-overlay {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.gameSpace {
+	height: 3rem;
+	background: var(--midtone1);
+	border: 1px dashed var(--space-border);
+}
+.gameSpace-wrapper {
+	height: 3rem;
+	padding: 0;
+	margin: 0;
+	display: inline-block;
+	overflow: hidden;
+}
+.gameSpace-wrapper.no-drop {
+	cursor: no-drop;
+}
+.gameSpace-wrapper .gameSpace-overlay {
+	width: 100%;
+	height: 100%;
+	background-color: transparent;
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: .3;
+	pointer-events: none;
+	z-index: 1;
+}
+.gameSpace-wrapper.droppable .gameSpace-overlay {
+	background-color: lime;
+}
+.gameSpace-wrapper.drop-target .gameSpace-overlay {
+	background-color: white;
+}
+.gameSpace-wrapper.no-drop .gameSpace-overlay {
+	background-color: black;
+}
+.tileRack {
+	height: 100%;
+	background: var(--dark);
+}
+.tileRack-col {
+	height: 30rem;
+}
+.terrain-grass1 {
+	background-position-x: -2px;
+	background-position-y: -2px;
+	height: 50px;
+	width: 50px;
+	background-image: url('/img/rpg-tiles.jpg');
+}
+.terrain-grass2 {
+	background-position-x: -2px;
+	background-position-y: -48px;
+	height: 50px;
+	width: 50px;
+	background-image: url('/img/rpg-tiles.jpg');
+}
+.terrain-grass3 {
+	background-position-x: -21px;
+	background-position-y: -48px;
+	height: 50px;
+	width: 50px;
+	background-image: url('/img/rpg-tiles.jpg');
+}
+.terrain-grass4 {
+	background-position-x: -21px;
+	background-position-y: -2px;
+	height: 50px;
+	width: 50px;
+	background-image: url('/img/rpg-tiles.jpg');
+}
+.terrain-water {
+	background-position-x: -455px;
+	background-position-y: -331px;
+	height: 50px;
+	width: 50px;
+	background-image: url('/img/rpg-tiles.jpg');
+}
+
+/* Game piece and tile faces */
+.gamePiece,
+.tileFace {
+	width: 40px;
+	height: 50px;
+	display: block;
+	top: 0;
+	left: 0;
+	background-image: url('/img/stratego-pieces.png');
+	background-repeat: no-repeat;
+}
+.tileFace {
+	left: -1px;
+	top: 1px;
+	position: absolute;
+}
+.gamePiece {
+	background-position-x: -240px;
+	left: 5px;
+	position: relative;
+}
+.gamePiece.red {
+	background-position-x: -240px;
+	background-position-y: 0px;
+}
+.gamePiece.blue {
+	background-position-x: -240px;
+	background-position-y: -50px;
+}
+.tileFace.rank-B {
+	background-position-x: 0px;
+	background-position-y: 0px;
+}
+.tileFace.rank-9 {
+	background-position-x: -40px;
+	background-position-y: 0px;
+}
+.tileFace.rank-8 {
+	background-position-x: -80px;
+	background-position-y: 0px;
+}
+.tileFace.rank-7 {
+	background-position-x: -120px;
+	background-position-y: 0px;
+}
+.tileFace.rank-6 {
+	background-position-x: -160px;
+	background-position-y: 0px;
+}
+.tileFace.rank-5 {
+	background-position-x: -200px;
+	background-position-y: 0px;
+}
+.tileFace.rank-4 {
+	background-position-x: 0px;
+	background-position-y: -50px;
+}
+.tileFace.rank-3 {
+	background-position-x: -40px;
+	background-position-y: -50px;
+}
+.tileFace.rank-2 {
+	background-position-x: -80px;
+	background-position-y: -50px;
+}
+.tileFace.rank-1 {
+	background-position-x: -120px;
+	background-position-y: -50px;
+}
+.tileFace.rank-S {
+	background-position-x: -160px;
+	background-position-y: -50px;
+}
+.tileFace.rank-F {
+	background-position-x: -200px;
+	background-position-y: -50px;
+}

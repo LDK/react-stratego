@@ -74,17 +74,18 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     userColor = 'blue' if (starterUid == senderUid) else 'red'
     # Remove existing spaces that match user color from list
     i = 0
+    combinedSpaces = []
     while i < len(spaceInfo):
         space = spaceInfo[i]
-        if space['color'] == userColor:
-            del spaceInfo[i]
+        if space['color'] != userColor:
+            combinedSpaces.append(spaceInfo[i])
         i += 1
     # Add new user color-matching spaces to list
     for space in newSpaceInfo:
         if space['color'] == userColor:
-            spaceInfo.append(space)
+            combinedSpaces.append(space)
     # Encode list into new json string
-    spaceString = json.dumps(spaceInfo)
+    spaceString = json.dumps(combinedSpaces)
     # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()

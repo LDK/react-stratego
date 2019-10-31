@@ -20,6 +20,7 @@ class Navigation extends React.Component {
 		this.updatePassInput = this.updatePassInput.bind(this);
 		this.updatePass2Input = this.updatePass2Input.bind(this);
 		this.updateEmailInput = this.updateEmailInput.bind(this);
+		props.app.nav = this;
 	}
 	updateUserInput(event) {
 		this.setState({userInput: event.target.value});
@@ -107,8 +108,12 @@ class Navigation extends React.Component {
 		});
 	}
 	gameChange(id) {
-		// var game = this.props.game;
-		// game.loadGame(id,true);
+		var app = this.props.app;
+		if (!id) {
+			app.setState({ activeGame: null });
+			return;
+		}
+		app.loadGame(id);
 	}
 	render() {
 		var app = this.props.app;
@@ -126,13 +131,10 @@ class Navigation extends React.Component {
 				<input type="submit" value="Go" size="3" onClick={this.sendRegistration} />
 			</form>
 		);
-		var games = app.state.games;
-		if (games.length && games[0].id && !app.state.activeGame.id) {
-			games.unshift({ id: '', name: ''});
-		}
 		var gameBrowser = '';
+		var games = app.state.games;
 		if (games.length) {
-			gameBrowser = <DataBrowser label="Game:" items={app.state.games} view="select" callback={this.gameChange} id="gameList" value="" />
+			gameBrowser = <DataBrowser label="Game:" emptyOption='- Select Game -' items={games} view="select" callback={this.gameChange} id="gameList" value={app.state.activeGame ? app.state.activeGame.props.id : null} />
 		}
 		return (
 			<div className="navigation row py-3 px-3">

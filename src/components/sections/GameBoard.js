@@ -14,6 +14,7 @@ class GameBoard extends React.Component {
 		this.gameSpaceRow = this.gameSpaceRow.bind(this);
 		this.gameSpaceRows = this.gameSpaceRows.bind(this);
 		this.placePiece = this.placePiece.bind(this);
+		this.props.app.gameBoard = this;
 	}
 	renderGameSpace(row,col,key,piece) {
 		var occupied = (piece !== undefined);
@@ -23,6 +24,7 @@ class GameBoard extends React.Component {
 	}
 	placePiece(pieceInfo,id) {
 		var spaces = this.state.spaces;
+		var app = this.props.app;
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
 		if (pieceInfo.fromId) {
@@ -39,6 +41,7 @@ class GameBoard extends React.Component {
 					spaces[id] = this.renderGameSpace(y,x,id,fromPiece);
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId,toPiece);
 					this.setState({spaces: spaces});
+					app.saveActiveGame();
 					return;
 				}
 			}
@@ -64,6 +67,7 @@ class GameBoard extends React.Component {
 		}
 		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} game={this.props.game} />);
 		this.setState({spaces: spaces});
+		app.saveActiveGame();
 	}
 	gameSpaceRow(row,start,end,colSize) {
 		var offset = (row - 1) * (colSize || 10);

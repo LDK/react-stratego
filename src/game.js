@@ -8,6 +8,7 @@ import Cookies from 'universal-cookie';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { useDrag } from 'react-dnd';
+import DataBrowser from './components/widgets/DataBrowser.js';
 
 class App extends React.Component {
 	constructor(props) {
@@ -28,16 +29,20 @@ class App extends React.Component {
 		this.logUserOut = this.logUserOut.bind(this);
 		this.getGames = this.getGames.bind(this);
 		this.newGame = this.newGame.bind(this);
+		this.loadGame = this.loadGame.bind(this);
 		this.getGames();
+		this.gameStates = {};
 	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;
-		if (!uid) {
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
 			return [];
 		}
 		var formData = new FormData();
 		var app = this;
-		formData.append('user_id',this.state.currentUser.user_id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
 		window.fetch(this.gameServer+'games', {
 			method: 'POST', 
 			body: formData
@@ -50,10 +55,25 @@ class App extends React.Component {
 				var games = [];
 				for (var i in gameData) {
 					var game = gameData[i];
-					games.push({
+					var opponent = '';
+					var opponent_id = null;
+					if (parseInt(game.starter_uid) == parseInt(uid)) {
+						opponent = game.opponent_name;
+						opponent_id = game.opponent_uid;
+					}
+					else {
+						opponent = game.starter_name;
+						opponent_id = game.starter_uid;
+					}
+					var gameEntry = {
 						id: game.id,
-						name: game.title
-					});
+						name: game.title,
+						opponent_name: opponent,
+						opponent_id: opponent_id
+					}
+					if (gameEntry && gameEntry.id) {
+						games.push(gameEntry);
+					}
 				}
 				app.setState({games: games});
 			});
@@ -74,8 +94,65 @@ class App extends React.Component {
 		this.setState({activeGame: game});
 	}
 	newGame(){
-		var gm = (<Game app={this} />);
+		var gm = (<Game app={this} oy={'vey'} />);
 		this.setState({activeGame: gm});
+	}
+	loadGame(id){
+		var gm = (<Game app={this} id={id} />);
+		this.setState({activeGame: gm});
+		this.nav.render();
+	}
+	saveActiveGame(){
+		if (!this.state.activeGame || !this.state.currentUser) {
+			return false;
+		}
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		var id = this.state.activeGame.props.id;
+		if (!uid || !userKey || !id) {
+			return false;
+		}
+		var captured = [];
+		if (this.gameStates[id]) {
+			captured = this.gameStates[id].captured;
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		formData.append('game_id',id);
+		formData.append('captured',JSON.stringify(captured));
+		var spaces = this.gameBoard.state.spaces;
+		var saveSpaces = [];
+		for (var i in spaces) {
+			var space = {};
+			if (spaces[i].props.occupied) {
+				space.id = spaces[i].props.id;
+				space.rank = spaces[i].props.children.props.rank;
+				space.color = spaces[i].props.children.props.color;
+				saveSpaces[i] = space;
+			}
+		}
+		for (var i in saveSpaces) {
+			var space = saveSpaces[i];
+			if (!space) {
+				delete saveSpaces[i];
+			}
+		}
+		var filtered = saveSpaces.filter(function (el) {
+		  return el != null;
+		});
+		formData.append('spaces',JSON.stringify(filtered));
+		window.fetch(this.gameServer+'saveGame', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+			});
+		});
 	}
 	logUserOut() {
 		const cookies = new Cookies();
@@ -90,21 +167,23 @@ class App extends React.Component {
 		);
 	}
 	userMenuBody() {
+		var app = this;
 		return (
 			<div className="userMenu p-3">
-				<h2>No Game Started.</h2>
+				<DataBrowser label="Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} itemClick={this.gameChange} />
 				<input type="button" value="New Game" onClick={this.newGame} />
 			</div>
 		);
 	}
-	gameBody() {
+	gameBody(game) {
+		var id = game.props.id || fase;
 		return (
-			<Game app={this} />
+			<Game app={this} id={id} />
 		);
 	}
 	getBody() {
 		if (this.state.activeGame) {
-			return this.gameBody();
+			return this.gameBody(this.state.activeGame);
 		}
 		else if (this.state.currentUser) {
 			return this.userMenuBody();
@@ -134,10 +213,16 @@ class Game extends React.Component {
 				blue: null,
 				red: null
 			},
+			captured: {
+				
+			},
 			started: props.started || false
 		};
 		this.app = props.app;
-		this.app.setActiveGame(this);
+		if (props.id) {
+			this.app.gameStates[props.id] = this.state;
+		}
+		// this.app.setActiveGame(this);
 	}
 	render() {
 		var app = this.app;
@@ -147,10 +232,10 @@ class Game extends React.Component {
 					<DndProvider backend={HTML5Backend}>
 						<div className="row">
 							<div className="col-12 col-md-8 col-lg-9 pr-0">
-								<GameBoard game={this} />
+								<GameBoard game={this} app={app} />
 							</div>
 							<div className="col-12 col-md-4 col-lg-3 pr-0 tileRack-col">
-								<TileRack game={this} />
+								<TileRack game={this} app={app} />
 							</div>
 						</div>
 					</DndProvider>
@@ -158,7 +243,6 @@ class Game extends React.Component {
 			);
 		}
 		else {
-			console.log('oh',this.state);
 			return (
 				<div className="container-fluid mx-auto game-bg">
 					<Navigation game={this} loginCallback={app.setCurrentUser} logoutCallback={app.logUserOut} />

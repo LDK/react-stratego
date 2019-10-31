@@ -43,9 +43,17 @@ class DataBrowser extends React.Component {
 	}
 	renderList(elId,wrapperClass) {
 		var cb = this.callback;
-		const dataItems = this.props.items.map((opt,i) => 
+		var items = this.props.items;
+		if (this.props.deleteEmpty) {
+			for (var i in items) {
+				if (!items[i].name) {
+					delete items[i];
+				}
+			}
+		}
+		const dataItems = items.map((opt,i) => 
 			<li key={i}>
-				<a onClick={ (e) => { cb(e) }} href="javascript:;" data-key={opt.id}>{opt.name}</a>
+				<a onClick={cb} href="javascript:;" data-key={opt.id}>{opt.name}</a>
 			</li>
 		);
 		return (

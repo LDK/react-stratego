@@ -7,7 +7,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 sqlite_file = './stratego.sqlite'
 import json
-import simplejson
 import sqlite3
 import random
 import string
@@ -63,64 +62,83 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     rename(imgInitLoc,imgLoc)
     return imgLoc
 
-  def saveSongData(self, data):
-    # TODO: Repurpose as saveGameData
+  def saveGameData(self, data):
+    # Grab existing game data
+    gameData = self.getGameData(data['id'])
+    # Decode spaces json data into list
+    spaceInfo = json.loads(gameData['spaces'])
+    newSpaceInfo = json.loads(data['spaces'])
+    # Check user color, starter = blue, opponent = red
+    starterUid = int(gameData['starter_uid'])
+    senderUid = int(data['sender'])
+    userColor = 'blue' if (starterUid == senderUid) else 'red'
+    # Remove existing spaces that match user color from list
+    i = 0
+    while i < len(spaceInfo):
+        space = spaceInfo[i]
+        if space['color'] == userColor:
+            del spaceInfo[i]
+        i += 1
+    # Add new user color-matching spaces to list
+    for space in newSpaceInfo:
+        if space['color'] == userColor:
+            spaceInfo.append(space)
+    # Encode list into new json string
+    spaceString = json.dumps(spaceInfo)
+    # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    if ('id' in data and data['id']):
-        updateSql = "UPDATE `song` SET title='{title}',user_id='{uid}',bpm='{bpm}',swing='{swing}' WHERE id = '{id}'".\
-            format(title=data['title'], uid=data['user_id'], bpm=data['bpm'], swing=data['swing'], id=data['id'])
-        c.execute(updateSql)
-        savedId = data['id']
-    else:
-        insertSql = "REPLACE INTO `song` (title,user_id,bpm,swing) VALUES ('{title}','{uid}','{bpm}','{swing}')".\
-            format(title=data['title'], uid=data['user_id'], bpm=data['bpm'], swing=data['swing'])
-        c.execute(insertSql)
-        savedId = c.lastrowid
+    updateSql = "UPDATE `game` SET spaces='{spaces}' WHERE id = '{id}'".\
+        format(spaces=spaceString, id=data['id'])
+    c.execute(updateSql)
     conn.commit()
     conn.close()
-    return savedId
+    savedId = data['id']
+    return savedId;
 
-  def getSongData(self, id):
-    # TODO: Repurpose as getGameData
+  def getGameData(self, id):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT title, user_id, bpm, swing FROM `song` WHERE id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
-    songData = c.fetchone()
+    gameData = c.fetchone()
     postRes = {}
-    postRes['title'] = songData[0]
-    postRes['user_id'] = songData[1]
-    postRes['bpm'] = songData[2]
-    postRes['swing'] = songData[3]
+    postRes['title'] = gameData[0]
+    postRes['id'] = gameData[1]
+    postRes['starter_uid'] = gameData[2]
+    postRes['starter_name'] = gameData[3]
+    postRes['opponent_uid'] = gameData[4]
+    postRes['opponent_name'] = gameData[5]
+    postRes['spaces'] = gameData[6]
     conn.commit()
     conn.close()
     return postRes
 
-  def getSongList(self, uid):
-    # TODO: Repurpose as getGameList
+  def getGameList(self, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT title, id, bpm, swing FROM `song` WHERE user_id = '{uid}'".format(uid=uid)
-    print("select sql",selectSql)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE starting_user_id = '{uid}' OR opponent_user_id = '{uid}'".format(uid=uid)
     c.execute(selectSql)
-    songs = c.fetchall()
+    games = c.fetchall()
     conn.close()
     postRes = {}
-    for song in songs:
-        if not (song[1] in postRes):
-            postRes[song[1]] = {}
-        postRes[song[1]]['title'] = song[0]
-        postRes[song[1]]['id'] = song[1]
-        postRes[song[1]]['bpm'] = song[2]
-        postRes[song[1]]['swing'] = song[3]
+    for game in games:
+        if not (game[1] in postRes):
+            postRes[game[1]] = {}
+        postRes[game[1]]['title'] = game[0]
+        postRes[game[1]]['id'] = game[1]
+        postRes[game[1]]['starter_uid'] = game[2]
+        postRes[game[1]]['starter_name'] = game[3]
+        postRes[game[1]]['opponent_uid'] = game[4]
+        postRes[game[1]]['opponent_name'] = game[5]
     return postRes
 
   def checkCreds(self,user_id,userKey):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    c.execute("SELECT id FROM `user` WHERE `id` = '{uid}' AND `userKey` = '{userKey}'".\
-        format(uid=user_id, userKey=userKey))
+    credSql = "SELECT id FROM `user` WHERE `id` = '{uid}' AND `userKey` = '{userKey}'".\
+        format(uid=user_id, userKey=userKey)
+    c.execute(credSql)
     user_match = c.fetchone()
     conn.close()
     return user_match
@@ -232,7 +250,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
-    elif (self.path == '/songs'):
+    elif (self.path == '/games'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
         uid = postvars['user_id'][0]
@@ -241,7 +259,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             self.respond(401)
             return
         self.respond(200)
-        postRes = self.getSongList(uid)
+        postRes = self.getGameList(uid)
         # postRes['id'] = sid
         # postRes['channels'] = self.getSongChannels(sid)
         # postRes['patterns'] = self.getSongPatterns(sid)
@@ -304,76 +322,26 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.data_string = self.rfile.read(int(self.headers['Content-Length']))
         fName = groove.renderJSON(self.data_string);
         self.wfile.write(bytes(fName, "utf8"))
-    else:
-        self.data_string = self.rfile.read(int(self.headers['Content-Length']))
-        data = simplejson.loads(self.data_string)
+    elif (self.path == '/saveGame'):
+        postvars = self.parse_POST()
         postRes = {}
-        userKey = data['currentUser']['userKey']
-        # TODO HERE: checkUserKey(userKey,data['currentUser']['user_id']) ... if fail, return
-        if ('id' in data and data['id']):
-            songId = data['id']
-            self.saveSongData({
-                "user_id": data['currentUser']['user_id'],
-                "title": data['title'],
-                "bpm": int(data['bpm']),
-                "swing": data['swing'],
-                "id": songId
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        if ('game_id' in postvars and postvars['game_id'][0]):
+            gameId = postvars['game_id'][0]
+            self.saveGameData({
+                "spaces": postvars['spaces'][0],
+                "captured": postvars['captured'][0],
+                "id": gameId,
+                "sender": uid
             })
         else:
-            songId = self.saveSongData({
-                "user_id": data['currentUser']['user_id'],
-                "title": data['title'],
-                "bpm": int(data['bpm']),
-                "swing": data['swing']
-            })
-        postRes['id'] = songId
-        trackPos=0
-        for key, track in data['tracks'].items():
-            if not ('image' in track):
-                track['image'] = self.saveSampleImage(track)
-            sampleId = self.saveSample({
-                "filename": track['sample']['wav'],
-                "reverse": track['reverse'],
-                "normalize": track['normalize'],
-                "trim": track['trim'],
-                "image": track['image']
-            })
-            trackPos = trackPos + 1
-            track['sample_id'] = sampleId
-            track['song_id'] = songId
-            track['name'] = key
-            track['position'] = trackPos
-            channelId = self.saveSongChannel(track)
-            track['channel_id'] = channelId
-            filterSectionId = self.saveFilterSection(1,channelId,track['filter'])
-            filterSection2Id = self.saveFilterSection(2,channelId,track['filter2'])
-            track['filter_id'] = filterSectionId
-            track['filter2_id'] = filterSection2Id
-        # NOTE: We don't have multiple patterns yet so this will get a little more complex
-        for key, pattern in data['patterns'].items():
-            patternId = pattern['id']
-            if (patternId):
-                self.savePattern({
-                    "id": pattern['id'],
-                    "bars": pattern['bars'],
-                    "song_id": songId,
-                    "position": pattern['position'],
-                    "name": pattern['name']
-                })    
-            else:
-                position = key
-                patternId = self.savePattern({
-                    "bars": data['bars'],
-                    "song_id": songId,
-                    "position": position,
-                    "name": data['title'] + " Pattern  " + str(position)
-                })    
-        for key, track in data['tracks'].items():
-            self.saveStepSequence({
-                "pattern_id": patternId,
-                "channel_id": track['channel_id'],
-                "steps": track['notes']
-            })
+            return
+        postRes['id'] = gameId
         self.respond(200)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
     return

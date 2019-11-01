@@ -64,7 +64,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
   def saveGameData(self, data):
     # Grab existing game data
-    gameData = self.getGameData(data['id'])
+    gameData = self.getGameData(data['id'], False)
     # Decode spaces json data into list
     spaceInfo = json.loads(gameData['spaces'])
     newSpaceInfo = json.loads(data['spaces'])
@@ -97,20 +97,38 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     savedId = data['id']
     return savedId;
 
-  def getGameData(self, id):
+  def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
     selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
+    if not uid:
+        postRes['spaces'] = gameData[6]
+    else:
+        starterUid = int(gameData[2])
+        uid = int(uid)
+        spaceInfo = json.loads(gameData[6])
+        combinedSpaces = []
+        if (starterUid == uid):
+            userColor = 'blue'
+        else:
+            userColor = 'red'
+        i = 0
+        while i < len(spaceInfo):
+            space = spaceInfo[i]
+            if space['color'] != userColor:
+                space['rank'] = None
+            combinedSpaces.append(spaceInfo[i])
+            i += 1
+        postRes['spaces'] = json.dumps(combinedSpaces)
     postRes['title'] = gameData[0]
     postRes['id'] = gameData[1]
     postRes['starter_uid'] = gameData[2]
     postRes['starter_name'] = gameData[3]
     postRes['opponent_uid'] = gameData[4]
     postRes['opponent_name'] = gameData[5]
-    postRes['spaces'] = gameData[6]
     conn.commit()
     conn.close()
     return postRes
@@ -243,7 +261,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             self.respond(401)
             return
         self.respond(200)
-        postRes = self.getGameData(gid)
+        postRes = self.getGameData(gid,uid)
         postRes['id'] = gid
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()

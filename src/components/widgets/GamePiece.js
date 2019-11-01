@@ -9,22 +9,28 @@ class GamePiece extends React.Component {
 			captured: this.props.captured || false,
 			placed: this.props.placed || false,
 		};
-		const { name, rackOrder, move, capture, defuse } = PIECES[this.props.rank];
-		this.name = name;
-		this.rackOrder = rackOrder;
-		this.move = move;
-		this.capture = capture || null;
-		this.defuse = defuse || false;
+		if (this.props.rank) {
+			const { name, rackOrder, move, capture, defuse } = PIECES[this.props.rank];
+			this.name = name;
+			this.rackOrder = rackOrder;
+			this.move = move;
+			this.capture = capture || null;
+			this.defuse = defuse || false;
+		}
 	}
 	render() {
 		var divClass = "gamePiece text-center " + (this.props.className || '');
 		var wrapperClass = "gamePiece-wrapper " + (this.props.wrapperClass || '');
 		wrapperClass = wrapperClass.trim();
 		divClass = divClass.trim();
+		var tileFace = '';
+		if (this.props.rank) {
+			tileFace = <div className={"tileFace rank-"+this.props.rank}></div>;
+		}
 		return (
 			<div className={wrapperClass}>
 				<div className={divClass + " " + this.props.color}>
-					<div className={"tileFace rank-"+this.props.rank}></div>
+					{tileFace}
 				</div>
 			</div>
 		)
@@ -32,10 +38,26 @@ class GamePiece extends React.Component {
 }
 
 function DragPiece(props) {
-  const [{isDragging}, drag] = useDrag({
-    item: { type: 'piece', rank: props.rank, game: props.game, color: props.color, tileSpace: props.tileSpace, fromX: props.fromX, fromY: props.fromY, fromId: props.fromId },
+	const isDraggable = function(rank) {
+		var rv = !!rank;
+		console.log('RV',rv);
+		return rv;
+	}
+	const [{isDragging, canDrag}, drag] = useDrag({
+		item: { 
+			type: 'piece', 
+			rank: props.rank || null, 
+			game: props.game, 
+			color: props.color, 
+			tileSpace: props.tileSpace, 
+			fromX: props.fromX, 
+			fromY: props.fromY, 
+			fromId: props.fromId 
+		},
+		canDrag: () => isDraggable(props.rank),
 		collect: monitor => ({
 			isDragging: !!monitor.isDragging(),
+			canDrag: !!monitor.canDrag()
 		}),
   });
   return (

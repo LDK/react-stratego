@@ -13,7 +13,12 @@ class TileRack extends React.Component {
 		this.app = props.app;
 		this.app.tileSpaces = {};
 		this.app.tileRack = this;
-		this.playerColor = 'red';
+		if (this.app.state.currentUser.user_id == this.app.state.activeGame.props.starter) {
+			this.playerColor = 'blue';
+		}
+		else {
+			this.playerColor = 'red';
+		}
 	}
 	renderTileSpace(key) {
 		return <TileSpace id={"tileSpace-"+key} rack={this} key={key} rank={key} />;

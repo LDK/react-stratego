@@ -28,51 +28,12 @@ class App extends React.Component {
 		};
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
-		this.getGameData = this.getGameData.bind(this);
 		this.getGames = this.getGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.getGames();
 		this.gameStates = {};
 		this.gameSpaces = [];
-	}
-	getGameData(id) {
-		if (this.gameBoard) {
-			this.gameBoard.setState({ spaces: []});
-		}
-		if (this.tileSpaces) {
-			for (var rank in this.tileSpaces) {
-				var space = this.tileSpaces[rank];
-				var initCount = PIECES[rank].count;
-				space.setState( { remaining: initCount } );
-			}
-		}
-		var uid = this.state.currentUser.user_id;
-		var userKey = this.state.currentUser.userKey;
-		if (!uid || !userKey) {
-			return [];
-		}
-		var formData = new FormData();
-		var app = this;
-		formData.append('id',id);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
-		window.fetch(this.gameServer+'game', {
-			method: 'POST', 
-			body: formData
-		}).then(function(data){
-			data.text().then(function(text) {
-				if (!text.length) {
-					return;
-				}
-				var gameData = JSON.parse(text);
-				var spaces = JSON.parse(gameData.spaces);
-				for (var i in spaces) {
-					var space = spaces[i];
-					app.gameBoard.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
-				}
-			});
-		});
 	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;
@@ -135,14 +96,53 @@ class App extends React.Component {
 		this.setState({activeGame: game});
 	}
 	newGame(){
-		var gm = (<Game app={this} oy={'vey'} />);
+		var gm = (<Game app={this} />);
 		this.setState({activeGame: gm});
 	}
 	loadGame(id){
-		var gameData = this.getGameData(id);
-		var gm = (<Game app={this} id={id} />);
-		this.setState({activeGame: gm});
-		this.nav.render();
+		if (this.gameBoard) {
+			this.gameBoard.setState({ spaces: []});
+		}
+		if (this.tileSpaces) {
+			for (var rank in this.tileSpaces) {
+				var space = this.tileSpaces[rank];
+				var initCount = PIECES[rank].count;
+				space.setState( { remaining: initCount } );
+			}
+		}
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('id',id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		var spaces;
+		window.fetch(this.gameServer+'game', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gameData = JSON.parse(text);
+				var starterUid = gameData.starter_uid;
+				var opponentUid = gameData.opponent_uid;
+				spaces = JSON.parse(gameData.spaces);
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} />;
+				if (app.gameBoard) {
+					for (var i in spaces) {
+						var space = spaces[i];
+						app.gameBoard.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
+					}
+				}
+				app.setState({activeGame: gm});
+			});
+		});
 	}
 	saveActiveGame(){
 		if (!this.state.activeGame || !this.state.currentUser) {
@@ -225,7 +225,7 @@ class App extends React.Component {
 	}
 	getBody() {
 		if (this.state.activeGame) {
-			return this.gameBody(this.state.activeGame);
+			return this.state.activeGame;
 		}
 		else if (this.state.currentUser) {
 			return this.userMenuBody();
@@ -260,21 +260,20 @@ class Game extends React.Component {
 			},
 			started: props.started || false
 		};
-		this.app = props.app;
-		if (props.id) {
-			this.app.gameStates[props.id] = this.state;
-		}
-		// this.app.setActiveGame(this);
 	}
 	render() {
-		var app = this.app;
+		var app = this.props.app;
+		if (this.props.id) {
+			app.gameStates[this.props.id] = this.state;
+		}
+		var gameBoard = <GameBoard game={this} app={app} />;
 		if (app.state.currentUser) {
 			return (
 				<div className="container-fluid mx-auto game-bg">
 					<DndProvider backend={HTML5Backend}>
 						<div className="row">
 							<div className="col-12 col-md-8 col-lg-9 pr-0">
-								<GameBoard game={this} app={app} />
+				{gameBoard}
 							</div>
 							<div className="col-12 col-md-4 col-lg-3 pr-0 tileRack-col">
 								<TileRack game={this} app={app} />

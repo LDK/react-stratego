@@ -16,6 +16,16 @@ class GameBoard extends React.Component {
 		this.placePiece = this.placePiece.bind(this);
 		this.props.app.gameBoard = this;
 	}
+	componentDidMount() {
+		var app = this.props.app;
+		var spaces = this.props.game.props.spaces;
+		if (spaces && spaces.length) {
+			for (var i in spaces) {
+				var space = spaces[i];
+				this.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
+			}
+		}
+	}
 	renderGameSpace(row,col,key,piece) {
 		var occupied = (piece !== undefined);
 		return <DropSpace id={key} board={this} y={row} x={col} occupied={occupied} key={key} passable={!(this.obscuredSpaces[key] || false)} game={this.props.game}>
@@ -99,7 +109,6 @@ class GameBoard extends React.Component {
 		return rows;
 	}
 	render() {
-		// console.log('render board',this.state.spaces);
 		var game = this.props.game;
 		var app = game.app;
 		return (

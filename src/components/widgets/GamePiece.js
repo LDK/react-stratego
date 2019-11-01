@@ -22,8 +22,8 @@ class GamePiece extends React.Component {
 		wrapperClass = wrapperClass.trim();
 		divClass = divClass.trim();
 		return (
-			<div className={wrapperClass} data-color={this.props.color}>
-				<div className={divClass}>
+			<div className={wrapperClass}>
+				<div className={divClass + " " + this.props.color}>
 					<div className={"tileFace rank-"+this.props.rank}></div>
 				</div>
 			</div>

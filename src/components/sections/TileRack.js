@@ -10,8 +10,8 @@ class TileRack extends React.Component {
 		this.spaces = {};
 		this.renderTileSpace = this.renderTileSpace.bind(this);
 		this.tileSpaces = this.tileSpaces.bind(this);		
-		this.game = props.game;
-		this.game.tileSpaces = {};
+		this.app = props.app;
+		this.app.tileSpaces = {};
 		this.playerColor = 'red';
 	}
 	renderTileSpace(key) {
@@ -26,8 +26,6 @@ class TileRack extends React.Component {
 		return spaces;
 	}
 	render() {
-		var game = this.props.game;
-		var app = game.app;
 		return (
 			<div className="tileRack row no-gutters">
 				{this.tileSpaces()}

@@ -18,11 +18,11 @@ class GameBoard extends React.Component {
 	}
 	renderGameSpace(row,col,key,piece) {
 		var occupied = (piece !== undefined);
-		return <DropSpace id={key} board={this} y={row} x={col} occupied={occupied} key={key} passable={!(this.obscuredSpaces[key] || false)}>
+		return <DropSpace id={key} board={this} y={row} x={col} occupied={occupied} key={key} passable={!(this.obscuredSpaces[key] || false)} game={this.props.game}>
 				{piece}
 			</DropSpace>;
 	}
-	placePiece(pieceInfo,id) {
+	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
 		var { x, y, territory } = spaces[id].props;
@@ -57,9 +57,9 @@ class GameBoard extends React.Component {
 					return;
 				}
 				else if (occupantInfo.color == color) {
-					var occRemaining = this.props.game.tileSpaces[occupantInfo.rank].state.remaining;
+					var occRemaining = this.props.app.tileSpaces[occupantInfo.rank].state.remaining;
 					occRemaining++;
-					this.props.game.tileSpaces[occupantInfo.rank].setState({ remaining: occRemaining });
+					this.props.app.tileSpaces[occupantInfo.rank].setState({ remaining: occRemaining });
 				}
 			}
 			remaining--;
@@ -67,7 +67,9 @@ class GameBoard extends React.Component {
 		}
 		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} game={this.props.game} />);
 		this.setState({spaces: spaces});
-		app.saveActiveGame();
+		if (!loading) {
+			app.saveActiveGame();
+		}
 	}
 	gameSpaceRow(row,start,end,colSize) {
 		var offset = (row - 1) * (colSize || 10);

@@ -27,11 +27,41 @@ class App extends React.Component {
 		};
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
+		this.getGameData = this.getGameData.bind(this);
 		this.getGames = this.getGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.getGames();
 		this.gameStates = {};
+		this.gameSpaces = [];
+	}
+	getGameData(id) {
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('id',id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'game', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gameData = JSON.parse(text);
+				var spaces = JSON.parse(gameData.spaces);
+				for (var i in spaces) {
+					var space = spaces[i];
+					app.gameBoard.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
+				}
+			});
+		});
 	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;
@@ -98,6 +128,7 @@ class App extends React.Component {
 		this.setState({activeGame: gm});
 	}
 	loadGame(id){
+		var gameData = this.getGameData(id);
 		var gm = (<Game app={this} id={id} />);
 		this.setState({activeGame: gm});
 		this.nav.render();

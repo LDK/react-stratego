@@ -233,20 +233,18 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
-    elif (self.path == '/song'):
+    elif (self.path == '/game'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
         uid = postvars['user_id'][0]
-        sid = postvars['song_id'][0]
+        gid = postvars['id'][0]
         authorized = self.checkCreds(uid,userKey)
         if not authorized:
             self.respond(401)
             return
         self.respond(200)
-        postRes = self.getSongData(sid)
-        postRes['id'] = sid
-        postRes['channels'] = self.getSongChannels(sid)
-        postRes['patterns'] = self.getSongPatterns(sid)
+        postRes = self.getGameData(gid)
+        postRes['id'] = gid
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return

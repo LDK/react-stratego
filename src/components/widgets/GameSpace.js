@@ -28,7 +28,7 @@ class GameSpace extends React.Component {
 	}
 }
 
-function DropSpace({ id, x, y, passable, board, children }) {
+function DropSpace({ id, x, y, passable, board, game, children }) {
 
 	const handleDrop = function(x,y,territory,dropped) {
 		if (!passable || dropped.color != territory) {

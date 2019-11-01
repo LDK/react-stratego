@@ -16,8 +16,8 @@ class TileSpace extends React.Component {
 		this.empty = this.empty.bind(this);
 		this.populate = this.populate.bind(this);
 		this.rack = props.rack;
-		this.game = props.rack.game;
-		this.game.tileSpaces[props.rank] = this;
+		this.app = props.rack.app;
+		this.app.tileSpaces[props.rank] = this;
 	}
 	populate(items) {
 		this.setState({ occupant: items });

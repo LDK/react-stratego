@@ -2,3 +2,5 @@ node_modules
 __pycache__
 tmp
 src/reference
+dist
+package-lock.json

@@ -96,7 +96,11 @@ class App extends React.Component {
 		this.setState({activeGame: game});
 	}
 	newGame(){
-		var gm = (<Game app={this} />);
+		if (this.gameBoard) {
+			this.gameBoard.setState({ spaces: []});
+		}
+		var uid = this.state.currentUser.user_id;
+		var gm = (<Game app={this} starter={uid} />);
 		this.setState({activeGame: gm});
 	}
 	loadGame(id){
@@ -140,6 +144,16 @@ class App extends React.Component {
 						app.gameBoard.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
 					}
 				}
+				if (app.tileRack) {
+					
+					if (app.state.currentUser.user_id == gm.props.starter) {
+						app.tileRack.playerColor = 'blue';
+					}
+					else {
+						app.tileRack.playerColor = 'red';
+					}
+				}
+				
 				app.setState({activeGame: gm});
 			});
 		});

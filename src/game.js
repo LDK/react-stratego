@@ -9,6 +9,7 @@ import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { useDrag } from 'react-dnd';
 import DataBrowser from './components/widgets/DataBrowser.js';
+import {PIECES} from './components/Helpers.js';
 
 class App extends React.Component {
 	constructor(props) {
@@ -36,6 +37,16 @@ class App extends React.Component {
 		this.gameSpaces = [];
 	}
 	getGameData(id) {
+		if (this.gameBoard) {
+			this.gameBoard.setState({ spaces: []});
+		}
+		if (this.tileSpaces) {
+			for (var rank in this.tileSpaces) {
+				var space = this.tileSpaces[rank];
+				var initCount = PIECES[rank].count;
+				space.setState( { remaining: initCount } );
+			}
+		}
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
 		if (!uid || !userKey) {

@@ -12,6 +12,7 @@ class TileRack extends React.Component {
 		this.tileSpaces = this.tileSpaces.bind(this);		
 		this.app = props.app;
 		this.app.tileSpaces = {};
+		this.app.tileRack = this;
 		this.playerColor = 'red';
 	}
 	renderTileSpace(key) {

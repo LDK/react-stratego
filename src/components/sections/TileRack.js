@@ -40,6 +40,7 @@ class TileRack extends React.Component {
 		var players = game.state.players;
 		players[this.playerColor].ready = true;
 		game.setState({players: players});
+		app.saveActiveGame();
 	}
 	render() {
 		var startButton = '';

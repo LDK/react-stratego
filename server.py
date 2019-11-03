@@ -68,6 +68,16 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Decode spaces json data into list
     spaceInfo = json.loads(gameData['spaces'])
     newSpaceInfo = json.loads(data['spaces'])
+    # Decode player json data into list
+    players = json.loads(data['players'])
+    if (players['blue']['ready']):
+        starterReady = 1
+    else:
+        starterReady = 0
+    if (players['red']['ready']):
+        oppReady = 1
+    else:
+        oppReady = 0
     # Check user color, starter = blue, opponent = red
     starterUid = int(gameData['starter_uid'])
     senderUid = int(data['sender'])
@@ -89,8 +99,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    updateSql = "UPDATE `game` SET spaces='{spaces}' WHERE id = '{id}'".\
-        format(spaces=spaceString, id=data['id'])
+    updateSql = "UPDATE `game` SET spaces='{spaces}', starter_ready='{starterReady}', opponent_ready='{oppReady}' WHERE id = '{id}'".\
+        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'])
     c.execute(updateSql)
     conn.commit()
     conn.close()
@@ -100,7 +110,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -129,6 +139,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['starter_name'] = gameData[3]
     postRes['opponent_uid'] = gameData[4]
     postRes['opponent_name'] = gameData[5]
+    postRes['starter_ready'] = gameData[7]
+    postRes['opponent_ready'] = gameData[8]
     conn.commit()
     conn.close()
     return postRes
@@ -352,6 +364,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             gameId = postvars['game_id'][0]
             self.saveGameData({
                 "spaces": postvars['spaces'][0],
+                "players": postvars['players'][0],
                 "captured": postvars['captured'][0],
                 "id": gameId,
                 "sender": uid

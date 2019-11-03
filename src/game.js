@@ -138,10 +138,12 @@ class App extends React.Component {
 					return;
 				}
 				var gameData = JSON.parse(text);
+				var starterReady = gameData.starter_ready;
+				var opponentReady = gameData.opponent_ready;
 				var starterUid = gameData.starter_uid;
 				var opponentUid = gameData.opponent_uid;
 				spaces = JSON.parse(gameData.spaces);
-				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} />;
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} />;
 				if (app.tileRack) {
 					if (uid == starterUid) {
 						app.tileRack.playerColor = 'blue';
@@ -172,14 +174,17 @@ class App extends React.Component {
 			return false;
 		}
 		var captured = [];
+		var players = [];
 		if (this.gameStates[id]) {
 			captured = this.gameStates[id].captured;
+			players = this.gameStates[id].players;
 		}
 		var formData = new FormData();
 		var app = this;
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
 		formData.append('game_id',id);
+		formData.append('players',JSON.stringify(players));
 		formData.append('captured',JSON.stringify(captured));
 		var spaces = this.gameBoard.state.spaces;
 		var saveSpaces = [];
@@ -269,8 +274,8 @@ class Game extends React.Component {
 			name: '',
 			id: props.id || false,
 			players: {
-				blue: { id: props.starter, ready: false },
-				red: { id: props.opponent || null, ready: false }
+				blue: { id: props.starter, ready: props.starterReady || false },
+				red: { id: props.opponent || null, ready: props.opponentReady || false }
 			},
 			captured: {
 				

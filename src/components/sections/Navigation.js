@@ -150,7 +150,7 @@ class Navigation extends React.Component {
 					</form>
 					<div className={userClass}>
 						<span className="username mr-2">{username} is playing.</span>
-						[<a className="text-white anchor" onClick={this.props.logoutCallback}>Log out</a>]
+						[<a className="text-white anchor no-underline" onClick={this.props.logoutCallback}>Log out</a>]
 					</div>
 				</div>
 				<Modal 

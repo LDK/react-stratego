@@ -111,8 +111,12 @@ class App extends React.Component {
 			for (var rank in this.tileSpaces) {
 				var space = this.tileSpaces[rank];
 				var initCount = PIECES[rank].count;
-				space.setState( { remaining: initCount } );
+				space.remaining = initCount;
+				space.setState({ remaining: space.remaining });
 			}
+		}
+		if (this.tileRack) {
+			this.tileRack.remaining = 40;
 		}
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
@@ -138,22 +142,21 @@ class App extends React.Component {
 				var opponentUid = gameData.opponent_uid;
 				spaces = JSON.parse(gameData.spaces);
 				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} />;
-				if (app.gameBoard) {
-					for (var i in spaces) {
-						var space = spaces[i];
-						app.gameBoard.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
-					}
-				}
 				if (app.tileRack) {
-					
-					if (app.state.currentUser.user_id == gm.props.starter) {
+					if (uid == starterUid) {
 						app.tileRack.playerColor = 'blue';
 					}
 					else {
 						app.tileRack.playerColor = 'red';
 					}
 				}
-				
+				if (app.gameBoard) {
+					for (var i in spaces) {
+						var space = spaces[i];
+						var piece = { rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] };
+						app.gameBoard.placePiece(piece, space.id, true);
+					}
+				}
 				app.setState({activeGame: gm});
 			});
 		});
@@ -266,8 +269,8 @@ class Game extends React.Component {
 			name: '',
 			id: props.id || false,
 			players: {
-				blue: null,
-				red: null
+				blue: { id: props.starter, ready: false },
+				red: { id: props.opponent || null, ready: false }
 			},
 			captured: {
 				

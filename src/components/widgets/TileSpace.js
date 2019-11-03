@@ -5,13 +5,14 @@ import {PIECES} from '../Helpers.js';
 class TileSpace extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { 
+		this.state = {
 			highlight: false,
 			passable: props.passable || true,
 			occupied: props.occupied || false,
 			occupant: null,
-			remaining: props.count || PIECES[this.props.rank].count
 		};
+		this.remaining = props.count || PIECES[this.props.rank].count;
+		this.state.remaining = this.remaining;
 		this.onClick = this.props.onClick || function(){};
 		this.empty = this.empty.bind(this);
 		this.populate = this.populate.bind(this);
@@ -28,7 +29,7 @@ class TileSpace extends React.Component {
 	render() {
 		const { name, rackOrder } = PIECES[this.props.rank];
 		var orderClass = rackOrder ? ' order-'+rackOrder : '';
-		var unavailable = !this.state.remaining;
+		var unavailable = !this.remaining;
 		if (unavailable) {
 			return (
 				<div id={'tileSpace-'+this.props.rank} className={"tileSpace col-6 " + this.props.rank + orderClass + (this.state.highlight ? ' highlight' : '') }>

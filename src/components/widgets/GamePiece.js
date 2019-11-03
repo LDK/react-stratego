@@ -27,6 +27,9 @@ class GamePiece extends React.Component {
 		if (this.props.rank) {
 			tileFace = <div className={"tileFace rank-"+this.props.rank}></div>;
 		}
+		else {
+			wrapperClass += ' no-drag';
+		}
 		return (
 			<div className={wrapperClass}>
 				<div className={divClass + " " + this.props.color}>
@@ -40,7 +43,6 @@ class GamePiece extends React.Component {
 function DragPiece(props) {
 	const isDraggable = function(rank) {
 		var rv = !!rank;
-		console.log('RV',rv);
 		return rv;
 	}
 	const [{isDragging, canDrag}, drag] = useDrag({
@@ -66,9 +68,7 @@ function DragPiece(props) {
       style={{
 		  color: props.color || 'black',
         opacity: isDragging ? 0 : 1,
-        fontSize: 25,
-        fontWeight: 'bold',
-        cursor: 'move',
+        cursor: !!props.rank ? 'move' : 'default',
       }}
     >
 	  <GamePiece color={props.color} rank={props.rank} placed={props.placed || false} game={props.game} /> 

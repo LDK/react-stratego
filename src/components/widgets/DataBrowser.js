@@ -53,7 +53,7 @@ class DataBrowser extends React.Component {
 		}
 		const dataItems = items.map((opt,i) => 
 			<li key={i}>
-				<a onClick={cb} href="javascript:;" data-key={opt.id}>{opt.name}</a>
+				<a onClick={cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>
 			</li>
 		);
 		return (

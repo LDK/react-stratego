@@ -18,11 +18,29 @@ class GameBoard extends React.Component {
 	}
 	componentDidMount() {
 		var app = this.props.app;
+		var game = this.props.game;
 		var spaces = this.props.game.props.spaces;
-		if (spaces && spaces.length) {
+		var uid = app.state.currentUser.user_id;
+
+		if (app.tileRack) {
+			if (game.props.starter == uid) {
+				app.tileRack.playerColor = 'blue';
+			}
+			else {
+				app.tileRack.playerColor = 'red';
+			}
+		}
+		if (spaces && spaces.length && app.tileSpaces) {
 			for (var i in spaces) {
 				var space = spaces[i];
-				this.placePiece({ rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] }, space.id, true);
+				var targetSpace = null;
+				if (space.rank && app.tileSpaces[space.rank]) {
+					targetSpace = app.tileSpaces[space.rank];
+				}
+				this.placePiece({ rank: space.rank, color: space.color, tileSpace: targetSpace }, space.id, true);
+				if (targetSpace) {
+					targetSpace.setState({ remaining: targetSpace.remaining });
+				}
 			}
 		}
 	}
@@ -35,6 +53,7 @@ class GameBoard extends React.Component {
 	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
+		var playerColor = app.tileRack.playerColor;
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
 		if (pieceInfo.fromId) {
@@ -57,8 +76,7 @@ class GameBoard extends React.Component {
 			}
 		}
 		if (tileSpace) {
-			var {remaining} = tileSpace.state;
-			if (!remaining) {
+			if (!tileSpace.remaining) {
 				return;
 			}
 			if (spaces[id].props.occupied) {
@@ -67,13 +85,18 @@ class GameBoard extends React.Component {
 					return;
 				}
 				else if (occupantInfo.color == color) {
-					var occRemaining = this.props.app.tileSpaces[occupantInfo.rank].state.remaining;
-					occRemaining++;
-					this.props.app.tileSpaces[occupantInfo.rank].setState({ remaining: occRemaining });
+					this.props.app.tileSpaces[occupantInfo.rank].remaining++;
 				}
 			}
-			remaining--;
-			tileSpace.setState({ remaining: remaining });
+			if (color == playerColor) 
+			{
+				tileSpace.remaining--;
+				app.tileRack.remaining--;
+				if (!app.tileRack.remaining) {
+					app.tileRack.setState({ allPlaced: true });
+				}
+			}
+			tileSpace.setState({ remaining: tileSpace.remaining });
 		}
 		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} game={this.props.game} />);
 		this.setState({spaces: spaces});

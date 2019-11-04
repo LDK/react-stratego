@@ -14,6 +14,7 @@ class GameBoard extends React.Component {
 		this.gameSpaceRow = this.gameSpaceRow.bind(this);
 		this.gameSpaceRows = this.gameSpaceRows.bind(this);
 		this.placePiece = this.placePiece.bind(this);
+		this.emptySpace = this.emptySpace.bind(this);
 		this.props.app.gameBoard = this;
 	}
 	componentDidMount() {
@@ -49,6 +50,16 @@ class GameBoard extends React.Component {
 		return <DropSpace id={key} board={this} y={row} x={col} occupied={occupied} key={key} passable={!(this.obscuredSpaces[key] || false)} game={this.props.game}>
 				{piece}
 			</DropSpace>;
+	}
+	emptySpace(id) {
+		var spaces = this.state.spaces;
+		var app = this.props.app;
+		var playerColor = app.tileRack.playerColor;
+		var space = spaces[id];
+		var newSpace = this.renderGameSpace(space.props.y,space.props.x,id);
+		spaces[id] = newSpace;
+		this.setState({ spaces: spaces });
+		return newSpace;
 	}
 	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;

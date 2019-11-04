@@ -31,9 +31,11 @@ class App extends React.Component {
 		this.getGames = this.getGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
+		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
 		this.getGames();
 		this.gameStates = {};
 		this.gameSpaces = [];
+		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;
@@ -152,6 +154,84 @@ class App extends React.Component {
 						app.tileRack.playerColor = 'red';
 					}
 				}
+				if (app.gameBoard) {
+					for (var i in spaces) {
+						var space = spaces[i];
+						var piece = { rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] };
+						app.gameBoard.placePiece(piece, space.id, true);
+					}
+				}
+				app.setState({activeGame: gm});
+			});
+		});
+	}
+	pollOpponentStatus(){
+		if (!this.state.activeGame || !this.state.activeGame.props.id || !this.tileRack || !this.gameBoard || !this.tileSpaces) {
+			return null;
+		}
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return null;
+		}
+		var formData = new FormData();
+		var app = this;
+		var game = this.gameBoard.props.game;
+		formData.append('game_id',app.state.activeGame.props.id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		var spaces;
+		window.fetch(this.gameServer+'opponent_status', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gameData = JSON.parse(text);
+				var opponentReady = gameData.opponent_ready;
+				spaces = JSON.parse(gameData.opponent_spaces);
+				var opponentColor;
+				if (app.tileRack.playerColor == 'blue') {
+					opponentColor = 'red';
+				}
+				else {
+					opponentColor = 'blue';
+				}
+				if (opponentReady != game.state.players[opponentColor].ready) {
+					var players = game.state.players;
+					players[opponentColor].ready = opponentReady;
+					game.setState({players: players});
+				}
+				var newSpaceIds = [];
+				var oldSpaceIds = [];
+				for (var i in spaces) {
+					newSpaceIds.push(spaces[i].id);
+				}
+				for (var i in app.gameBoard.state.spaces) {
+					if (!app.gameBoard.state.spaces[i].props.children) {
+						continue;
+					}
+					if 
+						(app.gameBoard.state.spaces[i].props.children.props.color == opponentColor) {
+							oldSpaceIds.push(app.gameBoard.state.spaces[i].props.id);
+						}
+				}
+				for (var i in newSpaceIds) {
+					var id = newSpaceIds[i];
+					if (!oldSpaceIds.includes(id)) {
+						var piece = { rank: null, color: opponentColor, tileSpace: null };
+						app.gameBoard.placePiece(piece, id, false);
+					}
+				}
+				for (var i in oldSpaceIds) {
+					var id = oldSpaceIds[i];
+					if (!newSpaceIds.includes(id)) {
+						app.gameBoard.emptySpace(id);
+					}
+				}
+				return;
 				if (app.gameBoard) {
 					for (var i in spaces) {
 						var space = spaces[i];

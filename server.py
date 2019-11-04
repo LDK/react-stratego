@@ -145,6 +145,38 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     conn.close()
     return postRes
 
+  def getOpponentData(self, gameId, uid):
+    if not uid:
+        return {}
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
+    c.execute(selectSql)
+    gameData = c.fetchone()
+    postRes = {}
+    starterUid = int(gameData[0])
+    uid = int(uid)
+    spaceInfo = json.loads(gameData[2])
+    combinedSpaces = []
+    if (starterUid == uid):
+        userColor = 'blue'
+        opponentReady = gameData[4]
+    else:
+        userColor = 'red'
+        opponentReady = gameData[3]
+    i = 0
+    while i < len(spaceInfo):
+        space = spaceInfo[i]
+        if space['color'] != userColor:
+            space['rank'] = None
+            combinedSpaces.append(spaceInfo[i])
+        i += 1
+    postRes['opponent_spaces'] = json.dumps(combinedSpaces)
+    postRes['opponent_ready'] = opponentReady
+    conn.commit()
+    conn.close()
+    return postRes
+
   def getGameList(self, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -275,6 +307,21 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.respond(200)
         postRes = self.getGameData(gid,uid)
         postRes['id'] = gid
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
+    elif (self.path == '/opponent_status'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        gid = postvars['game_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.getOpponentData(gid,uid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return

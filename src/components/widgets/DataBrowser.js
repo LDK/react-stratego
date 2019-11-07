@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import cloneDeep from 'lodash/cloneDeep';
 
 class DataBrowser extends React.Component {
 	constructor(props) {
@@ -27,7 +28,12 @@ class DataBrowser extends React.Component {
 	}
 	renderSelect(elId,wrapperClass) {
 		var cb = this.callback;
-		const dataItems = this.props.items.map((opt,i) => 
+		var items = this.props.items;
+		if (this.props.emptyOption) {
+			items = cloneDeep(this.props.items);
+			items.unshift({ id: null, name: this.props.emptyOption });
+		}
+		const dataItems = items.map((opt,i) => 
 			<option key={i} value={opt.id}>
 				{opt.name}
 			</option>
@@ -51,11 +57,28 @@ class DataBrowser extends React.Component {
 				}
 			}
 		}
-		const dataItems = items.map((opt,i) => 
-			<li key={i}>
-				<a onClick={cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>
-			</li>
-		);
+		var dataItems = null;
+		if (this.props.afterLink) {
+			dataItems = items.map((opt,i) => 
+				<li key={i}>
+					{opt.name} <a onClick={cb} className="anchor underline" data-key={opt.id}>{this.props.afterLink}</a>
+				</li>
+			);
+		}
+		else if (this.props.beforeLink) {
+			 dataItems = items.map((opt,i) => 
+				<li key={i}>
+					<a onClick={cb} className="anchor underline" data-key={opt.id}>{this.props.beforeLink}</a> {opt.name}
+				</li>
+			);
+		}
+		else {
+			 dataItems = items.map((opt,i) => 
+				<li key={i}>
+					<a onClick={cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>
+				</li>
+			);
+		}
 		return (
 			<div className={wrapperClass}>
 				<label>{this.state.label}</label>

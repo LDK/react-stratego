@@ -69,6 +69,9 @@ class DataBrowser extends React.Component {
 		var view = this.props.view || 'list';
 		var wrapperClass = "dataBrowser" +  (this.props.disabled ? ' disabled ' : ' ') + (this.props.className || '');
 		var elId = this.props.id || '';
+		if (this.props.hideIfEmpty && (!this.props.items || !this.props.items.length)) {
+			return null;
+		}
 		switch(view) {
 			case 'select':
 				return this.renderSelect(elId,wrapperClass);

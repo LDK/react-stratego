@@ -37,6 +37,8 @@ class App extends React.Component {
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
 		this.getGames = this.getGames.bind(this);
+		this.acceptInvite = this.acceptInvite.bind(this);
+		this.declineInvite = this.declineInvite.bind(this);
 		this.cancelRequest = this.cancelRequest.bind(this);
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
@@ -51,6 +53,74 @@ class App extends React.Component {
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
+	}
+	acceptInvite(id){
+		console.log('accepting',id);
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('game_id',id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'accept_invite', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var result = JSON.parse(text);
+				if (result.accepted) {
+					var invites = app.state.invites;
+					for (var i in invites) {
+						var req = invites[i];
+						if (req.id) {
+							invites.splice(i,1)
+						}
+					}
+					app.setState({invites: invites});
+					app.getGames();
+				}
+			});
+		});
+	}
+	declineInvite(id) {
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('game_id',id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'decline_invite', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var result = JSON.parse(text);
+				if (result.declined) {
+					var invites = app.state.invites;
+					for (var i in invites) {
+						var req = invites[i];
+						if (req.id) {
+							invites.splice(i,1)
+						}
+					}
+					app.setState({invites: invites});
+				}
+			});
+		});
 	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;
@@ -481,8 +551,8 @@ class App extends React.Component {
 			<div className="userMenu p-3">
 				{newGameForm}
 				<DataBrowser label="Active Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Invites:" items={app.state.invites} view="list" callback={this.loadGame} id="userInviteList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} callback={this.cancelRequest} hideIfEmpty={true} afterLink="[cancel]" />
+				<DataBrowser label="Invites:" items={app.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: app.acceptInvite},{label: 'decline', action: app.declineInvite}]} />
+				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />
 				<input type="button" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);

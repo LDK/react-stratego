@@ -126,6 +126,44 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['cancelled'] = gameId
     return postRes
 
+  def declineInvite(self, uid, gameId):
+    # Grab existing game data
+    gameData = self.getGameData(gameId, False)
+    uid = int(uid)
+    opponentUid = int(gameData['opponent_uid'])
+    postRes = {}
+    if not (uid == opponentUid):
+        postRes['error'] = 'User id mismatch'
+        return postRes
+    # Update status field in db
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    updateSql = "UPDATE `game` SET status='declined' WHERE id = '{id}'".format(id=gameId)
+    c.execute(updateSql)
+    conn.commit()
+    conn.close()
+    postRes['declined'] = gameId
+    return postRes
+
+  def acceptInvite(self, uid, gameId):
+    # Grab existing game data
+    gameData = self.getGameData(gameId, False)
+    uid = int(uid)
+    opponentUid = int(gameData['opponent_uid'])
+    postRes = {}
+    if not (uid == opponentUid):
+        postRes['error'] = 'User id mismatch'
+        return postRes
+    # Update status field in db
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    updateSql = "UPDATE `game` SET status='active' WHERE id = '{id}'".format(id=gameId)
+    c.execute(updateSql)
+    conn.commit()
+    conn.close()
+    postRes['accepted'] = gameId
+    return postRes
+
   def newGame(self, starterId, opponentId):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -473,6 +511,36 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         postRes = self.cancelRequest(uid,gid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
+    elif (self.path == '/decline_invite'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        gid = postvars['game_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.declineInvite(uid,gid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
+    elif (self.path == '/accept_invite'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        gid = postvars['game_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.acceptInvite(uid,gid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return

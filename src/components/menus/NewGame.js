@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import Modal from '../widgets/Modal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 
@@ -51,6 +50,7 @@ class NewGameMenu extends React.Component {
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
 		var mode = this.state.opponentSelectMode;
+		var menu = this;
 		switch (mode) {
 			case 'past':
 				formData.append('opponent_id',opponentId);
@@ -67,7 +67,8 @@ class NewGameMenu extends React.Component {
 				if (!text.length) {
 					return;
 				}
-				console.log('text',text);
+				menu.setState({ formOpen: false });
+				app.getRequests();
 			});
 		});
 	}

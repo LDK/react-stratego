@@ -391,3 +391,20 @@ a.button:active {
 	background-position-x: -200px;
 	background-position-y: -50px;
 }
+
+.link-list {
+	list-style-type: none;
+	display: inline-block;
+}
+.link-list li {
+	display: inline-block;
+}
+.link-list li:after {
+	content: ", ";
+	display: inline-block;
+	margin-right: .5em;
+}
+.link-list li:last-child:after {
+    content: "";
+	display: none;
+}

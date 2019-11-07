@@ -7,6 +7,7 @@ class DataBrowser extends React.Component {
 		this.callback = this.callback.bind(this);
 		this.renderSelect = this.renderSelect.bind(this);
 		this.renderList = this.renderList.bind(this);
+		this.linkList = this.linkList.bind(this);
 		this.state = {
 			value: props.value || null,
 			label: props.label || '',
@@ -47,6 +48,19 @@ class DataBrowser extends React.Component {
 			</div>
 		)
 	}
+	linkList(property, refVal) {
+		var links = [];
+		const linkItems = this.props[property].map((link,i) => 
+			<li key={i}>
+				<a className="anchor underline" onClick={() => link.action(refVal)}>{link.label}</a>
+			</li>
+		);
+		return (
+			<div className="d-inline">
+				[<ul className="link-list px-1">{linkItems}</ul>]
+			</div>
+		);
+	}
 	renderList(elId,wrapperClass) {
 		var cb = this.callback;
 		var items = this.props.items;
@@ -58,17 +72,17 @@ class DataBrowser extends React.Component {
 			}
 		}
 		var dataItems = null;
-		if (this.props.afterLink) {
+		if (this.props.afterLinks) {
 			dataItems = items.map((opt,i) => 
 				<li key={i}>
-					{opt.name} <a onClick={cb} className="anchor underline" data-key={opt.id}>{this.props.afterLink}</a>
+					{opt.name} {this.linkList('afterLinks',opt.id)}
 				</li>
 			);
 		}
-		else if (this.props.beforeLink) {
-			 dataItems = items.map((opt,i) => 
+		else if (this.props.beforeLinks) {
+			dataItems = items.map((opt,i) => 
 				<li key={i}>
-					<a onClick={cb} className="anchor underline" data-key={opt.id}>{this.props.beforeLink}</a> {opt.name}
+					{opt.name} {this.linkList('beforeLinks',opt.id)}
 				</li>
 			);
 		}

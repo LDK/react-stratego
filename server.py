@@ -107,6 +107,24 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     savedId = data['id']
     return savedId;
 
+  def newGame(self, starterId, opponentId):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT s.username as starter_name, o.username as opponent_name from user s left join user o where s.id = '{sid}' and o.id = '{oid}'".\
+        format(sid=starterId, oid=opponentId)
+    c.execute(selectSql)
+    userData = c.fetchone()
+    title = "{starter} vs {opponent}".format(starter=userData[0], opponent=userData[1])
+    insertSql = "INSERT INTO `game` (starting_user_id, opponent_user_id, title) VALUES ('{starterId}','{oppId}','{title}')".\
+        format(starterId=starterId, oppId=opponentId, title=title)
+    c.execute(insertSql)
+    conn.commit()
+    conn.close()
+    savedId = c.lastrowid
+    postRes = {};
+    postRes['game_id'] = savedId;
+    return postRes;
+
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -177,10 +195,59 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     conn.close()
     return postRes
 
+  def getPastOpponents(self, uid):
+    if not uid:
+        return {}
+    uid = int(uid)
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT DISTINCT g.starting_user_id, g.opponent_user_id, s.username as starter_name, o.username as opponent_name FROM `game` g INNER JOIN `user` s ON s.id = g.starting_user_id INNER JOIN `user` o ON o.id = g.opponent_user_id WHERE g.starting_user_id = '{id}' OR g.opponent_user_id = '{id}'".format(id=uid)
+    c.execute(selectSql)
+    games = c.fetchall()
+    conn.close()
+    postRes = {}
+    
+    for game in games:
+        if (int(game[0]) == uid):
+            opponentId = game[1]
+            opponentName = game[3]
+        else:
+            opponentId = game[0]
+            opponentName = game[2]
+        if not (game[opponentId] in postRes):
+            postRes[opponentId] = opponentName
+    return postRes
+
+
+    c.execute(selectSql)
+    gameData = c.fetchone()
+    postRes = {}
+    starterUid = int(gameData[0])
+    spaceInfo = json.loads(gameData[2])
+    combinedSpaces = []
+    if (starterUid == uid):
+        userColor = 'blue'
+        opponentReady = gameData[4]
+    else:
+        userColor = 'red'
+        opponentReady = gameData[3]
+    i = 0
+    while i < len(spaceInfo):
+        space = spaceInfo[i]
+        if space['color'] != userColor:
+            space['rank'] = None
+            combinedSpaces.append(spaceInfo[i])
+        i += 1
+    postRes['opponent_spaces'] = json.dumps(combinedSpaces)
+    postRes['opponent_ready'] = opponentReady
+    conn.commit()
+    conn.close()
+    return postRes
+
   def getGameList(self, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE starting_user_id = '{uid}' OR opponent_user_id = '{uid}'".format(uid=uid)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'active' AND (starting_user_id = '{uid}' OR opponent_user_id = '{uid}')".format(uid=uid)
     c.execute(selectSql)
     games = c.fetchall()
     conn.close()
@@ -194,6 +261,41 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         postRes[game[1]]['starter_name'] = game[3]
         postRes[game[1]]['opponent_uid'] = game[4]
         postRes[game[1]]['opponent_name'] = game[5]
+    return postRes
+
+  def getOutgoingRequests(self, uid):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT g.title, g.id, g.opponent_user_id, ou.username as opponent_name FROM `game` g INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'pending' AND g.starting_user_id = '{uid}'".format(uid=uid)
+    c.execute(selectSql)
+    games = c.fetchall()
+    conn.close()
+    postRes = {}
+    for game in games:
+        if not (game[1] in postRes):
+            postRes[game[1]] = {}
+        postRes[game[1]]['title'] = game[0]
+        postRes[game[1]]['game_id'] = game[1]
+        postRes[game[1]]['opponent_uid'] = game[2]
+        postRes[game[1]]['opponent_name'] = game[3]
+    return postRes
+
+  def getIncomingInvites(self, uid):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id WHERE g.status = 'pending' AND g.opponent_user_id = '{uid}'".format(uid=uid)
+    print ("select",selectSql)
+    c.execute(selectSql)
+    games = c.fetchall()
+    conn.close()
+    postRes = {}
+    for game in games:
+        if not (game[1] in postRes):
+            postRes[game[1]] = {}
+        postRes[game[1]]['title'] = game[0]
+        postRes[game[1]]['game_id'] = game[1]
+        postRes[game[1]]['opponent_uid'] = game[2]
+        postRes[game[1]]['opponent_name'] = game[3]
     return postRes
 
   def checkCreds(self,user_id,userKey):
@@ -311,6 +413,21 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
+    elif (self.path == '/new_game'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        oppId = postvars['opponent_id'][0]
+        postRes = self.newGame(uid,oppId)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
     elif (self.path == '/opponent_status'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
@@ -326,6 +443,20 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
+    elif (self.path == '/past_opponents'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.getPastOpponents(uid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
     elif (self.path == '/games'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
@@ -336,6 +467,41 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         postRes = self.getGameList(uid)
+        # postRes['id'] = sid
+        # postRes['channels'] = self.getSongChannels(sid)
+        # postRes['patterns'] = self.getSongPatterns(sid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
+    elif (self.path == '/incoming_invites'):
+        print ("HeY")
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.getIncomingInvites(uid)
+        # postRes['id'] = sid
+        # postRes['channels'] = self.getSongChannels(sid)
+        # postRes['patterns'] = self.getSongPatterns(sid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
+    elif (self.path == '/outgoing_requests'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.getOutgoingRequests(uid)
         # postRes['id'] = sid
         # postRes['channels'] = self.getSongChannels(sid)
         # postRes['patterns'] = self.getSongPatterns(sid)

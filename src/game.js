@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
+import NewGameMenu from './components/menus/NewGame.js';
 import Navigation from './components/sections/Navigation.js';
 import GameBoard from './components/sections/GameBoard.js';
 import TileRack from './components/sections/TileRack.js';
+import Modal from './components/widgets/Modal.js';
 import Cookies from 'universal-cookie';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -24,15 +26,27 @@ class App extends React.Component {
 		this.state = {
 			currentUser: currentUser,
 			activeGame: null,
-			games: []
+			newGameFormOpen: false,
+			opponentSelectMode: 'past',
+			userSearch: '',
+			pastOpponents: [],
+			games: [],
+			requests: [],
+			invites: []
 		};
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
 		this.getGames = this.getGames.bind(this);
+		this.getInvites = this.getInvites.bind(this);
+		this.getRequests = this.getRequests.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
+		this.openNewGameMenu = this.openNewGameMenu.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
+
 		this.getGames();
+		this.getInvites();
+		this.getRequests();
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
@@ -83,6 +97,78 @@ class App extends React.Component {
 			});
 		});
 	}
+	getRequests() {
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'outgoing_requests', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gameData = JSON.parse(text);
+				var requests = [];
+				for (var i in gameData) {
+					var game = gameData[i];
+					var gameEntry = {
+						id: game.game_id,
+						name: game.title,
+						opponent_name: game.opponent_name,
+						opponent_id: game.opponent_id
+					}
+					if (gameEntry && gameEntry.id) {
+						requests.push(gameEntry);
+					}
+				}
+				app.setState({requests: requests});
+			});
+		});
+	}
+	getInvites() {
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'incoming_invites', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gameData = JSON.parse(text);
+				var invites = [];
+				for (var i in gameData) {
+					var game = gameData[i];
+					var gameEntry = {
+						id: game.game_id,
+						name: game.title,
+						opponent_name: game.opponent_name,
+						opponent_id: game.opponent_id
+					}
+					if (gameEntry && gameEntry.id) {
+						invites.push(gameEntry);
+					}
+				}
+				app.setState({invites: invites});
+			});
+		});
+	}
 	setCurrentUser(user) {
 		if (user.hasOwnProperty('error')) {
 			return;
@@ -93,11 +179,18 @@ class App extends React.Component {
 		cookies.set("stratego-user", JSON.stringify(user), { path: "/", expires: d });
 		this.setState({currentUser: user});
 		this.getGames();
+		this.getRequests();
+		this.getInvites();
 	}
 	setActiveGame(game) {
 		this.setState({activeGame: game});
 	}
-	newGame(){
+	newGame(event){
+	}
+	openNewGameMenu(){
+		this.getPastOpponents();
+		this.newGameMenu.setState({ formOpen: true });
+		return;
 		if (this.gameBoard) {
 			this.gameBoard.setState({ spaces: []});
 		}
@@ -310,12 +403,50 @@ class App extends React.Component {
 			</div>
 		);
 	}
+	getPastOpponents() {
+		if (!this.state.currentUser) {
+			return false;
+		}
+		var app = this;
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		var formData = new FormData();
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'past_opponents', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var opps = JSON.parse(text);
+				var opponents = [{ id: null, name: ' - Select Username - '}];
+				for (var oppId in opps) {
+					var oppName = opps[oppId];
+					var oppEntry = {
+						id: oppId,
+						name: oppName
+					}
+					if (oppEntry && oppEntry.id) {
+						opponents.push(oppEntry);
+					}
+				}
+				app.setState({ pastOpponents: opponents });
+			});
+		});
+	}
 	userMenuBody() {
 		var app = this;
+		const newGameForm = <NewGameMenu app={app} />;
 		return (
 			<div className="userMenu p-3">
-				<DataBrowser label="Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} itemClick={this.gameChange} />
-				<input type="button" value="New Game" onClick={this.newGame} />
+				{newGameForm}
+				<DataBrowser label="Active Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} itemClick={this.gameChange} hideIfEmpty={true} />
+				<DataBrowser label="Invites:" items={app.state.invites} view="list" callback={this.loadGame} id="userInviteList" deleteEmpty={true} itemClick={this.gameChange} hideIfEmpty={true} />
+				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" callback={this.loadGame} id="userRequestList" deleteEmpty={true} itemClick={this.gameChange} hideIfEmpty={true} />
+				<input type="button" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);
 	}

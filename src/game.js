@@ -37,6 +37,7 @@ class App extends React.Component {
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
 		this.getGames = this.getGames.bind(this);
+		this.cancelRequest = this.cancelRequest.bind(this);
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
 		this.newGame = this.newGame.bind(this);
@@ -191,14 +192,15 @@ class App extends React.Component {
 		this.getPastOpponents();
 		this.newGameMenu.setState({ formOpen: true });
 		return;
-		if (this.gameBoard) {
-			this.gameBoard.setState({ spaces: []});
-		}
-		var uid = this.state.currentUser.user_id;
-		var gm = (<Game app={this} starter={uid} />);
-		this.setState({activeGame: gm});
 	}
 	loadGame(id){
+		if (isNaN(parseInt(id))) {
+			this.tileSpaces = null;
+			this.tileRack = null;
+			this.gameBoard = null;
+			this.setState({ activeGame: null });
+			return;
+		}
 		if (this.gameBoard) {
 			this.gameBoard.setState({ spaces: []});
 		}
@@ -255,6 +257,41 @@ class App extends React.Component {
 					}
 				}
 				app.setState({activeGame: gm});
+				app.nav.setState({});
+			});
+		});
+	}
+	cancelRequest(id){
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var formData = new FormData();
+		var app = this;
+		formData.append('game_id',id);
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'cancel_request', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var result = JSON.parse(text);
+				if (result.cancelled) {
+					var reqs = app.state.requests;
+					for (var i in reqs) {
+						var req = reqs[i];
+						if (req.id) {
+							reqs.splice(i,1)
+						}
+					}
+					console.log('cancelling',id,app.state.requests,reqs);
+					app.setState({requests: reqs});
+				}
 			});
 		});
 	}
@@ -443,9 +480,9 @@ class App extends React.Component {
 		return (
 			<div className="userMenu p-3">
 				{newGameForm}
-				<DataBrowser label="Active Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} itemClick={this.gameChange} hideIfEmpty={true} />
-				<DataBrowser label="Invites:" items={app.state.invites} view="list" callback={this.loadGame} id="userInviteList" deleteEmpty={true} itemClick={this.gameChange} hideIfEmpty={true} />
-				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" callback={this.loadGame} id="userRequestList" deleteEmpty={true} itemClick={this.gameChange} hideIfEmpty={true} />
+				<DataBrowser label="Active Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Invites:" items={app.state.invites} view="list" callback={this.loadGame} id="userInviteList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} callback={this.cancelRequest} hideIfEmpty={true} afterLink="[cancel]" />
 				<input type="button" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);

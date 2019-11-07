@@ -134,7 +134,7 @@ class Navigation extends React.Component {
 		var gameBrowser = '';
 		var games = app.state.games;
 		if (games.length) {
-			gameBrowser = <DataBrowser label="Game:" emptyOption='- Select Game -' items={games} view="select" callback={this.gameChange} id="gameList" value={app.state.activeGame ? app.state.activeGame.props.id : null} />
+			gameBrowser = <DataBrowser label="Game:" emptyOption='- User Menu -' items={games} view="select" callback={this.gameChange} id="gameList" value={app.state.activeGame ? app.state.activeGame.props.id : null} />
 		}
 		return (
 			<div className="navigation row py-3 px-3">

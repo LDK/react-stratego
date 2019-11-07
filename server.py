@@ -105,7 +105,26 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     conn.commit()
     conn.close()
     savedId = data['id']
-    return savedId;
+    return savedId
+
+  def cancelRequest(self, uid, gameId):
+    # Grab existing game data
+    gameData = self.getGameData(gameId, False)
+    uid = int(uid)
+    starterUid = int(gameData['starter_uid'])
+    postRes = {}
+    if not (uid == starterUid):
+        postRes['error'] = 'User id mismatch'
+        return postRes
+    # Update status field in db
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    updateSql = "UPDATE `game` SET status='cancelled' WHERE id = '{id}'".format(id=gameId)
+    c.execute(updateSql)
+    conn.commit()
+    conn.close()
+    postRes['cancelled'] = gameId
+    return postRes
 
   def newGame(self, starterId, opponentId):
     conn = sqlite3.connect(sqlite_file)
@@ -121,9 +140,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     conn.commit()
     conn.close()
     savedId = c.lastrowid
-    postRes = {};
-    postRes['game_id'] = savedId;
-    return postRes;
+    postRes = {}
+    postRes['game_id'] = savedId
+    return postRes
 
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
@@ -443,6 +462,21 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
+    elif (self.path == '/cancel_request'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        gid = postvars['game_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.cancelRequest(uid,gid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
     elif (self.path == '/past_opponents'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
@@ -562,7 +596,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         
     elif (self.path == '/render'):
         self.data_string = self.rfile.read(int(self.headers['Content-Length']))
-        fName = groove.renderJSON(self.data_string);
+        fName = groove.renderJSON(self.data_string)
         self.wfile.write(bytes(fName, "utf8"))
     elif (self.path == '/saveGame'):
         postvars = self.parse_POST()

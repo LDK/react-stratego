@@ -161,7 +161,11 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     c.execute(updateSql)
     conn.commit()
     conn.close()
-    postRes['accepted'] = gameId
+    gameRes = {}
+    gameRes['starter_uid'] = uid
+    gameRes['opponent_uid'] = opponentUid
+    gameRes['id'] = gameId
+    postRes['accepted'] = gameRes
     return postRes
 
   def newGame(self, starterId, opponentId):

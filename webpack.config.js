@@ -2,7 +2,7 @@ const path = require('path');
 const HWP = require('html-webpack-plugin');
 module.exports = {
 	entry: {
-		game: path.join(__dirname, '/src/game.js')
+		app: path.join(__dirname, '/src/app.js')
 	},
 	output: {
 		filename: 'build.js',
@@ -19,8 +19,8 @@ module.exports = {
 		new HWP(
 			{
 				filename: 'index.html',
-				template: path.join(__dirname,'/src/game.html'),
-				chunks: ['game']
+				template: path.join(__dirname,'/src/stratego.html'),
+				chunks: ['app']
 			}
 		)
 	]

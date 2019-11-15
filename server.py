@@ -65,6 +65,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def saveGameData(self, data):
     # Grab existing game data
     gameData = self.getGameData(data['id'], False)
+    started = data['started']
     # Decode spaces json data into list
     spaceInfo = json.loads(gameData['spaces'])
     newSpaceInfo = json.loads(data['spaces'])
@@ -99,8 +100,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    updateSql = "UPDATE `game` SET spaces='{spaces}', starter_ready='{starterReady}', opponent_ready='{oppReady}' WHERE id = '{id}'".\
-        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'])
+    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}' WHERE id = '{id}'".\
+        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started)
     c.execute(updateSql)
     conn.commit()
     conn.close()
@@ -189,7 +190,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -220,6 +221,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['opponent_name'] = gameData[5]
     postRes['starter_ready'] = gameData[7]
     postRes['opponent_ready'] = gameData[8]
+    postRes['status'] = gameData[9]
+    postRes['started'] = gameData[10]
     conn.commit()
     conn.close()
     return postRes
@@ -229,7 +232,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         return {}
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
+    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -252,6 +255,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         i += 1
     postRes['opponent_spaces'] = json.dumps(combinedSpaces)
     postRes['opponent_ready'] = opponentReady
+    postRes['started'] = gameData[5]
     conn.commit()
     conn.close()
     return postRes
@@ -308,7 +312,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameList(self, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'active' AND (starting_user_id = '{uid}' OR opponent_user_id = '{uid}')".format(uid=uid)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'active' AND (starting_user_id = '{uid}' OR opponent_user_id = '{uid}')".format(uid=uid)
     c.execute(selectSql)
     games = c.fetchall()
     conn.close()
@@ -322,6 +326,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         postRes[game[1]]['starter_name'] = game[3]
         postRes[game[1]]['opponent_uid'] = game[4]
         postRes[game[1]]['opponent_name'] = game[5]
+        postRes[game[1]]['started'] = game[6]
     return postRes
 
   def getOutgoingRequests(self, uid):
@@ -345,7 +350,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
     selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id WHERE g.status = 'pending' AND g.opponent_user_id = '{uid}'".format(uid=uid)
-    print ("select",selectSql)
     c.execute(selectSql)
     games = c.fetchall()
     conn.close()
@@ -581,7 +585,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         return
         
     elif (self.path == '/incoming_invites'):
-        print ("HeY")
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
         uid = postvars['user_id'][0]
@@ -685,6 +688,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 "spaces": postvars['spaces'][0],
                 "players": postvars['players'][0],
                 "captured": postvars['captured'][0],
+                "started": postvars['started'][0],
                 "id": gameId,
                 "sender": uid
             })

@@ -68,7 +68,7 @@ class GameBoard extends React.Component {
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
 		if (pieceInfo.fromId) {
-			if(!this.props.game.state.started) {
+			if (!this.props.game.state.started) {
 				if (!spaces[id].props.occupied) {
 					// Render the target space with the piece in it, and empty the source space.
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);
@@ -84,6 +84,9 @@ class GameBoard extends React.Component {
 					app.saveActiveGame();
 					return;
 				}
+			}
+			else {
+				return;
 			}
 		}
 		if (tileSpace) {

@@ -32,12 +32,13 @@ class App extends React.Component {
 		};
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
-		this.getGames = this.getGames.bind(this);
 		this.acceptInvite = this.acceptInvite.bind(this);
 		this.declineInvite = this.declineInvite.bind(this);
 		this.cancelRequest = this.cancelRequest.bind(this);
+		this.getGames = this.getGames.bind(this);
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
+		this.pollGames = this.pollGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
@@ -49,6 +50,7 @@ class App extends React.Component {
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
+		this.gamesPoll = setInterval( this.pollGames, 15000 );
 	}
 	acceptInvite(id){
 		var uid = this.state.currentUser.user_id;
@@ -109,6 +111,11 @@ class App extends React.Component {
 			});
 		});
 	}
+	pollGames() {
+		this.getGames();
+		this.getInvites();
+		this.getRequests();
+	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
@@ -133,6 +140,7 @@ class App extends React.Component {
 					var game = gameData[i];
 					var opponent = '';
 					var opponent_id = null;
+					var started = 0;
 					if (parseInt(game.starter_uid) == parseInt(uid)) {
 						opponent = game.opponent_name;
 						opponent_id = game.opponent_uid;
@@ -141,11 +149,15 @@ class App extends React.Component {
 						opponent = game.starter_name;
 						opponent_id = game.starter_uid;
 					}
+					if (parseInt(game.started)) {
+						started = 1;
+					}
 					var gameEntry = {
 						id: game.id,
 						name: game.title,
 						opponent_name: opponent,
-						opponent_id: opponent_id
+						opponent_id: opponent_id,
+						started: started
 					}
 					if (gameEntry && gameEntry.id) {
 						games.push(gameEntry);
@@ -296,8 +308,9 @@ class App extends React.Component {
 				var opponentReady = gameData.opponent_ready;
 				var starterUid = gameData.starter_uid;
 				var opponentUid = gameData.opponent_uid;
+				var started = gameData.started;
 				spaces = JSON.parse(gameData.spaces);
-				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} />;
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} started={started} />;
 				if (app.tileRack) {
 					if (uid == starterUid) {
 						app.tileRack.playerColor = 'blue';
@@ -379,6 +392,7 @@ class App extends React.Component {
 				var gameData = JSON.parse(text);
 				var opponentReady = gameData.opponent_ready;
 				spaces = JSON.parse(gameData.opponent_spaces);
+				var gameStatus = gameData.game_status;
 				var opponentColor;
 				if (app.tileRack.playerColor == 'blue') {
 					opponentColor = 'red';
@@ -390,6 +404,9 @@ class App extends React.Component {
 					var players = game.state.players;
 					players[opponentColor].ready = opponentReady;
 					game.setState({players: players});
+				}
+				if (gameStatus != game.state.status) {
+					game.setState({status: gameStatus});
 				}
 				var newSpaceIds = [];
 				var oldSpaceIds = [];
@@ -442,15 +459,18 @@ class App extends React.Component {
 		}
 		var captured = [];
 		var players = [];
+		var started = 0;
 		if (this.gameStates[id]) {
 			captured = this.gameStates[id].captured;
 			players = this.gameStates[id].players;
+			started = this.gameStates[id].started ? 1 : 0;
 		}
 		var formData = new FormData();
 		var app = this;
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
 		formData.append('game_id',id);
+		formData.append('started',started);
 		formData.append('players',JSON.stringify(players));
 		formData.append('captured',JSON.stringify(captured));
 		var spaces = this.gameBoard.state.spaces;

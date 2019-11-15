@@ -34,27 +34,46 @@ class TileRack extends React.Component {
 		this.spaces = spaces;
 		return spaces;
 	}
-	setReady() {
+	setReady(isReady) {
 		var app = this.app;
 		var game = this.props.game;
 		var players = game.state.players;
-		players[this.playerColor].ready = true;
+		players[this.playerColor].ready = isReady;
+		var oppColor = (this.playerColor == 'red') ? 'blue' : 'red';
 		game.setState({players: players});
 		app.saveActiveGame();
 	}
 	render() {
+		var readyButton = '';
 		var startButton = '';
 		var game = this.props.game;
-		if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
-			startButton = (
-					<div className="col-12">
-				<a className="button mx-auto my-3" tabIndex="-1" onClick={this.setReady}>Ready to Start</a>
-					</div>
-			);
+		if (!game.state.started) {
+			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
+				readyButton = (
+						<div className="col-12">
+					<a className="button mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(true)}>Ready to Start</a>
+						</div>
+				);
+			}
+			else if (!this.remaining && this.state.allPlaced) {
+				readyButton = (
+						<div className="col-12">
+					<a className="button mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(false)}>Not Ready</a>
+						</div>
+				);
+			}
+			if (game.state.players.blue.ready && game.state.players.red.ready) {
+				startButton = (
+						<div className="col-12">
+					<a className="button mx-auto my-3" tabIndex="-1" onClick={game.startGame}>Start Game</a>
+						</div>
+				);
+			}
 		}
 		return (
 			<div className="tileRack row no-gutters">
 				{startButton}
+				{readyButton}
 				{this.tileSpaces()}
 			</div>
 		)

@@ -6,11 +6,11 @@ class GamePiece extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			captured: this.props.captured || false,
-			placed: this.props.placed || false,
+			captured: props.captured || false,
+			placed: props.placed || false,
 		};
-		if (this.props.rank) {
-			const { name, rackOrder, move, capture, defuse } = PIECES[this.props.rank];
+		if (props.rank) {
+			const { name, rackOrder, move, capture, defuse } = PIECES[props.rank];
 			this.name = name;
 			this.rackOrder = rackOrder;
 			this.move = move;
@@ -41,8 +41,9 @@ class GamePiece extends React.Component {
 }
 
 function DragPiece(props) {
-	const isDraggable = function(rank) {
+	const isDraggable = function(rank, captured) {
 		var rv = !!rank;
+		if (captured) { rv = false; }
 		return rv;
 	}
 	const [{isDragging, canDrag}, drag] = useDrag({
@@ -56,7 +57,7 @@ function DragPiece(props) {
 			fromY: props.fromY, 
 			fromId: props.fromId 
 		},
-		canDrag: () => isDraggable(props.rank),
+		canDrag: () => isDraggable(props.rank, props.captured || false),
 		collect: monitor => ({
 			isDragging: !!monitor.isDragging(),
 			canDrag: !!monitor.canDrag()
@@ -68,10 +69,10 @@ function DragPiece(props) {
       style={{
 		  color: props.color || 'black',
         opacity: isDragging ? 0 : 1,
-        cursor: !!props.rank ? 'move' : 'default',
+        cursor: !!props.rank && !props.captured ? 'move' : 'default',
       }}
     >
-	  <GamePiece color={props.color} rank={props.rank} placed={props.placed || false} game={props.game} /> 
+	  <GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} /> 
     </div>
   );
 }

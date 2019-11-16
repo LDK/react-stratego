@@ -306,11 +306,19 @@ class App extends React.Component {
 				var gameData = JSON.parse(text);
 				var starterReady = gameData.starter_ready;
 				var opponentReady = gameData.opponent_ready;
+				var opponentName = gameData.opponent_name;
+				var starterName = gameData.starter_name;
 				var starterUid = gameData.starter_uid;
 				var opponentUid = gameData.opponent_uid;
 				var started = gameData.started;
 				spaces = JSON.parse(gameData.spaces);
-				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} started={started} />;
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} started={started} />;
+				if (app.gameRef) {
+					app.gameRef.setState({
+						id: id,
+						started: started
+					});
+				}
 				if (app.tileRack) {
 					if (uid == starterUid) {
 						app.tileRack.playerColor = 'blue';
@@ -359,7 +367,6 @@ class App extends React.Component {
 							reqs.splice(i,1)
 						}
 					}
-					console.log('cancelling',id,app.state.requests,reqs);
 					app.setState({requests: reqs});
 				}
 			});
@@ -392,7 +399,7 @@ class App extends React.Component {
 				var gameData = JSON.parse(text);
 				var opponentReady = gameData.opponent_ready;
 				spaces = JSON.parse(gameData.opponent_spaces);
-				var gameStatus = gameData.game_status;
+				var started = gameData.started;
 				var opponentColor;
 				if (app.tileRack.playerColor == 'blue') {
 					opponentColor = 'red';
@@ -405,8 +412,8 @@ class App extends React.Component {
 					players[opponentColor].ready = opponentReady;
 					game.setState({players: players});
 				}
-				if (gameStatus != game.state.status) {
-					game.setState({status: gameStatus});
+				if (started != game.state.started) {
+					game.setState({started: started});
 				}
 				var newSpaceIds = [];
 				var oldSpaceIds = [];
@@ -562,12 +569,6 @@ class App extends React.Component {
 				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />
 				<input type="button" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
-		);
-	}
-	gameBody(game) {
-		var id = game.props.id || fase;
-		return (
-			<Game app={this} id={id} />
 		);
 	}
 	getBody() {

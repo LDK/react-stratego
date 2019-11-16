@@ -408,3 +408,10 @@ a.button:active {
     content: "";
 	display: none;
 }
+
+.text-red {
+	color: red;
+}
+.text-blue {
+	color: blue;
+}

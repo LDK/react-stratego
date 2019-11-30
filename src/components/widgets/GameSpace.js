@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import GamePiece from './GamePiece.js';
+import {PIECES} from '../Helpers.js';
 import { DropTarget } from 'react-dnd'
 import { useDrop } from 'react-dnd';
 
@@ -49,15 +50,26 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 
 		}
 	}
-	const isDroppable = function(x,y,territory,item) {
-		return (item && passable && item.color == territory);
+	const isDroppable = function(x,y,territory,item,game) {
+		// var pieceInfo = PIECES[item.rank];
+		if (!item || !game || !game.state) {
+			return false;
+		}
+		if (!game.state.started) {
+			return (passable && item.color == territory);
+		}
+		else {
+			var piece = PIECES[item.rank];
+			if (!piece.move) { return false; }
+			console.log('piece',);
+		}
 	}
 	const territory = y < 5 ? 'red' : (y > 6 ? 'blue' : 'neutral');
 	const [{ dropped, isOver, canDrop }, drop] = useDrop({
 		accept: 'piece',
 		drop: () => handleDrop(x, y, territory, dropped),
 		hover: () => handleHover(x, y, territory, dropped),
-		canDrop: () => isDroppable(x, y, territory, dropped),
+		canDrop: () => isDroppable(x, y, territory, dropped, game),
 		collect: monitor => ({
 			dropped: monitor.getItem(),
 			isOver: !!monitor.isOver(),

@@ -58,14 +58,12 @@ function DragPiece(props) {
 		if (!game.props.app.state.currentUser || !game.props.app.state.currentUser.user_id) {
 			return false;
 		}
-		console.log('PIECES',PIECES);
 		// rv = return value
 		// Start by assuming that if we have a rank, the piece is draggable.
 		var rv = true;
 		var playerId = game.props.app.state.currentUser.user_id;
 		// Game Started situation
 		if (game.state.started) {
-			console.log('RANK',rank);
 			// If the piece is immovable, it's not draggable.
 			if (!PIECES[rank].move) {
 				return false;

@@ -61,7 +61,6 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		else {
 			var piece = PIECES[item.rank];
 			if (!piece.move) { return false; }
-			console.log('piece',);
 		}
 	}
 	const territory = y < 5 ? 'red' : (y > 6 ? 'blue' : 'neutral');

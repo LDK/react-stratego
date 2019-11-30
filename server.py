@@ -190,7 +190,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -223,6 +223,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['opponent_ready'] = gameData[8]
     postRes['status'] = gameData[9]
     postRes['started'] = gameData[10]
+    postRes['turn'] = gameData[11]
     conn.commit()
     conn.close()
     return postRes
@@ -232,7 +233,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         return {}
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
+    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started, g.turn FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -256,6 +257,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['opponent_spaces'] = json.dumps(combinedSpaces)
     postRes['opponent_ready'] = opponentReady
     postRes['started'] = gameData[5]
+    postRes['turn'] = gameData[6]
     conn.commit()
     conn.close()
     return postRes

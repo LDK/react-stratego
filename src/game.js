@@ -22,6 +22,7 @@ class Game extends React.Component {
 				blue: [],
 				red: []
 			},
+			turn: props.turn || null,
 			started: !!props.started,
 			status: props.status || 'pending'
 		};
@@ -54,6 +55,10 @@ class Game extends React.Component {
 			);
 		}
 		else {
+			var turnLabel;
+			if (this.state.turn) {
+				turnLabel = (<h6>Current Turn: {this.state.players[this.state.turn].name} </h6>);
+			}
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 pr-0 gameStatus-col text-center">
 					<h4 className="mx-auto d-block">Captured</h4>
@@ -74,6 +79,7 @@ class Game extends React.Component {
 								{this.state.captured.blue.length ? this.state.captured.blue : 'None'}
 							</div>
 						</div>
+						{turnLabel}
 					</div>
 					<div className="d-none">
 						<TileRack game={this} app={app} />

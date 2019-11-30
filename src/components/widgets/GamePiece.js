@@ -41,9 +41,20 @@ class GamePiece extends React.Component {
 }
 
 function DragPiece(props) {
-	const isDraggable = function(rank, captured) {
+	const isDraggable = function(rank, game, captured) {
 		var rv = !!rank;
-		if (captured) { rv = false; }
+		if (captured) { 
+			rv = false; 
+		}
+		else if (game && game.state && game.props.app && game.props.app.state) {
+			var playerId = game.props.app.state.currentUser.user_id;
+			if (game.state.started) {
+				var turnColor = game.state.turn;
+				var turnId = game.state.players[turnColor].id;
+				// Once game starts, piece is draggable only when it's the current user's turn.
+				rv = (turnId == playerId);
+			}
+		}
 		return rv;
 	}
 	const [{isDragging, canDrag}, drag] = useDrag({
@@ -57,7 +68,7 @@ function DragPiece(props) {
 			fromY: props.fromY, 
 			fromId: props.fromId 
 		},
-		canDrag: () => isDraggable(props.rank, props.captured || false),
+		canDrag: () => isDraggable(props.rank, props.game, props.captured || false),
 		collect: monitor => ({
 			isDragging: !!monitor.isDragging(),
 			canDrag: !!monitor.canDrag()
@@ -69,7 +80,7 @@ function DragPiece(props) {
       style={{
 		  color: props.color || 'black',
         opacity: isDragging ? 0 : 1,
-        cursor: !!props.rank && !props.captured ? 'move' : 'default',
+        cursor: canDrag ? 'move' : 'default',
       }}
     >
 	  <GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} /> 

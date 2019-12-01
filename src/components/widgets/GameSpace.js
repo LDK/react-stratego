@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GamePiece from './GamePiece.js';
-import {PIECES} from '../Helpers.js';
+import { PIECES } from '../Helpers.js';
+import { xyToId } from '../Helpers.js';
 import { DropTarget } from 'react-dnd'
 import { useDrop } from 'react-dnd';
 
@@ -55,12 +56,74 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		if (!item || !game || !game.state) {
 			return false;
 		}
+		if (!passable) {
+			return false;
+		}
+		// Allow the non-move
+		if (x == item.fromX && y == item.fromY) {
+			return true;
+		}
 		if (!game.state.started) {
-			return (passable && item.color == territory);
+			// Before game has started, all spaces are droppable 
+			// if they're passable and the player's territory
+			return item.color == territory;
 		}
 		else {
+			// No diagonal moves
+			if (x != item.fromX && y != item.fromY) {
+				return false;
+			}
+			if (children) {
+				// If space is occupied by a piece of the same color, the piece can't be dropped there.
+				if (item.color == children.props.color) {
+					return false;
+				}
+				else {
+					// Battle!!
+				}
+			}
+			// Game started situation
 			var piece = PIECES[item.rank];
-			if (!piece.move) { return false; }
+			var xDist = Math.abs(x-item.fromX);
+			console.log(x,item.fromX,xDist);
+			var yDist = Math.abs(y-item.fromY);
+			// You can only move as far as the piece's stats allow
+			if (xDist > piece.move || yDist > piece.move) {
+				return false;
+			}
+			if (piece.move > 1) {
+				var xMove = x-item.fromX;
+				var yMove = y-item.fromY;
+				var moveDist = (xDist > yDist) ? xMove : yMove;
+				var nextVal = (moveDist > 0) ? function(n) { return n+1; } : function(n) { return n-1; };
+				var oppFound = false;
+				for (var i = 1;  i != nextVal(moveDist); i = nextVal(i)) {
+					if (oppFound) {
+						return false;
+					}
+					// if the space this distance in the move direction is occupied or passable, 
+					// nothing beyond it is droppable, so return false;
+					if (xDist > yDist) {
+						var spaceInfo = game.props.app.gameBoard.state.spaces[xyToId(item.fromX+i,item.fromY)].props;
+					}
+					else {
+						var spaceInfo = game.props.app.gameBoard.state.spaces[xyToId(item.fromX,item.fromY+i)].props;
+					}
+					if (!spaceInfo.passable) {
+						return false;
+					}
+					if (spaceInfo.children) {
+						if (spaceInfo.children.props.color == item.color) {
+							return false;
+						}
+						else {
+							oppFound = true;
+						}
+					}
+				}
+			}
+			// console.log(x,y,item.fromX,item.fromY);
+			return true;
 		}
 	}
 	const territory = y < 5 ? 'red' : (y > 6 ? 'blue' : 'neutral');

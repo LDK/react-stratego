@@ -30,3 +30,5 @@ export const PIECES = {
 	F: { name: 'Flag', move: 0, count: 1, flag: true, rackOrder: 1},
 	B: { name: 'Bomb', move: 0, count: 6, rackOrder: 12}
 };
+
+export const xyToId = function(x,y) { return (y-1) * 10 + x;  }

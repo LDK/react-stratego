@@ -24,7 +24,7 @@ class TileRack extends React.Component {
 		}
 	}
 	renderTileSpace(key) {
-		return <TileSpace id={"tileSpace-"+key} rack={this} key={key} rank={key} />;
+		return <TileSpace id={"tileSpace-"+key} rack={this} key={key} rank={key} game={this.props.game} />;
 	}
 	tileSpaces() {
 		var spaces = [];

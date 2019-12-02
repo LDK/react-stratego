@@ -39,7 +39,7 @@ class TileSpace extends React.Component {
 		}
 		return (
 			<div id={'tileSpace-'+this.props.rank} className={"tileSpace col-6 " + this.props.rank + orderClass + (this.state.highlight ? ' highlight' : '') } onClick={this.onClick}>
-				<DragPiece color={this.rack.playerColor} rank={this.props.rank} placed={false} game={this.game} tileSpace={this} />
+				<DragPiece color={this.rack.playerColor} rank={this.props.rank} placed={false} game={this.props.game} tileSpace={this} />
 				<label>x{this.state.remaining}</label>
 			</div>
 		)

@@ -34,12 +34,16 @@ class GameSpace extends React.Component {
 function DropSpace({ id, x, y, passable, board, game, children }) {
 
 	const handleDrop = function(x,y,territory,dropped) {
-		if (!passable || dropped.color != territory) {
-
+		if (!game || !game.state) {
+			return;
 		}
-		else {
-			board.placePiece(dropped,id);
+		if (!game.state.started && dropped.color != territory) {
+			return;
 		}
+		if (!passable) {
+			return;
+		}
+		board.placePiece(dropped,id);
 	}
 	const handleHover = function(x,y,territory,item) {
 		if (!passable) {

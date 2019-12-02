@@ -31,4 +31,29 @@ export const PIECES = {
 	B: { name: 'Bomb', move: 0, count: 6, rackOrder: 12}
 };
 
-export const xyToId = function(x,y) { return (y-1) * 10 + x;  }
+export const xyToId = function(x,y) {
+	x = parseInt(x);
+	y = parseInt(y);
+	if (isNaN(x) || isNaN(y) || x<1 || y<1 || x>10 || y>10) {
+		return null;
+	}
+	return (y-1) * 10 + x;  
+}
+export const getSpaceId = function(startX,startY,distance,direction) {
+	var spaceId = false;
+	switch (direction) {
+		case 'east':
+			spaceId = xyToId(startX+distance, startY);
+		break;
+		case 'west':
+			spaceId = xyToId(startX-distance, startY);
+		break;
+		case 'south':
+			spaceId = xyToId(startX, startY+distance);
+		break;
+		case 'north':
+			spaceId = xyToId(startX, startY-distance);
+		break;
+	}
+	return spaceId;
+}

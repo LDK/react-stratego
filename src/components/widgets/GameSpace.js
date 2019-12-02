@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import GamePiece from './GamePiece.js';
 import { PIECES } from '../Helpers.js';
 import { xyToId } from '../Helpers.js';
+import { getSpaceId } from '../Helpers.js';
 import { DropTarget } from 'react-dnd'
 import { useDrop } from 'react-dnd';
 
@@ -51,6 +52,51 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 
 		}
 	}
+	const getValidMoveSpaces = function(x, y, item, piece, game) {
+		// For each direction on the board, we'll see how far this piece can go in each direction with valid game moves.
+		var directions = ['east','west','south','north'];
+		var blockHit, oppFound;
+		var validSpaces = [xyToId(x,y)];
+		for (var di in directions) {
+			var dir = directions[di];
+			blockHit = false;
+			oppFound = false;
+			var i = 1;
+			while (i <= piece.move && !blockHit) {
+				// We've gone as far as we can go, so nothing beyond this point in this direction should be added
+				if (oppFound) { blockHit = true; continue; }
+				// Otherwise, grab next space in this direction
+				var spaceId = getSpaceId(x, y, i, dir);
+				// If there's not a space in that direction, we've hit the edge of the board, so a block.
+				if (!spaceId) {
+					blockHit = true;
+					continue;
+				}
+				var spaceInfo = game.props.app.gameBoard.state.spaces[spaceId].props;
+				// If this space isn't passable, we've hit a block.
+				if (!spaceInfo.passable) { blockHit = true; }
+				if (spaceInfo.children) {
+					// If player's one piece is in this space, we've hit a block.
+					if (spaceInfo.children.props.color == item.color) {
+						blockHit = true;
+						continue;
+					}
+					// If an opponent is there, we haven't hit a block, but we've found an opponent.
+					// We will add this space to the list of valid spaces, but nothing beyond it.
+					else {
+						oppFound = true;
+					}
+				}
+				
+				// No blocks!  Add it to the list.
+				if (!blockHit) {
+					validSpaces.push(spaceId);
+				}
+				i++;
+			}
+		}
+		return validSpaces;
+	}
 	const isDroppable = function(x,y,territory,item,game) {
 		// var pieceInfo = PIECES[item.rank];
 		if (!item || !game || !game.state) {
@@ -59,71 +105,17 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		if (!passable) {
 			return false;
 		}
-		// Allow the non-move
-		if (x == item.fromX && y == item.fromY) {
-			return true;
-		}
 		if (!game.state.started) {
 			// Before game has started, all spaces are droppable 
 			// if they're passable and the player's territory
 			return item.color == territory;
 		}
 		else {
-			// No diagonal moves
-			if (x != item.fromX && y != item.fromY) {
-				return false;
-			}
-			if (children) {
-				// If space is occupied by a piece of the same color, the piece can't be dropped there.
-				if (item.color == children.props.color) {
-					return false;
-				}
-				else {
-					// Battle!!
-				}
-			}
 			// Game started situation
 			var piece = PIECES[item.rank];
-			var xDist = Math.abs(x-item.fromX);
-			console.log(x,item.fromX,xDist);
-			var yDist = Math.abs(y-item.fromY);
-			// You can only move as far as the piece's stats allow
-			if (xDist > piece.move || yDist > piece.move) {
-				return false;
-			}
-			if (piece.move > 1) {
-				var xMove = x-item.fromX;
-				var yMove = y-item.fromY;
-				var moveDist = (xDist > yDist) ? xMove : yMove;
-				var nextVal = (moveDist > 0) ? function(n) { return n+1; } : function(n) { return n-1; };
-				var oppFound = false;
-				for (var i = 1;  i != nextVal(moveDist); i = nextVal(i)) {
-					if (oppFound) {
-						return false;
-					}
-					// if the space this distance in the move direction is occupied or passable, 
-					// nothing beyond it is droppable, so return false;
-					if (xDist > yDist) {
-						var spaceInfo = game.props.app.gameBoard.state.spaces[xyToId(item.fromX+i,item.fromY)].props;
-					}
-					else {
-						var spaceInfo = game.props.app.gameBoard.state.spaces[xyToId(item.fromX,item.fromY+i)].props;
-					}
-					if (!spaceInfo.passable) {
-						return false;
-					}
-					if (spaceInfo.children) {
-						if (spaceInfo.children.props.color == item.color) {
-							return false;
-						}
-						else {
-							oppFound = true;
-						}
-					}
-				}
-			}
-			// console.log(x,y,item.fromX,item.fromY);
-			return true;
+			var validSpaces = getValidMoveSpaces(item.fromX,item.fromY,item,piece,game);
+			var spaceId = xyToId(x,y);
+			return (spaceId && validSpaces.indexOf(spaceId) != -1);
 		}
 	}
 	const territory = y < 5 ? 'red' : (y > 6 ? 'blue' : 'neutral');

@@ -419,7 +419,7 @@ class App extends React.Component {
 					game.setState({started: started});
 				}
 				if (turn != game.state.turn) {
-					game.setState({started: started});
+					game.setState({turn: turn});
 				}
 				var newSpaceIds = [];
 				var oldSpaceIds = [];
@@ -473,10 +473,12 @@ class App extends React.Component {
 		var captured = [];
 		var players = [];
 		var started = 0;
+		var turn = null;
 		if (this.gameStates[id]) {
 			captured = this.gameStates[id].captured;
 			players = this.gameStates[id].players;
 			started = this.gameStates[id].started ? 1 : 0;
+			turn = this.gameStates[id].turn;
 		}
 		var formData = new FormData();
 		var app = this;
@@ -484,6 +486,9 @@ class App extends React.Component {
 		formData.append('userKey',userKey);
 		formData.append('game_id',id);
 		formData.append('started',started);
+		if (turn) {
+			formData.append('turn',turn);
+		}
 		formData.append('players',JSON.stringify(players));
 		formData.append('captured',JSON.stringify(captured));
 		var spaces = this.gameBoard.state.spaces;

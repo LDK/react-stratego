@@ -40,6 +40,16 @@ class Game extends React.Component {
 		app.gameStates[this.props.id].started = true;
 		app.saveActiveGame();
 	}
+	toggleTurn() {
+		var turn;
+		if (this.state.turn == 'blue') {
+			turn = 'red';
+		}
+		else {
+			turn = 'blue';
+		}
+		this.setState({turn: turn});
+	}
 	render() {
 		var app = this.props.app;
 		if (this.props.id) {
@@ -47,6 +57,7 @@ class Game extends React.Component {
 		}
 		var gameBoard = <GameBoard game={this} app={app} />;
 		var rightPanel;
+		var gameClass = "container-fluid mx-auto game-bg";
 		if (!this.state.started) {
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 pr-0 tileRack-col">
@@ -56,9 +67,19 @@ class Game extends React.Component {
 		}
 		else {
 			var turnLabel;
+			var turnClass;
 			if (this.state.turn) {
 				turnLabel = (<h6>Current Turn: {this.state.players[this.state.turn].name} </h6>);
+				turnClass = ' turn-'+this.state.turn;
 			}
+			var uid = parseInt(app.state.currentUser.user_id);
+			var starterUid = parseInt(this.props.starter);
+			var playerColor = (uid == starterUid) ? 'blue' : 'red';
+			var playerColorClass;
+			if (playerColor) {
+				playerColorClass = ' player-'+playerColor;
+			}
+			gameClass += turnClass+playerColorClass;
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 pr-0 gameStatus-col text-center">
 					<h4 className="mx-auto d-block">Captured</h4>
@@ -88,7 +109,7 @@ class Game extends React.Component {
 			);
 		}
 		return (
-			<div className="container-fluid mx-auto game-bg">
+			<div className={gameClass}>
 				<DndProvider backend={HTML5Backend}>
 					<div className="row">
 						<div className="col-12 col-md-8 col-lg-9 pr-0">

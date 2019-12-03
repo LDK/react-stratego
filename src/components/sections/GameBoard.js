@@ -93,6 +93,7 @@ class GameBoard extends React.Component {
 				else {
 					// BATTLE
 				}
+				this.props.game.toggleTurn();
 			}
 		}
 		if (tileSpace) {

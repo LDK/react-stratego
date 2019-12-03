@@ -66,6 +66,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Grab existing game data
     gameData = self.getGameData(data['id'], False)
     started = data['started']
+    turn = "'"+data['turn']+"'" if (data['turn']) else 'NULL'
     # Decode spaces json data into list
     spaceInfo = json.loads(gameData['spaces'])
     newSpaceInfo = json.loads(data['spaces'])
@@ -100,8 +101,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}' WHERE id = '{id}'".\
-        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started)
+    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}', turn={turn} WHERE id = '{id}'".\
+        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started, turn=turn)
+    print("UPDATE",updateSql);
     c.execute(updateSql)
     conn.commit()
     conn.close()
@@ -680,6 +682,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         postRes = {}
         userKey = postvars['userKey'][0]
         uid = postvars['user_id'][0]
+        turn = postvars['turn'][0] if ('turn' in postvars) else None
         authorized = self.checkCreds(uid,userKey)
         if not authorized:
             self.respond(401)
@@ -692,7 +695,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 "captured": postvars['captured'][0],
                 "started": postvars['started'][0],
                 "id": gameId,
-                "sender": uid
+                "sender": uid,
+                "turn": turn
             })
         else:
             return

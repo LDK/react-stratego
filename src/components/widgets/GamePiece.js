@@ -91,18 +91,33 @@ function DragPiece(props) {
 			isDragging: !!monitor.isDragging(),
 			canDrag: !!monitor.canDrag()
 		}),
-  });
-  return (
-    <div
-      ref={drag}
-      style={{
-		  color: props.color || 'black',
-        opacity: isDragging ? 0 : 1,
-        cursor: canDrag ? 'move' : 'not-allowed',
-      }}
-    >
-	  <GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} /> 
-    </div>
+	});
+	var styles = {
+		color: props.color || 'black',
+		opacity: isDragging ? 0 : 1,
+	};
+	if (canDrag) {
+		styles['cursor'] = 'move';
+	}
+	var piece = false;
+	if (props.rank) {
+		piece = PIECES[props.rank]
+	}
+	if (piece && !piece.move) {
+		styles['cursor'] = 'not-allowed';
+	}
+	var wrapperClass = '';
+	if (props.color) {
+		wrapperClass = 'piece-'+props.color;
+	}
+	return (
+		<div
+			ref={drag}
+			style={styles}
+			className={wrapperClass}
+		>
+			<GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} /> 
+		</div>
   );
 }
 

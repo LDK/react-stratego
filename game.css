@@ -415,3 +415,15 @@ a.button:active {
 .text-blue {
 	color: blue;
 }
+.player-red .piece-blue, .player-blue .piece-red {
+	cursor: not-allowed !important;
+}
+.player-red .piece-red, .player-blue .piece-blue {
+	cursor: move;
+}
+.turn-red .piece-blue, .turn-blue .piece-red {
+	cursor: not-allowed !important;
+}
+.turn-red .piece-red, .turn-blue .piece-blue {
+	cursor: move;
+}

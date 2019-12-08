@@ -58,6 +58,14 @@ class Game extends React.Component {
 		var gameBoard = <GameBoard game={this} app={app} />;
 		var rightPanel;
 		var gameClass = "container-fluid mx-auto game-bg";
+		var uid = parseInt(app.state.currentUser.user_id);
+		var starterUid = parseInt(this.props.starter);
+		var playerColor = (uid == starterUid) ? 'blue' : 'red';
+		var playerColorClass;
+		if (playerColor) {
+			playerColorClass = ' player-'+playerColor;
+		}
+		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 pr-0 tileRack-col">
@@ -71,13 +79,6 @@ class Game extends React.Component {
 			if (this.state.turn) {
 				turnLabel = (<h6>Current Turn: {this.state.players[this.state.turn].name} </h6>);
 				turnClass = ' turn-'+this.state.turn;
-			}
-			var uid = parseInt(app.state.currentUser.user_id);
-			var starterUid = parseInt(this.props.starter);
-			var playerColor = (uid == starterUid) ? 'blue' : 'red';
-			var playerColorClass;
-			if (playerColor) {
-				playerColorClass = ' player-'+playerColor;
 			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (

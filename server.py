@@ -53,15 +53,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     self.send_header('Access-Control-Allow-Origin', '*')
     self.end_headers()
 
-  def saveSampleImage(self, data):
-    fName = data['sample']['wav']
-    fLoc = pjoin(curdir, "audio", fName)
-    imgLoc = pjoin(curdir, "img/waveform", fName.replace('.wav','.png'))
-    waveImg = waveform.Waveform(fLoc)
-    imgInitLoc = waveImg.save()
-    rename(imgInitLoc,imgLoc)
-    return imgLoc
-
   def saveGameData(self, data):
     # Grab existing game data
     gameData = self.getGameData(data['id'], False)
@@ -103,12 +94,90 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     c = conn.cursor()
     updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}', turn={turn} WHERE id = '{id}'".\
         format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started, turn=turn)
-    print("UPDATE",updateSql);
     c.execute(updateSql)
     conn.commit()
     conn.close()
     savedId = data['id']
     return savedId
+
+  def getBattleResult(self, data):
+    # Grab existing game data
+    gameData = self.getGameData(data['game_id'], False)
+    # Decode spaces json data into list
+    spaces = json.loads(gameData['spaces'])
+    captured = json.loads(gameData['captured'])
+    spaceId = int(data['space_id'])
+    fromId = int(data['from_id'])
+    attackRank = data['attack_rank']
+    attackColor = data['attack_color']
+    defeated = ''
+    for i in range(len(spaces)): 
+        if (spaces[i]['id'] == spaceId): 
+            defendRank = spaces[i]['rank']
+            defendColor = spaces[i]['color']
+            attackedSpaceIndex = i
+        elif (spaces[i]['id'] == fromId):
+            fromSpaceIndex = i 
+    del spaces[fromSpaceIndex]
+
+    if (attackRank == defendRank):
+        defeated = 'both'
+    elif (defendRank == 'S'):
+        # Spies always lose when attacked by anyone other than another spy
+        defeated = defendColor
+    elif (defendRank == 'F'):
+        # Flag has been found!
+        postRes['victory'] = attackColor
+    elif (defendRank == 'B'):
+        if (attackRank == '8'):
+            defeated = defendColor
+        else:
+            defeated = attackColor
+    elif (attackRank == 'S'):
+        if (defendRank == 1):
+            defeated = defendColor
+        else:
+            defeated = attackColor
+    else:
+        # We have a numeric rank piece attacking a different numeric rank piece
+        attackRank = int(attackRank)
+        defendRank = int(defendRank)
+        if (attackRank < defendRank):
+            defeated = defendColor
+        else:
+            defeated = attackColor
+
+    if (defeated == attackColor):
+        captured.append(attackColor+'-'+str(attackRank))
+    elif (defeated == defendColor):
+        captured.append(defendColor+'-'+str(defendRank))
+        del spaces[attackedSpaceIndex]
+        newSpace = {}
+        newSpace['id'] = spaceId
+        newSpace['rank'] = attackRank
+        newSpace['color'] = attackColor
+        spaces.append(newSpace)
+    elif (defeated == 'both'):
+        captured.append(attackColor+'-'+str(attackRank))
+        captured.append(defendColor+'-'+str(defendRank))
+
+    postRes = {}
+    postRes['defend_rank'] = defendRank
+    postRes['attack_rank'] = attackRank
+    postRes['defend_color'] = defendColor
+    postRes['attack_color'] = attackColor
+    postRes['defeated'] = defeated
+    postRes['captured'] = json.dumps(captured)
+    
+    # Update spaces & fields in db
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    updateSql = "UPDATE `game` SET spaces='{spaces}', captured='{captured}', turn='{defendColor}' WHERE id = '{gameId}'".\
+        format(spaces=json.dumps(spaces), captured=json.dumps(captured), defendColor=defendColor, gameId=data['game_id'])
+    c.execute(updateSql)
+    conn.commit()
+    conn.close()
+    return postRes
 
   def cancelRequest(self, uid, gameId):
     # Grab existing game data
@@ -192,7 +261,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -226,6 +295,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['status'] = gameData[9]
     postRes['started'] = gameData[10]
     postRes['turn'] = gameData[11]
+    postRes['captured'] = gameData[12]
     conn.commit()
     conn.close()
     return postRes
@@ -446,26 +516,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
-    elif (self.path == '/upload'):
-        postvars = self.parse_POST()
-        fName = postvars['filename'][0]
-        fData = postvars['file'][0]
-        fLoc = pjoin(curdir, "audio/uploaded", fName)
-        with open(fLoc, 'wb') as fh:
-            fh.write(fData)
-        imgLoc = pjoin(curdir, "img/waveform/uploaded", fName.replace('.wav','.png'))
-        waveImg = waveform.Waveform(fLoc)
-        imgInitLoc = waveImg.save()
-        rename(imgInitLoc,imgLoc)
-        self.respond(200)
-        postRes = {
-          "wav": fName,
-          "img": imgLoc
-        }
-        self.wfile.write(json.dumps(postRes).encode("utf-8"))
-        conn.close()
-        return
-        
     elif (self.path == '/game'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
@@ -622,61 +672,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         conn.close()
         return
         
-    elif (self.path == '/channels'):
-        postvars = self.parse_POST()
-        userKey = postvars['userKey'][0]
-        uid = postvars['user_id'][0]
-        sid = postvars['song_id'][0]
-        authorized = self.checkCreds(uid,userKey)
-        if not authorized:
-            self.respond(401)
-            return
-        self.respond(200)
-        postRes = self.getSongChannels(sid)
-        self.wfile.write(json.dumps(postRes).encode("utf-8"))
-        conn.close()
-        return
-        
-    elif (self.path == '/patterns'):
-        postvars = self.parse_POST()
-        userKey = postvars['userKey'][0]
-        uid = postvars['user_id'][0]
-        sid = postvars['song_id'][0]
-        authorized = self.checkCreds(uid,userKey)
-        if not authorized:
-            self.respond(401)
-            return
-        self.respond(200)
-        postRes = self.getSongPatterns(sid)
-        self.wfile.write(json.dumps(postRes).encode("utf-8"))
-        conn.close()
-        return
-        
-    elif (self.path == '/upload-splitter'):
-        postvars = self.parse_POST()
-        fName = postvars['filename'][0]
-        fData = postvars['file'][0]
-        fLoc = pjoin(curdir, "audio/uploaded", fName)
-        with open(fLoc, 'wb') as fh:
-            fh.write(fData)
-        imgLoc = pjoin(curdir, "img/waveform/uploaded", fName.replace('.wav','.png'))
-        waveImg = waveform.Waveform(fLoc)
-        imgInitLoc = waveImg.save()
-        rename(imgInitLoc,imgLoc)
-        self.respond(200)
-        postRes = {
-          "wav": fName,
-          "img": imgLoc,
-          "slices": groove.split(fName,16)
-        }
-        self.wfile.write(json.dumps(postRes).encode("utf-8"))
-        conn.close()
-        return
-        
-    elif (self.path == '/render'):
-        self.data_string = self.rfile.read(int(self.headers['Content-Length']))
-        fName = groove.renderJSON(self.data_string)
-        self.wfile.write(bytes(fName, "utf8"))
     elif (self.path == '/saveGame'):
         postvars = self.parse_POST()
         postRes = {}
@@ -703,6 +698,32 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         postRes['id'] = gameId
         self.respond(200)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
+
+    elif (self.path == '/battle'):
+        postvars = self.parse_POST()
+        postRes = {}
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        if ('game_id' in postvars and postvars['game_id'][0]):
+            gameId = postvars['game_id'][0]
+            postRes = self.getBattleResult({
+                "space_id": postvars['space_id'][0],
+                "from_id": postvars['from_space_id'][0],
+                "attack_rank": postvars['attack_rank'][0],
+                "attack_color": postvars['attack_color'][0],
+                "spaces": postvars['spaces'][0],
+                "attacker_id": uid,
+                "game_id": gameId
+            })
+        else:
+            return
+        self.respond(200)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+
     return
 
 def run():

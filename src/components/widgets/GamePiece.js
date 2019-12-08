@@ -116,7 +116,7 @@ function DragPiece(props) {
 			style={styles}
 			className={wrapperClass}
 		>
-			<GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} /> 
+			<GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} /> 
 		</div>
   );
 }

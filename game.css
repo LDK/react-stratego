@@ -427,3 +427,11 @@ a.button:active {
 .turn-red .piece-red, .turn-blue .piece-blue {
 	cursor: move;
 }
+
+.player-red .text-opponent-color {
+	color: blue !important;
+}
+
+.player-blue .text-opponent-color {
+	color: red !important;
+}

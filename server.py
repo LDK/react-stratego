@@ -110,7 +110,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     fromId = int(data['from_id'])
     attackRank = data['attack_rank']
     attackColor = data['attack_color']
+    attacks = int(gameData['attacks']) + 1
     defeated = ''
+    victory = False
     for i in range(len(spaces)): 
         if (spaces[i]['id'] == spaceId): 
             defendRank = spaces[i]['rank']
@@ -127,7 +129,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         defeated = defendColor
     elif (defendRank == 'F'):
         # Flag has been found!
-        postRes['victory'] = attackColor
+        victory = attackColor
     elif (defendRank == 'B'):
         if (attackRank == '8'):
             defeated = defendColor
@@ -167,16 +169,20 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['defend_color'] = defendColor
     postRes['attack_color'] = attackColor
     postRes['defeated'] = defeated
-    postRes['captured'] = json.dumps(captured)
-    
+    if (victory):
+        postRes['victory'] = victory
+
+    # print("battle",postRes);
+
     # Update spaces & fields in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    updateSql = "UPDATE `game` SET spaces='{spaces}', captured='{captured}', turn='{defendColor}' WHERE id = '{gameId}'".\
-        format(spaces=json.dumps(spaces), captured=json.dumps(captured), defendColor=defendColor, gameId=data['game_id'])
+    updateSql = "UPDATE `game` SET spaces='{spaces}', captured='{captured}', turn='{defendColor}', attacks='{attacks}', last_attack='{lastAttack}' WHERE id = '{gameId}'".\
+        format(spaces=json.dumps(spaces), captured=json.dumps(captured), defendColor=defendColor, gameId=data['game_id'], attacks=attacks, lastAttack = json.dumps(postRes))
     c.execute(updateSql)
     conn.commit()
     conn.close()
+    postRes['captured'] = json.dumps(captured)
     return postRes
 
   def cancelRequest(self, uid, gameId):
@@ -261,7 +267,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -296,6 +302,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['started'] = gameData[10]
     postRes['turn'] = gameData[11]
     postRes['captured'] = gameData[12]
+    postRes['attacks'] = gameData[13]
+    postRes['last_attack'] = gameData[14]
     conn.commit()
     conn.close()
     return postRes
@@ -305,7 +313,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         return {}
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started, g.turn FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
+    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started, g.turn, g.attacks, g.last_attack FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -330,6 +338,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['opponent_ready'] = opponentReady
     postRes['started'] = gameData[5]
     postRes['turn'] = gameData[6]
+    postRes['attacks'] = gameData[7]
+    postRes['last_attack'] = gameData[8]
     conn.commit()
     conn.close()
     return postRes
@@ -631,9 +641,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         postRes = self.getGameList(uid)
-        # postRes['id'] = sid
-        # postRes['channels'] = self.getSongChannels(sid)
-        # postRes['patterns'] = self.getSongPatterns(sid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return
@@ -648,9 +655,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         postRes = self.getIncomingInvites(uid)
-        # postRes['id'] = sid
-        # postRes['channels'] = self.getSongChannels(sid)
-        # postRes['patterns'] = self.getSongPatterns(sid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return
@@ -665,9 +669,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         postRes = self.getOutgoingRequests(uid)
-        # postRes['id'] = sid
-        # postRes['channels'] = self.getSongChannels(sid)
-        # postRes['patterns'] = self.getSongPatterns(sid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return

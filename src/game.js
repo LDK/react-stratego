@@ -24,7 +24,9 @@ class Game extends React.Component {
 			},
 			turn: props.turn || null,
 			started: !!props.started,
-			status: props.status || 'pending'
+			status: props.status || 'pending',
+			attacks: props.attacks || 0,
+			last_attack: props.last_attack || {}
 		};
 		// this.state.captured.blue.push(<GamePiece color={'blue'} rank={'3'} captured={true} game={this} key={1} />);
 		// this.state.captured.blue.push(<GamePiece color={'blue'} rank={'4'} captured={true} game={this} key={2} />);
@@ -37,7 +39,9 @@ class Game extends React.Component {
 	startGame() {
 		var app = this.props.app;
 		this.setState({ started: true });
+		var turn = (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue';
 		app.gameStates[this.props.id].started = true;
+		app.gameStates[this.props.id].turn = turn;
 		app.saveActiveGame();
 	}
 	toggleTurn() {

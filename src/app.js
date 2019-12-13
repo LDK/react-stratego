@@ -312,8 +312,10 @@ class App extends React.Component {
 				var opponentUid = gameData.opponent_uid;
 				var started = gameData.started;
 				var turn = gameData.turn;
+				var attacks = gameData.attacks;
+				var last_attack = JSON.parse(gameData.last_attack);
 				spaces = JSON.parse(gameData.spaces);
-				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} />;
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} attacks={attacks} last_attack={last_attack} />;
 				if (app.gameRef) {
 					app.gameRef.setState({
 						id: id,
@@ -403,6 +405,7 @@ class App extends React.Component {
 				spaces = JSON.parse(gameData.opponent_spaces);
 				var started = gameData.started;
 				var turn = gameData.turn;
+				var attacks = gameData.attacks;
 				var opponentColor;
 				if (app.tileRack.playerColor == 'blue') {
 					opponentColor = 'red';
@@ -420,6 +423,13 @@ class App extends React.Component {
 				}
 				if (turn != game.state.turn) {
 					game.setState({turn: turn});
+				}
+				if (attacks != game.state.attacks) {
+					// Trigger battle modal and populate with last_attack data 
+					var last_attack = JSON.parse(gameData.last_attack);
+					game.setState({attacks: attacks, last_attack: last_attack});
+					app.gameBoard.openBattleModal();
+					app.gameBoard.getBattleContent(last_attack);
 				}
 				var newSpaceIds = [];
 				var oldSpaceIds = [];

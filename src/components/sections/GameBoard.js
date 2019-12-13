@@ -132,10 +132,14 @@ class GameBoard extends React.Component {
 	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
+		var game = this.props.game;
 		var battle = false;
 		var playerColor = app.tileRack.playerColor;
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
+		if (x == pieceInfo.fromX && y == pieceInfo.fromY) {
+			return;
+		}
 		if (pieceInfo.fromId) {
 			if (!this.props.game.state.started) {
 				if (!spaces[id].props.occupied) {
@@ -162,6 +166,7 @@ class GameBoard extends React.Component {
 				}
 				else {
 					// BATTLE
+					var attacks = game.state.attacks + 1;
 					battle = true;
 					this.openBattleModal();
 					var uid = app.state.currentUser.user_id;
@@ -192,6 +197,7 @@ class GameBoard extends React.Component {
 							}
 							var result = JSON.parse(text);
 							board.getBattleContent(result);
+							game.setState({ attacks: attacks });
 						});
 					});
 				}

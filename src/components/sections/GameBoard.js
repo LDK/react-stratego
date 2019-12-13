@@ -66,31 +66,49 @@ class GameBoard extends React.Component {
 		var attackRank = PIECES[result.attack_rank].name;
 		var defendRank = PIECES[result.defend_rank].name;
 		var playerColor = app.tileRack.playerColor;
-		var playerRank = (result.attack_color == playerColor) ? attackRank : defendRank;
+		var attacking = result.attack_color == playerColor;
+		var playerRank = attacking ? attackRank : defendRank;
 		var defeated = result.defeated;
 		var oppColor = (playerColor == 'red') ? 'blue' : 'red';
-		var oppRank = (result.attack_color == playerColor) ? defendRank : attackRank;
-		
-		var oppName = this.props.game.props.opponentName;
+		var oppRank = attacking ? defendRank : attackRank;
+		var starterId = parseInt(this.props.game.props.starter);
+		var uid = parseInt(app.state.currentUser.user_id);
+		var oppName = (starterId == uid) ? this.props.game.props.opponentName : this.props.game.props.starterName;
 		var outcome = '';
 		var resultText = '';
+		if (defendRank == 'Bomb') {
+			this.emptySpace(result.space_id);
+			this.emptySpace(result.from_space_id);
+		}
 		if (defeated == 'both') {
+			this.emptySpace(result.space_id);
+			this.emptySpace(result.from_space_id);
 			outcome = 'Draw!';
 			resultText = (<span>Your <strong>{playerRank}</strong> and <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong> defeated each other!</span>)
 		}
 		else if (defeated == playerColor) {
 			outcome = 'Defeat!';
 			var action = 'defeated';
-			if (defendRank == 'Bomb') {
+			if (defendRank == 'Bomb' && attacking) {
+				outcome = 'Catastrope!';
 				action = 'blown up';
+			}
+			else if (defendRank == 'Bomb') {
+				outcome = 'Sabotage!';
+				action = 'defused';
 			}
 			resultText = (<span>Your <strong>{playerRank}</strong> was {action} by <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong>!</span>)
 		}
 		else {
 			outcome = 'Victory!';
 			var action = 'defeated';
-			if (defendRank == 'Bomb') {
+			if (defendRank == 'Bomb' && attacking) {
+				outcome = 'Success!';
 				action = 'defused';
+			}
+			else if (defendRank == 'Bomb') {
+				outcome = 'Success!';
+				action = 'blew up';
 			}
 			else if (defendRank == 'Flag') {
 				action = 'captured';

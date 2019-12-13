@@ -131,10 +131,13 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         # Flag has been found!
         victory = attackColor
     elif (defendRank == 'B'):
+        # Spies defuse bombs.
         if (attackRank == '8'):
             defeated = defendColor
         else:
             defeated = attackColor
+        # Successful or not, bombs disappear when attacked.
+        del spaces[attackedSpaceIndex]
     elif (attackRank == 'S'):
         if (defendRank == 1):
             defeated = defendColor
@@ -162,6 +165,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     elif (defeated == 'both'):
         captured.append(attackColor+'-'+str(attackRank))
         captured.append(defendColor+'-'+str(defendRank))
+        del spaces[attackedSpaceIndex]
+        del spaces[fromSpaceIndex]
+
 
     postRes = {}
     postRes['defend_rank'] = defendRank
@@ -169,6 +175,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['defend_color'] = defendColor
     postRes['attack_color'] = attackColor
     postRes['defeated'] = defeated
+    postRes['space_id'] = spaceId
+    postRes['from_space_id'] = fromId
+    postRes['time'] = time.time()
     if (victory):
         postRes['victory'] = victory
 

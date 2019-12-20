@@ -10,6 +10,7 @@ import json
 import sqlite3
 import random
 import string
+import time
 
 # HTTPRequestHandler class
 class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
@@ -77,16 +78,16 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     userColor = 'blue' if (starterUid == senderUid) else 'red'
     # Remove existing spaces that match user color from list
     i = 0
-    combinedSpaces = []
-    while i < len(spaceInfo):
+    combinedSpaces = {}
+    for i in spaceInfo:
         space = spaceInfo[i]
         if space['color'] != userColor:
-            combinedSpaces.append(spaceInfo[i])
-        i += 1
+            combinedSpaces[space['id']] = spaceInfo[i]
     # Add new user color-matching spaces to list
-    for space in newSpaceInfo:
+    for spaceIndex in newSpaceInfo:
+        space = newSpaceInfo[spaceIndex]
         if space['color'] == userColor:
-            combinedSpaces.append(space)
+            combinedSpaces[space['id']] = space
     # Encode list into new json string
     spaceString = json.dumps(combinedSpaces)
     # Update spaces field in db
@@ -101,26 +102,28 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     return savedId
 
   def getBattleResult(self, data):
+    # print("battle data",data)
     # Grab existing game data
     gameData = self.getGameData(data['game_id'], False)
     # Decode spaces json data into list
     spaces = json.loads(gameData['spaces'])
+    # print("spaces before",spaces)
     captured = json.loads(gameData['captured'])
-    spaceId = int(data['space_id'])
-    fromId = int(data['from_id'])
+    spaceId = data['space_id']
+    fromId = data['from_id']
+    # print("from",fromId,"to",spaceId)
     attackRank = data['attack_rank']
     attackColor = data['attack_color']
     attacks = int(gameData['attacks']) + 1
     defeated = ''
     victory = False
-    for i in range(len(spaces)): 
-        if (spaces[i]['id'] == spaceId): 
-            defendRank = spaces[i]['rank']
-            defendColor = spaces[i]['color']
-            attackedSpaceIndex = i
-        elif (spaces[i]['id'] == fromId):
-            fromSpaceIndex = i 
-    del spaces[fromSpaceIndex]
+    for spaceIndex in spaces: 
+        space = spaces[spaceIndex]
+        if (str(space['id']) == spaceId): 
+            defendRank = space['rank']
+            defendColor = space['color']
+
+    del spaces[fromId]
 
     if (attackRank == defendRank):
         defeated = 'both'
@@ -130,6 +133,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     elif (defendRank == 'F'):
         # Flag has been found!
         victory = attackColor
+        defeated = defendColor
     elif (defendRank == 'B'):
         # Spies defuse bombs.
         if (attackRank == '8'):
@@ -137,7 +141,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         else:
             defeated = attackColor
         # Successful or not, bombs disappear when attacked.
-        del spaces[attackedSpaceIndex]
+        # print("deleting",spaceId)
+        del spaces[spaceId]
     elif (attackRank == 'S'):
         if (defendRank == 1):
             defeated = defendColor
@@ -156,18 +161,21 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         captured.append(attackColor+'-'+str(attackRank))
     elif (defeated == defendColor):
         captured.append(defendColor+'-'+str(defendRank))
-        del spaces[attackedSpaceIndex]
+        # print("deleting",spaceId)
+        del spaces[spaceId]
         newSpace = {}
         newSpace['id'] = spaceId
         newSpace['rank'] = attackRank
         newSpace['color'] = attackColor
-        spaces.append(newSpace)
+        spaces[spaceId] = newSpace
     elif (defeated == 'both'):
         captured.append(attackColor+'-'+str(attackRank))
         captured.append(defendColor+'-'+str(defendRank))
-        del spaces[attackedSpaceIndex]
-        del spaces[fromSpaceIndex]
-
+        # print("deleting",spaceId,"and",fromId,spaces)
+        if (spaceId in spaces):
+            del spaces[spaceId]
+        if (fromId in spaces):
+            del spaces[fromId]
 
     postRes = {}
     postRes['defend_rank'] = defendRank
@@ -181,8 +189,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     if (victory):
         postRes['victory'] = victory
 
-    # print("battle",postRes);
+    # print("spaces after",spaces);
 
+    # print("battle",postRes);
     # Update spaces & fields in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -286,18 +295,16 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         starterUid = int(gameData[2])
         uid = int(uid)
         spaceInfo = json.loads(gameData[6])
-        combinedSpaces = []
+        combinedSpaces = {}
         if (starterUid == uid):
             userColor = 'blue'
         else:
             userColor = 'red'
-        i = 0
-        while i < len(spaceInfo):
+        for i in spaceInfo:
             space = spaceInfo[i]
             if space['color'] != userColor:
                 space['rank'] = None
-            combinedSpaces.append(spaceInfo[i])
-            i += 1
+            combinedSpaces[space['id']] = space
         postRes['spaces'] = json.dumps(combinedSpaces)
     postRes['title'] = gameData[0]
     postRes['id'] = gameData[1]
@@ -329,20 +336,18 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     starterUid = int(gameData[0])
     uid = int(uid)
     spaceInfo = json.loads(gameData[2])
-    combinedSpaces = []
+    combinedSpaces = {}
     if (starterUid == uid):
         userColor = 'blue'
         opponentReady = gameData[4]
     else:
         userColor = 'red'
         opponentReady = gameData[3]
-    i = 0
-    while i < len(spaceInfo):
-        space = spaceInfo[i]
+    for spaceIndex in spaceInfo:
+        space = spaceInfo[spaceIndex]
         if space['color'] != userColor:
             space['rank'] = None
-            combinedSpaces.append(spaceInfo[i])
-        i += 1
+            combinedSpaces[space['id']] = space
     postRes['opponent_spaces'] = json.dumps(combinedSpaces)
     postRes['opponent_ready'] = opponentReady
     postRes['started'] = gameData[5]
@@ -382,7 +387,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes = {}
     starterUid = int(gameData[0])
     spaceInfo = json.loads(gameData[2])
-    combinedSpaces = []
+    combinedSpaces = {}
     if (starterUid == uid):
         userColor = 'blue'
         opponentReady = gameData[4]
@@ -394,7 +399,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         space = spaceInfo[i]
         if space['color'] != userColor:
             space['rank'] = None
-            combinedSpaces.append(spaceInfo[i])
+            combinedSpaces[space['id']] = spaceInfo[i]
         i += 1
     postRes['opponent_spaces'] = json.dumps(combinedSpaces)
     postRes['opponent_ready'] = opponentReady

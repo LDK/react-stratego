@@ -41,7 +41,7 @@ class GameBoard extends React.Component {
 				app.tileRack.playerColor = 'red';
 			}
 		}
-		if (spaces && spaces.length && app.tileSpaces) {
+		if (spaces && app.tileSpaces) {
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;
@@ -96,6 +96,11 @@ class GameBoard extends React.Component {
 			else if (defendRank == 'Bomb') {
 				outcome = 'Sabotage!';
 				action = 'defused';
+			}
+			else if (defendRank == 'Flag') {
+				outcome = 'Defeated!';
+				action = 'captured';
+				// OH ALSO YOU LOSE THE GAME
 			}
 			resultText = (<span>Your <strong>{playerRank}</strong> was {action} by <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong>!</span>)
 		}

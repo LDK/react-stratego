@@ -502,26 +502,23 @@ class App extends React.Component {
 		formData.append('players',JSON.stringify(players));
 		formData.append('captured',JSON.stringify(captured));
 		var spaces = this.gameBoard.state.spaces;
-		var saveSpaces = [];
+		var saveSpaces = {};
 		for (var i in spaces) {
 			var space = {};
 			if (spaces[i].props.occupied) {
 				space.id = spaces[i].props.id;
 				space.rank = spaces[i].props.children.props.rank;
 				space.color = spaces[i].props.children.props.color;
-				saveSpaces[i] = space;
+				saveSpaces[space.id] = space;
 			}
 		}
 		for (var i in saveSpaces) {
 			var space = saveSpaces[i];
-			if (!space) {
+			if (!space || !space.id || !space.rank) {
 				delete saveSpaces[i];
 			}
 		}
-		var filtered = saveSpaces.filter(function (el) {
-		  return el != null;
-		});
-		formData.append('spaces',JSON.stringify(filtered));
+		formData.append('spaces',JSON.stringify(saveSpaces));
 		window.fetch(this.gameServer+'saveGame', {
 			method: 'POST', 
 			body: formData

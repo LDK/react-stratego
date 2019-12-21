@@ -42,6 +42,7 @@ class GameBoard extends React.Component {
 			}
 		}
 		if (spaces && app.tileSpaces) {
+			var soldiers = 0;
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;
@@ -49,10 +50,16 @@ class GameBoard extends React.Component {
 					targetSpace = app.tileSpaces[space.rank];
 				}
 				this.placePiece({ rank: space.rank, color: space.color, tileSpace: targetSpace }, space.id, true);
+				if (space.rank && space.rank != 'F' && space.rank != 'B') {
+					soldiers++;
+				}
 				if (targetSpace) {
 					targetSpace.setState({ remaining: targetSpace.remaining });
 				}
 			}
+			var players = game.state.players;
+			players[app.tileRack.playerColor].soldiers = soldiers;
+			game.setState({ players: players });
 		}
 	}
 	openBattleModal() {
@@ -63,6 +70,7 @@ class GameBoard extends React.Component {
 	}
 	getBattleContent(result) {
 		var app = this.props.app;
+		var game = this.props.game;
 		var attackRank = PIECES[result.attack_rank].name;
 		var defendRank = PIECES[result.defend_rank].name;
 		var playerColor = app.tileRack.playerColor;
@@ -71,11 +79,22 @@ class GameBoard extends React.Component {
 		var defeated = result.defeated;
 		var oppColor = (playerColor == 'red') ? 'blue' : 'red';
 		var oppRank = attacking ? defendRank : attackRank;
-		var starterId = parseInt(this.props.game.props.starter);
+		var starterId = parseInt(game.props.starter);
 		var uid = parseInt(app.state.currentUser.user_id);
-		var oppName = (starterId == uid) ? this.props.game.props.opponentName : this.props.game.props.starterName;
+		var oppName = (starterId == uid) ? game.props.opponentName : game.props.starterName;
 		var outcome = '';
 		var resultText = '';
+		var spaces = this.state.spaces;
+		var remaining = 0;
+		var players = game.state.players;
+		var afterText = '';
+
+		for (var i in spaces) {
+			var space = spaces[i];
+			if (space.rank && space.color == playerColor && space.rank != 'F' && space.rank) {
+				remaining++;
+			}
+		}
 		if (defendRank == 'Bomb') {
 			this.emptySpace(result.space_id);
 			this.emptySpace(result.from_space_id);
@@ -83,12 +102,17 @@ class GameBoard extends React.Component {
 		if (defeated == 'both') {
 			this.emptySpace(result.space_id);
 			this.emptySpace(result.from_space_id);
+			players[oppColor].soldiers--;
+			players[playerColor].soldiers = remaining - 1;
+			game.setState({ players: players });
 			outcome = 'Draw!';
 			resultText = (<span>Your <strong>{playerRank}</strong> and <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong> defeated each other!</span>)
 		}
 		else if (defeated == playerColor) {
 			outcome = 'Defeat!';
 			var action = 'defeated';
+			players[playerColor].soldiers = remaining - 1;
+			game.setState({ players: players });
 			if (defendRank == 'Bomb' && attacking) {
 				outcome = 'Catastrope!';
 				action = 'blown up';
@@ -102,10 +126,18 @@ class GameBoard extends React.Component {
 				action = 'captured';
 				// OH ALSO YOU LOSE THE GAME
 			}
+			if (players[playerColor].soldiers < 1) {
+				outcome = 'Defeated!';
+				afterText = (
+					<p className="mx-auto text-center">Your entire army has been conquered!</p>
+				);
+			}
 			resultText = (<span>Your <strong>{playerRank}</strong> was {action} by <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong>!</span>)
 		}
 		else {
 			outcome = 'Victory!';
+			players[oppColor].soldiers--;
+			game.setState({ players: players });
 			var action = 'defeated';
 			if (defendRank == 'Bomb' && attacking) {
 				outcome = 'Success!';
@@ -119,12 +151,20 @@ class GameBoard extends React.Component {
 				action = 'captured';
 				// OH ALSO YOU WIN THE GAME
 			}
+			if (players[oppColor].soldiers < 1) {
+				outcome = 'Victory!';
+				afterText = (
+					<p className="mx-auto text-center"><strong className="text-opponent-color">{oppName}&apos;s</strong> entire army is defeated!</p>
+				);
+			}
 			resultText = (<span>Your <strong>{playerRank}</strong> {action} <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong>!</span>)
 		}
+		var players = game.state.players;
 		var content = (
 			<div className="row">
 				<h3 className="col-12 text-center battle-heading">{outcome}</h3>
 				<p className="col-12 battle-text text-center">{resultText}</p>
+				{afterText}
 				<div className="col-6">
 					<DragPiece color={result.attack_color} rank={result.attack_rank} placed={true} className="float-right" />
 				</div>

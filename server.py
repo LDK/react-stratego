@@ -337,6 +337,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     uid = int(uid)
     spaceInfo = json.loads(gameData[2])
     combinedSpaces = {}
+    oppSoldiers = 0
     if (starterUid == uid):
         userColor = 'blue'
         opponentReady = gameData[4]
@@ -346,6 +347,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     for spaceIndex in spaceInfo:
         space = spaceInfo[spaceIndex]
         if space['color'] != userColor:
+            if (space['rank'] != 'B' and space['rank'] != 'F'):
+                oppSoldiers += 1
             space['rank'] = None
             combinedSpaces[space['id']] = space
     postRes['opponent_spaces'] = json.dumps(combinedSpaces)
@@ -354,6 +357,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['turn'] = gameData[6]
     postRes['attacks'] = gameData[7]
     postRes['last_attack'] = gameData[8]
+    postRes['soldiers_remaining'] = oppSoldiers
     conn.commit()
     conn.close()
     return postRes

@@ -424,6 +424,12 @@ class App extends React.Component {
 				if (turn != game.state.turn) {
 					game.setState({turn: turn});
 				}
+				var remaining = game.state.players[opponentColor].soldiers;
+				if (!remaining || remaining != gameData['soldiers_remaining']) {
+					var players = game.state.players;
+					players[opponentColor].soldiers = gameData['soldiers_remaining'];
+					game.setState({players: players});
+				}
 				if (attacks != game.state.attacks) {
 					// Trigger battle modal and populate with last_attack data 
 					var last_attack = JSON.parse(gameData.last_attack);
@@ -458,15 +464,6 @@ class App extends React.Component {
 						app.gameBoard.emptySpace(id);
 					}
 				}
-				return;
-				if (app.gameBoard) {
-					for (var i in spaces) {
-						var space = spaces[i];
-						var piece = { rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] };
-						app.gameBoard.placePiece(piece, space.id, true);
-					}
-				}
-				app.setState({activeGame: gm});
 			});
 		});
 	}

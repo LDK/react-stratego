@@ -19,8 +19,8 @@ class Game extends React.Component {
 				red: { id: props.opponent || null, ready: props.opponentReady || false, name: props.opponentName }
 			},
 			captured: {
-				blue: [],
-				red: []
+				blue: {},
+				red: {}
 			},
 			turn: props.turn || null,
 			started: !!props.started,
@@ -33,8 +33,34 @@ class Game extends React.Component {
 		// this.state.captured.red.push(<GamePiece color={'red'} rank={'3'} captured={true} game={this} key={3} />);
 		// this.state.captured.red.push(<GamePiece color={'red'} rank={'4'} captured={true} game={this} key={4} />);
 		// this.state.captured.red.push(<GamePiece color={'red'} rank={'S'} captured={true} game={this} key={5} />);
+		// this.state.captured.red.push(<GamePiece color={'red'} rank={'9'} captured={true} game={this} key={5} />);
+		// this.state.captured.red.push(<GamePiece color={'red'} rank={'9'} captured={true} game={this} key={5} />);
 		this.startGame = this.startGame.bind(this);
+		this.addCaptured = this.addCaptured.bind(this);
+		this.clearCaptured = this.clearCaptured.bind(this);
+		if (props.captured) {
+			for (var i in props.captured) {
+				var pieceId = props.captured[i];
+				var pieceColor = pieceId.split('-')[0];
+				var pieceRank = pieceId.split('-')[1];
+				this.addCaptured({color: pieceColor, rank: pieceRank });
+			}
+		}
 		props.app.gameRef = this;
+	}
+	clearCaptured() {
+		this.state.captured = { blue: {}, red: {} };
+	}
+	addCaptured(pieceInfo) {
+		var captured = this.state.captured;
+		var pieceCount = 1;
+		if (captured[pieceInfo.color][pieceInfo.rank]) {
+			pieceCount = captured[pieceInfo.color][pieceInfo.rank].props.count + 1;
+		}
+		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} />
+		this.setState({ captured: captured });
+		// this.state.captured = captured;
+		// captured[pieceInfo.color].push(<GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} />)
 	}
 	startGame() {
 		var app = this.props.app;
@@ -84,6 +110,12 @@ class Game extends React.Component {
 				turnLabel = (<h6>Current Turn: {this.state.players[this.state.turn].name} </h6>);
 				turnClass = ' turn-'+this.state.turn;
 			}
+			var captured = { red: [], blue: [] };
+			for (var color in this.state.captured) {
+				for (var rank in this.state.captured[color]) {
+					captured[color].push(this.state.captured[color][rank]);
+				}
+			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 pr-0 gameStatus-col text-center">
@@ -94,7 +126,7 @@ class Game extends React.Component {
 								{this.state.players.red.name}
 							</span>
 							<div className="captured-tiles player-red">
-								{this.state.captured.red.length ? this.state.captured.red : 'None'}
+								{captured.red.length ? captured.red : 'None'}
 							</div>
 						</div>
 						<div className="col-12 col-md-6">
@@ -102,7 +134,7 @@ class Game extends React.Component {
 								{this.state.players.blue.name}
 							</span>
 							<div className="captured-tiles player-blue">
-								{this.state.captured.blue.length ? this.state.captured.blue : 'None'}
+								{captured.blue.length ? captured.blue : 'None'}
 							</div>
 						</div>
 						{turnLabel}

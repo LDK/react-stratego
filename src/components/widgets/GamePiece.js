@@ -110,13 +110,18 @@ function DragPiece(props) {
 	if (props.color) {
 		wrapperClass = 'piece-'+props.color;
 	}
+	var countLabel = '';
+	if (props.count && props.count > 1) {
+		countLabel = (<label>x{props.count}</label>);
+	}
 	return (
 		<div
 			ref={drag}
 			style={styles}
 			className={wrapperClass}
 		>
-			<GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} /> 
+			<GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} />
+			{countLabel}
 		</div>
   );
 }

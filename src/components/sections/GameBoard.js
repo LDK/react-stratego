@@ -88,7 +88,21 @@ class GameBoard extends React.Component {
 		var remaining = 0;
 		var players = game.state.players;
 		var afterText = '';
-
+		
+		if (defeated == 'both') {
+			game.addCaptured({ color: result.attack_color, rank: result.attack_rank });
+			game.addCaptured({ color: result.defend_color, rank: result.defend_rank });
+		}
+		else {
+			var defeatedRank;
+			if (result.attack_color == defeated) {
+				defeatedRank = result.attack_rank;
+			}
+			else {
+				defeatedRank = result.defend_rank;
+			}
+			game.addCaptured({ color: defeated, rank: defeatedRank });
+		}
 		for (var i in spaces) {
 			var space = spaces[i];
 			if (space.rank && space.color == playerColor && space.rank != 'F' && space.rank) {

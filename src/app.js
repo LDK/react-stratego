@@ -314,14 +314,22 @@ class App extends React.Component {
 				var turn = gameData.turn;
 				var attacks = gameData.attacks;
 				var last_attack = JSON.parse(gameData.last_attack);
+				var captured = JSON.parse(gameData.captured);
 				spaces = JSON.parse(gameData.spaces);
-				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} attacks={attacks} last_attack={last_attack} />;
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} attacks={attacks} last_attack={last_attack} captured={captured} />;
 				if (app.gameRef) {
 					app.gameRef.setState({
 						id: id,
 						started: started,
 						turn: turn
 					});
+					app.gameRef.clearCaptured();
+					for (var i in captured) {
+						var pieceId = captured[i];
+						var pieceColor = pieceId.split('-')[0];
+						var pieceRank = pieceId.split('-')[1];
+						app.gameRef.addCaptured({color: pieceColor, rank: pieceRank });
+					}
 				}
 				if (app.tileRack) {
 					if (uid == starterUid) {
@@ -467,6 +475,19 @@ class App extends React.Component {
 			});
 		});
 	}
+	getCapturedList(captured) {
+		var rList = [];
+		for (var color in captured) {
+			for (var rank in captured[color]) {
+				if (captured[color][rank].props.count) {
+					for (var i = 1;i <= captured[color][rank].props.count;i++) {
+						rList.push(color+'-'+rank);
+					}
+				}
+			}
+		}
+		return rList;
+	}
 	saveActiveGame(){
 		if (!this.state.activeGame || !this.state.currentUser) {
 			return false;
@@ -497,7 +518,8 @@ class App extends React.Component {
 			formData.append('turn',turn);
 		}
 		formData.append('players',JSON.stringify(players));
-		formData.append('captured',JSON.stringify(captured));
+		var capturedList = this.getCapturedList(captured);
+		formData.append('captured',JSON.stringify(capturedList));
 		var spaces = this.gameBoard.state.spaces;
 		var saveSpaces = {};
 		for (var i in spaces) {

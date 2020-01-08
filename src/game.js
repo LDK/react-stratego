@@ -28,13 +28,6 @@ class Game extends React.Component {
 			attacks: props.attacks || 0,
 			last_attack: props.last_attack || {}
 		};
-		// this.state.captured.blue.push(<GamePiece color={'blue'} rank={'3'} captured={true} game={this} key={1} />);
-		// this.state.captured.blue.push(<GamePiece color={'blue'} rank={'4'} captured={true} game={this} key={2} />);
-		// this.state.captured.red.push(<GamePiece color={'red'} rank={'3'} captured={true} game={this} key={3} />);
-		// this.state.captured.red.push(<GamePiece color={'red'} rank={'4'} captured={true} game={this} key={4} />);
-		// this.state.captured.red.push(<GamePiece color={'red'} rank={'S'} captured={true} game={this} key={5} />);
-		// this.state.captured.red.push(<GamePiece color={'red'} rank={'9'} captured={true} game={this} key={5} />);
-		// this.state.captured.red.push(<GamePiece color={'red'} rank={'9'} captured={true} game={this} key={5} />);
 		this.startGame = this.startGame.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);

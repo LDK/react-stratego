@@ -22,14 +22,13 @@ class App extends React.Component {
 		this.state = {
 			currentUser: currentUser,
 			activeGame: null,
-			newGameFormOpen: false,
 			opponentSelectMode: 'past',
 			userSearch: '',
-			pastOpponents: [],
 			games: [],
 			requests: [],
 			invites: []
 		};
+		this.pastOpponents = [];
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
 		this.acceptInvite = this.acceptInvite.bind(this);
@@ -38,15 +37,21 @@ class App extends React.Component {
 		this.getGames = this.getGames.bind(this);
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
+		this.getUsernames = this.getUsernames.bind(this);
 		this.pollGames = this.pollGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
 
+		this.usernames = {};
+		this.usernameLookup = {};
+
 		this.getGames();
 		this.getInvites();
 		this.getRequests();
+		this.getPastOpponents();
+		this.getUsernames();
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
@@ -258,7 +263,6 @@ class App extends React.Component {
 	newGame(event){
 	}
 	openNewGameMenu(){
-		this.getPastOpponents();
 		this.newGameMenu.setState({ formOpen: true });
 		return;
 	}
@@ -591,7 +595,36 @@ class App extends React.Component {
 						opponents.push(oppEntry);
 					}
 				}
-				app.setState({ pastOpponents: opponents });
+				// app.setState({ pastOpponents: opponents });
+				app.pastOpponents = opponents;
+			});
+		});
+	}
+	getUsernames() {
+		if (!this.state.currentUser) {
+			return false;
+		}
+		var app = this;
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		var formData = new FormData();
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'usernames', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var users = JSON.parse(text);
+				app.usernames = users;
+				var usernameLookup = {};
+				for (var userId in users) {
+					usernameLookup[users[userId]] = userId;
+				}
+				app.usernameLookup = usernameLookup;
 			});
 		});
 	}

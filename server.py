@@ -362,6 +362,22 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     conn.close()
     return postRes
 
+  def getUserList(self,uid):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT id, username FROM `user`WHERE id <> '{id}' ORDER BY username ASC".format(id=uid)
+    c.execute(selectSql)
+    users = c.fetchall()
+    conn.close()
+    postRes = {}
+    
+    for user in users:
+        userId = user[0]
+        userName = user[1]
+        postRes[userId] = userName
+            
+    return postRes
+
   def getPastOpponents(self, uid):
     if not uid:
         return {}
@@ -715,6 +731,18 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         else:
             return
         postRes['id'] = gameId
+        self.respond(200)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        
+    elif (self.path == '/usernames'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        postRes = self.getUserList(uid)
         self.respond(200)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
 

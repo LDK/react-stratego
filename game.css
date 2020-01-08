@@ -435,3 +435,7 @@ a.button:active {
 .player-blue .text-opponent-color {
 	color: red !important;
 }
+
+.suggestions .suggestion-active {
+	background: #88BBCE;
+}

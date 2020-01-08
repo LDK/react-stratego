@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Modal from '../widgets/Modal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
+import Autosuggest from '../widgets/Autosuggest.js';
 
 class NewGameMenu extends React.Component {
 	constructor(props) {
@@ -9,7 +10,8 @@ class NewGameMenu extends React.Component {
 			opponentSelectMode: 'past',
 			userSearch: '',
 			formOpen: false,
-			opponentId: null
+			opponentId: null,
+			opponentFound: false
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.focusUserSearch = this.focusUserSearch.bind(this);
@@ -28,11 +30,20 @@ class NewGameMenu extends React.Component {
 			this.setState({opponentSelectMode: 'past' });
 		}
 	}
-	updateUserSearch(event) {
-		this.setState({userSearch: event.target.value});
+	updateUserSearch(value) {
+		var opponentId = this.props.app.usernameLookup[value] || null;
+		this.setState({
+			userSearch: value,
+			opponentId: opponentId,
+			opponentFound: !!opponentId
+		});
 	}
 	updatePastOpp(value) {
-		this.setState({opponentId: value});
+		var opponentId = parseInt(value) || null;
+		this.setState({ 
+			opponentId: opponentId, 
+			opponentFound: !!opponentId 
+		});
 	}
 	changeOpponentSelectMode(event) {
 		this.setState({opponentSelectMode: event.target.value});
@@ -51,14 +62,7 @@ class NewGameMenu extends React.Component {
 		formData.append('userKey',userKey);
 		var mode = this.state.opponentSelectMode;
 		var menu = this;
-		switch (mode) {
-			case 'past':
-				formData.append('opponent_id',opponentId);
-			break;
-			case 'name':
-				console.log("This doesn't work yet!");
-			break;
-		}
+		formData.append('opponent_id',opponentId);
 		window.fetch(app.gameServer+'new_game', {
 			method: 'POST', 
 			body: formData
@@ -74,17 +78,45 @@ class NewGameMenu extends React.Component {
 	}
 	render() {
 		var app = this.props.app;
+		var opponentIndicator = null;
+		if (this.state.opponentFound) {
+			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
+		}
 		var newGameForm = (
 			<form action={app.state.gameServer+"new_game"} onSubmit={this.handleSubmit}>
 				<h3 className="mb-2">Select an opponent!</h3>
-				<input type="radio" name="selectMode" className="float-left mr-3 mt-1" value="past" checked={this.state.opponentSelectMode == 'past'} onChange={this.changeOpponentSelectMode} />
 				<div onClick={() => this.focusPastOpps(true) }>
-					<DataBrowser label="Select from Past Opponents:" items={app.state.pastOpponents} view="select" id="userOpponentList" callback={this.updatePastOpp} />
+					<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
+						value="past" 
+						checked={this.state.opponentSelectMode == 'past'} 
+						onChange={this.changeOpponentSelectMode} 
+					/>
+					<DataBrowser 
+						label="Select from Past Opponents:" 
+						items={app.pastOpponents} 
+						view="select" 
+						id="userOpponentList" 
+						callback={this.updatePastOpp} 
+					/>
 				</div>
-				<input type="radio" name="selectMode" className="float-left mr-3 mt-1" value="name" checked={this.state.opponentSelectMode == 'name'} onChange={this.changeOpponentSelectMode} />
-				<input type="text" onClick={() => this.focusUserSearch(true) } value={this.state.userSearch} onChange={this.updateUserSearch} size="22" className="mr-2" name="nameSearch" placeholder="Username" />
-			<br />
-				<input type="submit" value="Submit" size="3" onClick={this.handleSubmit} />
+				<div onClick={() => this.focusUserSearch(true)} className="mr-2">
+					<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
+						value="name"
+						checked={this.state.opponentSelectMode == 'name'} 
+						onChange={this.changeOpponentSelectMode}
+					/>
+					<Autosuggest 
+						inputSize="22"
+						value={this.state.userSearch}
+						onSelect={this.updateUserSearch}
+						onChange={this.updateUserSearch}
+						inputName="nameSearch"
+						placeholder="Username"
+						suggestions={app.usernames ? Object.values(app.usernames) : []}
+					/>
+				</div>
+				{opponentIndicator}
+				<input type="submit" value="Submit" size="3" onClick={this.handleSubmit} disabled={!this.state.opponentId} />
 			</form>
 		);
 		if (!this.state.formOpen) {

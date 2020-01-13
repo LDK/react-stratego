@@ -147,7 +147,7 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		}
 	}
 	return (
-		<div ref={drop} className={"gameSpace-wrapper col "+spaceClass}>
+		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass}>
 			<div className="gameSpace-overlay"></div>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}

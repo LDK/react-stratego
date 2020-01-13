@@ -91,7 +91,7 @@ class Game extends React.Component {
 		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 pr-0 tileRack-col">
+				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col">
 					<TileRack game={this} app={app} />
 				</div>
 			);
@@ -100,7 +100,7 @@ class Game extends React.Component {
 			var turnLabel;
 			var turnClass;
 			if (this.state.turn) {
-				turnLabel = (<h6>Current Turn: {this.state.players[this.state.turn].name} </h6>);
+				turnLabel = (<h6 className="text-center mx-auto">Current Turn: <span className={"text-"+this.state.turn}>{this.state.players[this.state.turn].name}</span></h6>);
 				turnClass = ' turn-'+this.state.turn;
 			}
 			var captured = { red: [], blue: [] };
@@ -111,22 +111,22 @@ class Game extends React.Component {
 			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 pr-0 gameStatus-col text-center">
-					<h4 className="mx-auto d-block">Captured</h4>
-					<div className="row">
-						<div className="col-12 col-md-6">
+				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col text-center">
+					<h4 className="mx-auto d-block my-3">Captured</h4>
+					<div className="row no-gutters">
+						<div className="col-12 col-md-6 px-3">
 							<span className="text-red">
 								{this.state.players.red.name}
 							</span>
-							<div className="captured-tiles player-red">
+							<div className="captured-tiles player-red mt-3">
 								{captured.red.length ? captured.red : 'None'}
 							</div>
 						</div>
-						<div className="col-12 col-md-6">
+						<div className="col-12 col-md-6 px-3">
 							<span className="text-blue">
 								{this.state.players.blue.name}
 							</span>
-							<div className="captured-tiles player-blue">
+							<div className="captured-tiles player-blue mt-3">
 								{captured.blue.length ? captured.blue : 'None'}
 							</div>
 						</div>
@@ -142,7 +142,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 				<DndProvider backend={HTML5Backend}>
 					<div className="row">
-						<div className="col-12 col-md-8 col-lg-9 pr-0">
+						<div className="col-12 col-md-8 col-lg-9 px-0">
 							{gameBoard}
 						</div>
 						{rightPanel}

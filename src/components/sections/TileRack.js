@@ -71,10 +71,12 @@ class TileRack extends React.Component {
 			}
 		}
 		return (
-			<div className="tileRack row no-gutters">
-				{startButton}
-				{readyButton}
-				{this.tileSpaces()}
+			<div className="container-fluid px-0">
+				<div className="tileRack row no-gutters pl-5 pr-3 pl-md-3 pr-md-0">
+					{startButton}
+					{readyButton}
+					{this.tileSpaces()}
+				</div>
 			</div>
 		)
 	}

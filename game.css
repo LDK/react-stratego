@@ -275,9 +275,6 @@ a.button:active {
 	height: 100%;
 	background: var(--dark);
 }
-.tileRack-col {
-	height: 30rem;
-}
 .terrain-grass1 {
 	background-position-x: -2px;
 	background-position-y: -2px;
@@ -438,4 +435,65 @@ a.button:active {
 
 .suggestions .suggestion-active {
 	background: #88BBCE;
+}
+
+div.captured-tiles label {
+	position: relative;
+	font-size: .85rem;
+	top: -1rem;
+	left: 0rem;
+}
+
+@media (min-width: 576px) {
+	.xl-only {
+		display: none !important;
+	}
+}
+@media (min-width: 768px) {
+	.sm-down {
+		display: none !important;
+	}
+}
+@media (min-width: 992px) {
+	.tileRack-col {
+		height: 30rem;
+	}
+	.md-down {
+		display: none !important;
+	}
+} 
+@media (min-width: 1200px) {
+	.lg-down {
+		display: none !important;
+	}
+}
+@media (min-width: 1800px) {
+	.xl-down {
+		display: none !important;
+	}
+} 
+@media (max-width: 575px) {
+	.sm-up {
+		display: none !important;
+	}
+}
+@media (max-width: 767px) {
+	.md-up {
+		display: none !important;
+	}
+}
+@media (max-width: 991px) {
+	.lg-up {
+		display: none !important;
+	}
+}
+@media (max-width: 1199px) {
+	.xl-up {
+		display: none !important;
+	}
+}
+@media (max-width: 1799px) {
+	.hd-only {
+		display: none !important;
+	}
 }

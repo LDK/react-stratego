@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import GameBoard from './components/sections/GameBoard.js';
 import TileRack from './components/sections/TileRack.js';
 import GamePiece from './components/widgets/GamePiece.js';
+import OptionIndicator from './components/widgets/OptionIndicator.js';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import { useDrag } from 'react-dnd';
@@ -23,12 +24,15 @@ class Game extends React.Component {
 				red: {}
 			},
 			turn: props.turn || null,
+			placementMode: 'drag',
 			started: !!props.started,
 			status: props.status || 'pending',
 			attacks: props.attacks || 0,
 			last_attack: props.last_attack || {}
 		};
+		this.selectedRank =  null;
 		this.startGame = this.startGame.bind(this);
+		this.modeChange = this.modeChange.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);
 		if (props.captured) {
@@ -73,6 +77,10 @@ class Game extends React.Component {
 		}
 		this.setState({turn: turn});
 	}
+	modeChange(val) {
+		this.setState({ placementMode: val });
+		
+	}
 	render() {
 		var app = this.props.app;
 		if (this.props.id) {
@@ -91,8 +99,39 @@ class Game extends React.Component {
 		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col">
-					<TileRack game={this} app={app} />
+				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col order-1 order-md-2">
+					<div className="row no-gutters">
+						<OptionIndicator id="placementMode" className="col-12 px-0 lg-up" layout="horizontal" 
+							value={this.state.placementMode}
+							ulClass="text-center px-0 mb-0"
+							liClass="col-6 px-0 mx-2 pt-3 mx-auto"
+							labelClass="px-3"
+							options={[
+								{key: 'Drag & Drop', value: 'drag'},
+								{key: 'Quick Load', value: 'quick'},
+								{key: 'Click & Place', value: 'click'},
+								{key: 'Keyboard', value: 'keyboard'}
+							]} 
+							name="placementMode" label="Placement Mode" 
+							callback={this.modeChange} 
+						/>
+						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 md-down sm-up" layout="horizontal" 
+							value={this.state.placementMode}
+							ulClass="text-center px-0 mb-0 mt-3"
+							liClass="col-4 px-0 mx-2 pt-3 mx-auto"
+							labelClass="px-2"
+							options={[
+								{key: 'Drag & Drop', value: 'drag'},
+								{key: 'Quick Load', value: 'quick'},
+								{key: 'Tap & Place', value: 'click'}
+							]} 
+							name="placementMode" label="Placement Mode" 
+							callback={this.modeChange} 
+						/>
+						<div className="col-12 col-sm-8 col-md-12 mx-auto tileRack-col">
+							<TileRack game={this} app={app} />
+						</div>
+					</div>
 				</div>
 			);
 		}
@@ -142,7 +181,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 				<DndProvider backend={HTML5Backend}>
 					<div className="row">
-						<div className="col-12 col-md-8 col-lg-9 px-0">
+						<div className="col-12 col-md-8 col-lg-9 px-0 order-2 order-md-1">
 							{gameBoard}
 						</div>
 						{rightPanel}

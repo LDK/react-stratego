@@ -17,6 +17,15 @@ class GamePiece extends React.Component {
 			this.capture = capture || null;
 			this.defuse = defuse || false;
 		}
+		this.pieceClicked = this.pieceClicked.bind(this);
+	}
+	pieceClicked() {
+		if (this.props.placed) {
+			return;
+		}
+		else if (this.props.game && this.props.game.state.placementMode == 'click'){
+			this.props.game.selectedRank = this.props.rank;
+		}
 	}
 	render() {
 		var divClass = "gamePiece text-center " + (this.props.className || '');
@@ -31,7 +40,7 @@ class GamePiece extends React.Component {
 			wrapperClass += ' no-drag';
 		}
 		return (
-			<div className={wrapperClass}>
+			<div className={wrapperClass} onClick={this.pieceClicked}>
 				<div className={divClass + " " + this.props.color}>
 					{tileFace}
 				</div>
@@ -56,6 +65,11 @@ function DragPiece(props) {
 		}
 		// There has to be a user or else who's doing the dragging?
 		if (!game.props.app.state.currentUser || !game.props.app.state.currentUser.user_id) {
+			return false;
+		}
+		// We're in initial tile placement state but not in drag and drop mode
+		// Note this still allows for drag and drop swapping of already-placed tiles
+		if (!game.state.started && game.state.placementMode != 'drag' && !props.placed) {
 			return false;
 		}
 		// rv = return value

@@ -146,8 +146,20 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 			spaceClass = 'no-drop';
 		}
 	}
+	const handleClick = function(event) {
+		var rank = game.selectedRank;
+		var tileSpace = game.props.app.tileSpaces[rank];
+		if (!rank || !tileSpace || !game.state.selectMode == 'click') {
+			return;
+		}
+		var uid = parseInt(game.props.app.state.currentUser.user_id);
+		var starterUid = parseInt(game.props.starter);
+		var playerColor = (uid == starterUid) ? 'blue' : 'red';
+		var piece = { rank: rank, color: playerColor, tileSpace: tileSpace };
+		board.placePiece(piece, id, false);
+	}
 	return (
-		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass}>
+		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass} onClick={handleClick}>
 			<div className="gameSpace-overlay"></div>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}

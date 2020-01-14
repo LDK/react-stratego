@@ -1,7 +1,10 @@
-body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+body, html{
+	margin:0;
+	padding:0;
+	width: 100%;
 }
 body {
+	font: 14px "Century Gothic", Futura, sans-serif;
 	--blue-button: #3777c7;
 	--blue-shadow: #275797;
 	--blue-highlight: #6797c7;
@@ -237,12 +240,12 @@ a.button:active {
 }
 
 .gameSpace {
-	height: 3rem;
+	height: 3.5rem;
 	background: var(--midtone1);
 	border: 1px dashed var(--space-border);
 }
 .gameSpace-wrapper {
-	height: 3rem;
+	height: 3.5rem;
 	padding: 0;
 	margin: 0;
 	display: inline-block;
@@ -319,74 +322,67 @@ a.button:active {
 	display: block;
 	top: 0;
 	left: 0;
-	background-image: url('/img/stratego-pieces.png');
 	background-repeat: no-repeat;
+}
+.tileFace {
+	background-position-x: -2px;
+}
+.tileFace {
+	background-image: url('/img/stratego-pieces.png');
+}
+.gamePiece {
+	background-image: url('/img/stratego-piece-red.svg');
+	background-size: contain;
+}
+.gamePiece.blue {
+	background-image: url('/img/stratego-piece-blue.svg');
 }
 .tileFace {
 	left: -1px;
 	top: 1px;
 	position: absolute;
+	background-size: contain;
+	background-repeat: no-repeat;
 }
 .gamePiece {
-	background-position-x: -240px;
 	left: 5px;
 	position: relative;
 }
-.gamePiece.red {
-	background-position-x: -240px;
-	background-position-y: 0px;
-}
-.gamePiece.blue {
-	background-position-x: -240px;
-	background-position-y: -50px;
-}
 .tileFace.rank-B {
-	background-position-x: 0px;
-	background-position-y: 0px;
+	background-image: url('/img/facebomb.png');
 }
 .tileFace.rank-9 {
-	background-position-x: -40px;
-	background-position-y: 0px;
+	background-image: url('/img/face9.png');
 }
 .tileFace.rank-8 {
-	background-position-x: -80px;
-	background-position-y: 0px;
+	background-image: url('/img/face8.png');
 }
 .tileFace.rank-7 {
-	background-position-x: -120px;
-	background-position-y: 0px;
+	background-image: url('/img/face7.png');
 }
 .tileFace.rank-6 {
-	background-position-x: -160px;
-	background-position-y: 0px;
+	background-image: url('/img/face6.png');
 }
 .tileFace.rank-5 {
-	background-position-x: -200px;
-	background-position-y: 0px;
+	background-image: url('/img/face5.png');
 }
 .tileFace.rank-4 {
-	background-position-x: 0px;
-	background-position-y: -50px;
+	background-image: url('/img/face4.png');
 }
 .tileFace.rank-3 {
-	background-position-x: -40px;
-	background-position-y: -50px;
+	background-image: url('/img/face3.png');
 }
 .tileFace.rank-2 {
-	background-position-x: -80px;
-	background-position-y: -50px;
+	background-image: url('/img/face2.png');
 }
 .tileFace.rank-1 {
-	background-position-x: -120px;
-	background-position-y: -50px;
+	background-image: url('/img/face1.png');
 }
 .tileFace.rank-S {
-	background-position-x: -160px;
-	background-position-y: -50px;
+	background-image: url('/img/facespy.png');
 }
 .tileFace.rank-F {
-	background-position-x: -200px;
-	background-position-y: -50px;
+	background-image: url('/img/faceflag.png');
 }
 
 .link-list {
@@ -444,6 +440,10 @@ div.captured-tiles label {
 	left: 0rem;
 }
 
+.tileRack-col {
+	height: 10rem;
+}
+
 @media (min-width: 576px) {
 	.xl-only {
 		display: none !important;
@@ -453,11 +453,14 @@ div.captured-tiles label {
 	.sm-down {
 		display: none !important;
 	}
+	.tileRack-col {
+		height: 27rem;
+	}
+	#placementMode {
+		height: 8rem;
+	}
 }
 @media (min-width: 992px) {
-	.tileRack-col {
-		height: 30rem;
-	}
 	.md-down {
 		display: none !important;
 	}
@@ -496,4 +499,95 @@ div.captured-tiles label {
 	.hd-only {
 		display: none !important;
 	}
+}
+
+@media (max-width: 320px) {
+	.gameSpace-wrapper, .gameSpace {
+		height: 2rem;
+	}
+	.gamePiece,
+	.tileFace {
+		width: 2rem;
+		height: 2rem;
+	}
+	.gameBoard .gamePiece {
+		left: -.67rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.gameSpace-wrapper, .gameSpace {
+		height: 2.5rem;
+	}
+	.gamePiece,
+	.tileFace {
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+	.gameBoard .gamePiece {
+		left: -.33rem;
+	}
+}
+
+/* The optionIndicator */
+.optionIndicator ul li {
+	list-style-type: none;
+	break-inside: avoid;
+  display: inline-block;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/* Hide the browser's default radio button */
+.optionIndicator ul li label input {
+  position: absolute;
+  opacity: 0;
+}
+.optionIndicator ul li label {
+  font-size: .8rem;
+}
+/* Create a custom radio button */
+.optionIndicator ul li label .checkmark {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 4px);
+  height: 8px;
+  width: 8px;
+  background-color: #6a6a6a;
+  border-radius: 50%;
+}
+.optionIndicator ul.vertical li label .checkmark {
+	left: auto;
+	right: auto;
+	text-align: center;
+	margin-left: -1rem;
+}
+.optionIndicator ul.vertical li {
+	margin-left: 0rem !important;
+	margin-right: 0rem !important;
+	width: 100%;
+}
+/* When the radio button is checked, add a blue background */
+.optionIndicator ul li label input:checked ~ .checkmark {
+	background-color: var(--disabled-light);
+}
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.optionIndicator ul li label .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+/* Show the indicator (dot/circle) when checked */
+.optionIndicator ul li label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.optionIndicator ul li label .checkmark:after {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--disabled-light);
 }

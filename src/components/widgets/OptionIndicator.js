@@ -9,6 +9,7 @@ class OptionIndicator extends React.Component {
 			label: props.label || '',
 			layout: props.layout || 'horizontal'
 		};
+		this.onKeyDown = this.onKeyDown.bind(this);
 	}
 	callback(event) {
 		var val = event.currentTarget.value;
@@ -17,6 +18,11 @@ class OptionIndicator extends React.Component {
 			this.props.callback(event.currentTarget.value);
 		}
 		this.render();
+	}
+	onKeyDown (e) {
+		if (this.props.disableArrows) {
+			e.preventDefault();
+		}
 	}
 	render() {
 		var props = this.props;
@@ -35,7 +41,7 @@ class OptionIndicator extends React.Component {
 		var listClass = props.ulClass + " " + layout;
 		var wrapperClass = "optionIndicator text-center" +  (props.disabled ? ' disabled ' : ' ') + (this.props.className || '');
 		return (
-			<div className={wrapperClass} id={props.id}>
+			<div className={wrapperClass} id={props.id} onKeyDown={this.onKeyDown}>
 				<label>{this.state.label}</label>
 				<ul className={listClass}>
 					{radios}

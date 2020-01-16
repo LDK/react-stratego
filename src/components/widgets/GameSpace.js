@@ -147,19 +147,28 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		}
 	}
 	const handleClick = function(event) {
-		var rank = game.selectedRank;
-		var tileSpace = game.props.app.tileSpaces[rank];
-		if (!rank || !tileSpace || !game.state.selectMode == 'click') {
-			return;
+		if (game.state.placementMode == 'click') {
+			var rank = game.selectedRank;
+			var tileSpace = game.props.app.tileSpaces[rank];
+			if (!rank || !tileSpace) {
+				return;
+			}
+			var uid = parseInt(game.props.app.state.currentUser.user_id);
+			var starterUid = parseInt(game.props.starter);
+			var playerColor = (uid == starterUid) ? 'blue' : 'red';
+			var piece = { rank: rank, color: playerColor, tileSpace: tileSpace };
+			board.placePiece(piece, id, false);
 		}
-		var uid = parseInt(game.props.app.state.currentUser.user_id);
-		var starterUid = parseInt(game.props.starter);
-		var playerColor = (uid == starterUid) ? 'blue' : 'red';
-		var piece = { rank: rank, color: playerColor, tileSpace: tileSpace };
-		board.placePiece(piece, id, false);
+		else if (game.state.placementMode == 'keyboard') {
+			board.selectSpace(id);
+		}
+	}
+	var highlightClass = '';
+	if (!game.state.started && game.state.placementMode == 'keyboard' && board.state.selectedSpace == id) {
+		highlightClass = ' selectedSpace';
 	}
 	return (
-		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass} onClick={handleClick}>
+		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+highlightClass} onClick={handleClick}>
 			<div className="gameSpace-overlay"></div>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}

@@ -2,6 +2,7 @@ body, html{
 	margin:0;
 	padding:0;
 	width: 100%;
+	overflow: hidden;
 }
 body {
 	font: 14px "Century Gothic", Futura, sans-serif;
@@ -273,6 +274,9 @@ a.button:active {
 }
 .gameSpace-wrapper.no-drop .gameSpace-overlay {
 	background-color: black;
+}
+.selectedSpace .gameSpace-overlay {
+	background-color: white;
 }
 .tileRack {
 	height: 100%;
@@ -590,4 +594,8 @@ div.captured-tiles label {
 	height: 8px;
 	border-radius: 50%;
 	background: var(--disabled-light);
+}
+
+.app-wrapper {
+	height: 100%
 }

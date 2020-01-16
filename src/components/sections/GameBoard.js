@@ -3,12 +3,15 @@ import DropSpace from '../widgets/GameSpace.js';
 import DragPiece from '../widgets/GamePiece.js';
 import Modal from '../widgets/Modal.js';
 import { PIECES } from '../Helpers.js';
+import { xyToId } from '../Helpers.js';
+import { idToXy } from '../Helpers.js';
 
 class GameBoard extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			spaces: {},
+			selectedSpace: 1,
 			battleContent: (
 				<div className="row">
 					<h3 className="col-12 text-center">Attacking...</h3>
@@ -22,6 +25,8 @@ class GameBoard extends React.Component {
 		this.gameSpaceRows = this.gameSpaceRows.bind(this);
 		this.placePiece = this.placePiece.bind(this);
 		this.emptySpace = this.emptySpace.bind(this);
+		this.resetSpace = this.resetSpace.bind(this);
+		this.placementArrowMove = this.placementArrowMove.bind(this);
 		this.openBattleModal = this.openBattleModal.bind(this);
 		this.closeBattleModal = this.closeBattleModal.bind(this);
 		this.getBattleContent = this.getBattleContent.bind(this);
@@ -61,6 +66,54 @@ class GameBoard extends React.Component {
 			players[app.tileRack.playerColor].soldiers = soldiers;
 			game.setState({ players: players });
 		}
+	}
+	placementArrowMove(keyCode) {
+		var { x, y } = idToXy(this.state.selectedSpace);
+		switch (keyCode) {
+			case 37:
+				// Left Arrow
+				x = Math.max(1,x-1);
+			break;
+			case 38:
+				// Up Arrow
+				y = Math.max(1,y-1);
+			break;
+			case 39:
+				// Right Arrow
+				x = Math.min(10,x+1);
+			break;
+			case 40:
+				// Down Arrow
+				y = Math.min(10,y+1);
+			break;
+		}
+		var spaceId = xyToId(x,y);
+		this.selectSpace(spaceId);
+	}
+	placeByKeyboard(rank) {
+		var app = this.props.app;
+		var spaceId = parseInt(this.state.selectedSpace);
+		var playerColor = app.tileRack.playerColor;
+		var targetSpace = app.tileSpaces[rank];
+		rank = rank.toUpperCase();
+		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
+	}
+	selectSpace(id) {
+		var playerColor = this.props.app.tileRack.playerColor;
+		var placementMinY = (playerColor == 'red') ? 1 : 7;
+		var placementMaxY = (playerColor == 'red') ? 4 : 10;
+		var minId = xyToId(1,placementMinY);
+		var maxId = xyToId(10,placementMaxY);
+		var oldSelected = parseInt(this.state.selectedSpace) || 1;
+		if (id < minId) {
+			id = Math.max(oldSelected,minId);
+		}
+		if (id > maxId) {
+			id = Math.min(oldSelected,maxId);
+		}
+		this.setState({ selectedSpace: id });
+		this.resetSpace(id);
+		this.resetSpace(oldSelected);
 	}
 	openBattleModal() {
 		this.setState({ battleModalOpen: true });
@@ -308,6 +361,12 @@ class GameBoard extends React.Component {
 		if (!loading && !battle) {
 			app.saveActiveGame();
 		}
+	}
+	resetSpace(id) {
+		var spaces = this.state.spaces;
+		var space = spaces[id];
+		spaces[id] = this.renderGameSpace(space.props.y,space.props.x,id,space.props.children);
+		this.setState({ spaces: spaces })
 	}
 	gameSpaceRow(row,start,end,colSize) {
 		var offset = (row - 1) * (colSize || 10);

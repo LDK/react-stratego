@@ -8,6 +8,8 @@ import Cookies from 'universal-cookie';
 import HTML5Backend from 'react-dnd-html5-backend';
 import DataBrowser from './components/widgets/DataBrowser.js';
 import {PIECES} from './components/Helpers.js';
+import {keyCodes} from './components/Helpers.js';
+import Hotkeys from 'react-hot-keys';
 
 class App extends React.Component {
 	constructor(props) {
@@ -43,6 +45,12 @@ class App extends React.Component {
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
+
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.keyCodeLookup = {};
+		for (var key in keyCodes) {
+			this.keyCodeLookup[keyCodes[key]] = key;
+		}
 
 		this.usernames = {};
 		this.usernameLookup = {};
@@ -652,13 +660,49 @@ class App extends React.Component {
 			return this.preLoginBody();
 		}
 	}
+	onKeyDown (e) {
+		if (!e.keyCode) { return; }
+		switch (e.keyCode) {
+			// Arrow Keys
+			case 37:
+			case 38:
+			case 39:
+			case 40:
+				if (this.gameRef) {
+					var game = this.gameRef;
+					if (!game.state.started && game.state.placementMode == 'keyboard') {
+						this.gameBoard.placementArrowMove(e.keyCode);
+					}
+				}
+			break;
+			case keyCodes['1']:
+			case keyCodes['2']:
+			case keyCodes['3']:
+			case keyCodes['4']:
+			case keyCodes['5']:
+			case keyCodes['6']:
+			case keyCodes['7']:
+			case keyCodes['8']:
+			case keyCodes['9']:
+			case keyCodes['s']:
+			case keyCodes['b']:
+			case keyCodes['f']:
+				if (this.gameRef) {
+					var game = this.gameRef;
+					if (!game.state.started && game.state.placementMode == 'keyboard') {
+						this.gameBoard.placeByKeyboard(this.keyCodeLookup[e.keyCode]);
+					}
+				}
+			break;
+		}
+	}
 	render() {
 		const body = this.getBody();
 		return (
-			<div className="app-wrapper p-0 m-0">
-				<Navigation app={this} loginCallback={this.setCurrentUser} logoutCallback={this.logUserOut} />
-				{body}
-			</div>
+				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
+					<Navigation app={this} loginCallback={this.setCurrentUser} logoutCallback={this.logUserOut} />
+					{body}
+				</div>
 		);
 	}
 }

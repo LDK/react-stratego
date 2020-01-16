@@ -79,7 +79,9 @@ class Game extends React.Component {
 	}
 	modeChange(val) {
 		this.setState({ placementMode: val });
-		
+		if (val == 'keyboard') {
+			this.props.app.gameBoard.selectSpace(1);
+		}
 	}
 	render() {
 		var app = this.props.app;
@@ -103,6 +105,7 @@ class Game extends React.Component {
 					<div className="row no-gutters">
 						<OptionIndicator id="placementMode" className="col-12 px-0 lg-up" layout="horizontal" 
 							value={this.state.placementMode}
+							disableArrows={true}
 							ulClass="text-center px-0 mb-0"
 							liClass="col-6 px-0 mx-2 pt-3 mx-auto"
 							labelClass="px-3"
@@ -117,6 +120,7 @@ class Game extends React.Component {
 						/>
 						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 md-down sm-up" layout="horizontal" 
 							value={this.state.placementMode}
+							disableArrows={true}
 							ulClass="text-center px-0 mb-0 mt-3"
 							liClass="col-4 px-0 mx-2 pt-3 mx-auto"
 							labelClass="px-2"

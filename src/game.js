@@ -33,6 +33,7 @@ class Game extends React.Component {
 		this.selectedRank =  null;
 		this.startGame = this.startGame.bind(this);
 		this.modeChange = this.modeChange.bind(this);
+		this.openQuickLoadModal = this.openQuickLoadModal.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);
 		if (props.captured) {
@@ -83,6 +84,10 @@ class Game extends React.Component {
 			this.props.app.gameBoard.selectSpace(1);
 		}
 	}
+	openQuickLoadModal() {
+		var app = this.props.app;
+		app.QuickLoadMenu.setState({ formOpen: true });
+	}
 	render() {
 		var app = this.props.app;
 		if (this.props.id) {
@@ -111,7 +116,7 @@ class Game extends React.Component {
 							labelClass="px-2 px-md-3"
 							options={[
 								{key: 'Drag & Drop', value: 'drag'},
-								{key: 'Quick Load', value: 'quick'},
+								{key: 'Quick Load', value: 'quick', onSelect: this.openQuickLoadModal},
 								{key: 'Tap & Place', value: 'click', className: 'md-down'},
 								{key: 'Click & Place', value: 'click', className: 'lg-up'},
 								{key: 'Keyboard', value: 'keyboard', className: 'lg-up'}

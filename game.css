@@ -155,38 +155,6 @@ a.button:active {
 .text-white {
 	color: white !important;
 }
-.dropZone {
-	height: 72px;
-	width: 100%;
-	background-color: var(--green-grey);
-	border: 2px dashed var(--green-light);
-/*	border-radius: 50%;*/
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	font-size: 12px;
-}
-.dropZone .icon {
-	opacity: 0.3;
-	height: 48px;
-	width: 64px;
-	position: relative;
-	top: -3px;
-	margin-bottom: -5px;
-}
-.dropZone.waveform .icon {
-	opacity: 1;
-}
-.dropZone .fileInput {
-	display: none;
-}
-.dropZone.highlight,
-.dropZone:hover {
-	background-color: var(--green-light);
-	border: 2px dashed  var(--green-dark);
-}
-
 .navigation.row {
 	background: var(--darker);
 	color: white;
@@ -446,6 +414,15 @@ div.captured-tiles label {
 
 .tileRack-col {
 	height: 10rem;
+}
+
+.preview-square {
+	width: 10%;
+	display: inline-block;
+	background: forestgreen;
+	height: 3.5rem;
+	background: var(--midtone1);
+	border: 1px dashed var(--space-border);
 }
 
 @media (min-width: 576px) {

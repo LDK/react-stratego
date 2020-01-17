@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
+import QuickLoadMenu from './components/menus/QuickLoad.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
@@ -645,7 +646,7 @@ class App extends React.Component {
 				<DataBrowser label="Active Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={app.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: app.acceptInvite},{label: 'decline', action: app.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />
-				<input type="button" value="New Game" onClick={this.openNewGameMenu} />
+				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);
 	}
@@ -698,9 +699,11 @@ class App extends React.Component {
 	}
 	render() {
 		const body = this.getBody();
+		const quickLoadForm = <QuickLoadMenu app={this} />;
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} loginCallback={this.setCurrentUser} logoutCallback={this.logUserOut} />
+					{quickLoadForm}
 					{body}
 				</div>
 		);

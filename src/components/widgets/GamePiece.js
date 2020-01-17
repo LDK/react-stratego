@@ -28,7 +28,7 @@ class GamePiece extends React.Component {
 		}
 	}
 	render() {
-		var divClass = "gamePiece text-center " + (this.props.className || '');
+		var divClass = "gamePiece text-center mx-auto" + (this.props.className || '');
 		var wrapperClass = "gamePiece-wrapper " + (this.props.wrapperClass || '');
 		wrapperClass = wrapperClass.trim();
 		divClass = divClass.trim();

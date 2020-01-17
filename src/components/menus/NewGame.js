@@ -77,6 +77,9 @@ class NewGameMenu extends React.Component {
 		});
 	}
 	render() {
+		if (!this.state.formOpen) {
+			return null;
+		}
 		var app = this.props.app;
 		var opponentIndicator = null;
 		if (this.state.opponentFound) {
@@ -119,9 +122,6 @@ class NewGameMenu extends React.Component {
 				<input type="submit" value="Submit" size="3" onClick={this.handleSubmit} disabled={!this.state.opponentId} />
 			</form>
 		);
-		if (!this.state.formOpen) {
-			return null;
-		}
 		return (
 		<Modal 
 			id="newGame-modal"

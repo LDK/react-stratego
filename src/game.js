@@ -103,31 +103,18 @@ class Game extends React.Component {
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col order-1 order-md-2">
 					<div className="row no-gutters">
-						<OptionIndicator id="placementMode" className="col-12 px-0 lg-up" layout="horizontal" 
+						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 sm-up" layout="horizontal" 
 							value={this.state.placementMode}
 							disableArrows={true}
-							ulClass="text-center px-0 mb-0"
-							liClass="col-6 px-0 mx-2 pt-3 mx-auto"
-							labelClass="px-3"
+							ulClass="text-center px-0 mt-3 mt-sm-0 mb-0"
+							liClass="col-4 col-md-6 px-0 mx-2 pt-3 mx-auto"
+							labelClass="px-2 px-md-3"
 							options={[
 								{key: 'Drag & Drop', value: 'drag'},
 								{key: 'Quick Load', value: 'quick'},
-								{key: 'Click & Place', value: 'click'},
-								{key: 'Keyboard', value: 'keyboard'}
-							]} 
-							name="placementMode" label="Placement Mode" 
-							callback={this.modeChange} 
-						/>
-						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 md-down sm-up" layout="horizontal" 
-							value={this.state.placementMode}
-							disableArrows={true}
-							ulClass="text-center px-0 mb-0 mt-3"
-							liClass="col-4 px-0 mx-2 pt-3 mx-auto"
-							labelClass="px-2"
-							options={[
-								{key: 'Drag & Drop', value: 'drag'},
-								{key: 'Quick Load', value: 'quick'},
-								{key: 'Tap & Place', value: 'click'}
+								{key: 'Tap & Place', value: 'click', className: 'md-down'},
+								{key: 'Click & Place', value: 'click', className: 'lg-up'},
+								{key: 'Keyboard', value: 'keyboard', className: 'lg-up'}
 							]} 
 							name="placementMode" label="Placement Mode" 
 							callback={this.modeChange} 

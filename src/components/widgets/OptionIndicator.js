@@ -21,7 +21,8 @@ class OptionIndicator extends React.Component {
 	}
 	onKeyDown (e) {
 		if (this.props.disableArrows) {
-			e.preventDefault();
+			if (e.keyCode < 41 && e.keyCode > 36)
+				e.preventDefault();
 		}
 	}
 	render() {
@@ -30,7 +31,7 @@ class OptionIndicator extends React.Component {
 		var cb = this.callback;
 		var layout = state.layout;
 		const radios = this.props.options.map((opt,i) => 
-			<li className={props.liClass} key={i}>
+			<li className={props.liClass+" "+opt.className} key={i}>
 				<label className={props.labelClass}>{opt.key}
 					<input type="radio" defaultChecked={opt.value === state.value}
 					tabIndex="-1" value={opt.value} name={props.name} disabled={props.disabled} onClick={cb} />

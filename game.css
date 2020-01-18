@@ -576,3 +576,14 @@ div.captured-tiles label {
 .app-wrapper {
 	height: 100%
 }
+
+.modal-container a.close-button {
+	position: absolute !important;
+	right: 1rem;
+	background: none !important;
+	box-shadow: none !important;
+	top: 1rem;
+	font-weight: 700;
+	font-size: 1.5rem;
+	left: unset;
+}

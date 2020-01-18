@@ -68,12 +68,32 @@ class QuickLoadMenu extends React.Component {
 				var row4 = layoutTiles.slice(0,10);
 				layoutTiles = row1.concat(row2).concat(row3).concat(row4);
 			}
+			var barrierTiles = [3,4,7,8];
+			var barrierSquares = [];
+			for (var i = 1;i<11;i++) {
+				var obstacle = '';
+				if (barrierTiles.indexOf(i) != -1) {
+					obstacle = 'X';
+				}
+				barrierSquares.push(
+					<div className="preview-square text-center" key={i-11}>
+						{obstacle}
+					</div>
+				);
+			}
 			const squares = layoutTiles.map((rank,i) => 
 				<div className="preview-square" key={i}>
 					<DragPiece color={tilerack.playerColor} rank={rank} placed={true} className="" />
 				</div>
-			);
-			layoutPreview = (<div className="row">{squares}</div>);
+			)
+			var grid;
+			if (tilerack.playerColor == 'red') {
+				grid = squares.concat(barrierSquares);
+			}
+			else {
+				grid = barrierSquares.concat(squares);
+			}
+			layoutPreview = (<div className="row">{grid}</div>);
 		}
 		var displayClass = null;
 		if (!this.state.selected) {

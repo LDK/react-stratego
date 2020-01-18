@@ -92,11 +92,11 @@ class GameBoard extends React.Component {
 		this.selectSpace(spaceId);
 	}
 	placeByKeyboard(rank) {
+		rank = rank.toUpperCase();
 		var app = this.props.app;
 		var spaceId = parseInt(this.state.selectedSpace);
 		var playerColor = app.tileRack.playerColor;
 		var targetSpace = app.tileSpaces[rank];
-		rank = rank.toUpperCase();
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
 	}
 	selectSpace(id) {

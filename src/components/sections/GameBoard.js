@@ -268,8 +268,10 @@ class GameBoard extends React.Component {
 		var playerColor = app.tileRack.playerColor;
 		for (var id in spaces) {
 			var space = spaces[id];
-			var newSpace = this.renderGameSpace(space.props.y,space.props.x,id);
-			spaces[id] = newSpace;
+			if (space.props.occupied && space.props.children && space.props.children.props.color == playerColor) {
+				var newSpace = this.renderGameSpace(space.props.y,space.props.x,id);
+				spaces[id] = newSpace;
+			}
 		}
 		this.setState({ spaces: spaces });
 		app.tileRack.resetCounts();

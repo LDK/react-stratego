@@ -41,6 +41,9 @@ class OptionIndicator extends React.Component {
 		);
 		var listClass = props.ulClass + " " + layout;
 		var wrapperClass = "optionIndicator text-center" +  (props.disabled ? ' disabled ' : ' ') + (this.props.className || '');
+		if (props.hidden) {
+			wrapperClass += ' d-none';
+		}
 		return (
 			<div className={wrapperClass} id={props.id} onKeyDown={this.onKeyDown}>
 				<label>{this.state.label}</label>

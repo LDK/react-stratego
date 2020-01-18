@@ -15,15 +15,31 @@ class QuickLoadMenu extends React.Component {
 		};
 		this.selectPreset = this.selectPreset.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		props.app.QuickLoadMenu = this;
+		this.closeMenu = this.closeMenu.bind(this);
+		props.app.gameBoard.QuickLoadMenu = this;
 		this.layoutLookup = {};
+		this.previousMode = 'drag';
 		for (var i in layouts) {
 			this.layoutLookup[layouts[i].id] = i;
 		}
 	}
-	handleSubmit(event) {
-		event.preventDefault();
+	handleSubmit(tiles) {
 		var app = this.props.app;
+		var game = this.props.game;
+		var playerColor = app.tileRack.playerColor;
+		app.gameBoard.clearBoard();
+		for (var i in tiles) {
+			var rank = tiles[i];
+			i = parseInt(i);
+			var targetSpace = app.tileSpaces[rank];
+			app.gameBoard.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, i+1, true);
+		}
+		game.setState({placementMode: this.previousMode});
+		this.closeMenu();
+		app.saveActiveGame();
+	}
+	closeMenu() {
+		this.setState({ formOpen: false });
 	}
 	selectPreset(value){
 		this.setState({selected: value});
@@ -33,6 +49,7 @@ class QuickLoadMenu extends React.Component {
 			return null;
 		}
 		var app = this.props.app;
+		var game = this.props.game;
 		var tilerack = app.tileRack;
 		var layout = [];
 		var layoutPreview = '';
@@ -57,21 +74,21 @@ class QuickLoadMenu extends React.Component {
 					callback={this.selectPreset} 
 				/>
 				{layoutPreview}
-				<button onClick={this.handleSubmit} value="Load Preset" />
+				<a className="button mx-auto my-3" tabIndex="-1" onClick={() => this.handleSubmit(layoutTiles)}>Load Preset</a>
 			</div>
 		);
 		if (!this.state.formOpen) {
 			return null;
 		}
 		return (
-			<DndProvider backend={HTML5Backend}>
-				<Modal 
-					id="quickLoad-modal"
-					content={presetSelector}
-					open={true}
-					additionalClasses={"p-5 text-black w-75"}
-				/>
-			</DndProvider>
+			<Modal 
+				id="quickLoad-modal"
+				content={presetSelector}
+				closeButton={true}
+				closeCallback={this.closeMenu}
+				open={true}
+				additionalClasses={"p-5 text-black w-75"}
+			/>
 		);
 	}
 }

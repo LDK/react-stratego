@@ -88,10 +88,13 @@ class Game extends React.Component {
 		if (val == 'keyboard') {
 			this.props.app.gameBoard.selectSpace(1);
 		}
+		if (val != 'quick') {
+			this.props.app.gameBoard.QuickLoadMenu.previousMode = val;
+		}
 	}
 	openQuickLoadModal() {
 		var app = this.props.app;
-		app.QuickLoadMenu.setState({ formOpen: true });
+		app.gameBoard.QuickLoadMenu.setState({ formOpen: true });
 	}
 	render() {
 		var app = this.props.app;
@@ -118,6 +121,7 @@ class Game extends React.Component {
 							disableArrows={true}
 							ulClass="text-center px-0 mt-3 mt-sm-0 mb-0"
 							liClass="col-4 col-md-6 px-0 mx-2 pt-3 mx-auto"
+							disabled={this.state.players[playerColor].ready}
 							labelClass="px-2 px-md-3"
 							options={[
 								{key: 'Drag & Drop', value: 'drag'},

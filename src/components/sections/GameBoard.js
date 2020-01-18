@@ -5,6 +5,7 @@ import Modal from '../widgets/Modal.js';
 import { PIECES } from '../Helpers.js';
 import { xyToId } from '../Helpers.js';
 import { idToXy } from '../Helpers.js';
+import QuickLoadMenu from '../menus/QuickLoad.js';
 
 class GameBoard extends React.Component {
 	constructor(props) {
@@ -122,6 +123,9 @@ class GameBoard extends React.Component {
 		this.setState({ battleModalOpen: false });
 	}
 	getBattleContent(result) {
+		if (!result || !result.attack_rank) {
+			return null;
+		}
 		var app = this.props.app;
 		var game = this.props.game;
 		var attackRank = PIECES[result.attack_rank].name;
@@ -257,6 +261,18 @@ class GameBoard extends React.Component {
 		spaces[id] = newSpace;
 		this.setState({ spaces: spaces });
 		return newSpace;
+	}
+	clearBoard() {
+		var spaces = this.state.spaces;
+		var app = this.props.app;
+		var playerColor = app.tileRack.playerColor;
+		for (var id in spaces) {
+			var space = spaces[id];
+			var newSpace = this.renderGameSpace(space.props.y,space.props.x,id);
+			spaces[id] = newSpace;
+		}
+		this.setState({ spaces: spaces });
+		app.tileRack.resetCounts();
 	}
 	// 'id' in placePiece refers to the board square id
 	placePiece(pieceInfo,id,loading) {
@@ -397,9 +413,10 @@ class GameBoard extends React.Component {
 	}
 	render() {
 		var game = this.props.game;
-		var app = game.app;
+		var app = this.props.app;
 		return (
 			<div className="gameBoard">
+				<QuickLoadMenu app={app} game={game} />
 				<Modal
 					closeButton={true}
 					closeCallback={this.closeBattleModal}

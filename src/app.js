@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
-import QuickLoadMenu from './components/menus/QuickLoad.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
@@ -699,11 +698,9 @@ class App extends React.Component {
 	}
 	render() {
 		const body = this.getBody();
-		const quickLoadForm = <QuickLoadMenu app={this} />;
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} loginCallback={this.setCurrentUser} logoutCallback={this.logUserOut} />
-					{quickLoadForm}
 					{body}
 				</div>
 		);

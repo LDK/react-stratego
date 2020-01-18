@@ -8,8 +8,9 @@ class TileRack extends React.Component {
 		this.remaining = props.remaining || 40;
 		this.spaces = {};
 		this.renderTileSpace = this.renderTileSpace.bind(this);
-		this.tileSpaces = this.tileSpaces.bind(this);		
-		this.setReady = this.setReady.bind(this);		
+		this.tileSpaces = this.tileSpaces.bind(this);
+		this.setReady = this.setReady.bind(this);
+		this.resetCounts = this.resetCounts.bind(this);
 		this.app = props.app;
 		this.app.tileSpaces = {};
 		this.app.tileRack = this;
@@ -25,6 +26,15 @@ class TileRack extends React.Component {
 	}
 	renderTileSpace(key) {
 		return <TileSpace id={"tileSpace-"+key} rack={this} key={key} rank={key} game={this.props.game} />;
+	}
+	resetCounts() {
+		var app = this.props.app;
+		this.remaining = 40;
+		this.setState({allPlaced: false});
+		for (var rank in PIECES) {
+			app.tileSpaces[rank].remaining = PIECES[rank].count;
+			app.tileSpaces[rank].setState({remaining: PIECES[rank].count});
+		}
 	}
 	tileSpaces() {
 		var spaces = [];

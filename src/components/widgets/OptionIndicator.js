@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactTooltip from 'react-tooltip';
 
 class OptionIndicator extends React.Component {
 	constructor(props) {
@@ -31,7 +32,7 @@ class OptionIndicator extends React.Component {
 		var cb = this.callback;
 		var layout = state.layout;
 		const radios = this.props.options.map((opt,i) => 
-			<li className={props.liClass+" "+opt.className} key={i} onClick={opt.onSelect}>
+			<li className={props.liClass+" "+opt.className} key={i} onClick={opt.onSelect} data-tip={opt.tooltip}>
 				<label className={props.labelClass}>{opt.key}
 					<input type="radio" defaultChecked={opt.value === state.value}
 					tabIndex="-1" value={opt.value} name={props.name} disabled={props.disabled} onClick={cb} />
@@ -50,6 +51,7 @@ class OptionIndicator extends React.Component {
 				<ul className={listClass}>
 					{radios}
 				</ul>
+				<ReactTooltip />
 			</div>
 		)
 	}

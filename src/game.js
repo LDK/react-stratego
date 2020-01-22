@@ -5,6 +5,7 @@ import GameBoard from './components/sections/GameBoard.js';
 import TileRack from './components/sections/TileRack.js';
 import GamePiece from './components/widgets/GamePiece.js';
 import OptionIndicator from './components/widgets/OptionIndicator.js';
+import ReactTooltip from 'react-tooltip';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import { useDrag } from 'react-dnd';
@@ -124,11 +125,11 @@ class Game extends React.Component {
 							disabled={this.state.players[playerColor].ready}
 							labelClass="px-2 px-md-3"
 							options={[
-								{key: 'Drag & Drop', value: 'drag'},
-								{key: 'Quick Load', value: 'quick', onSelect: this.openQuickLoadModal},
-								{key: 'Tap & Place', value: 'click', className: 'md-down'},
-								{key: 'Click & Place', value: 'click', className: 'lg-up'},
-								{key: 'Keyboard', value: 'keyboard', className: 'lg-up'}
+								{key: 'Drag & Drop', value: 'drag', tooltip: 'Drag & drop tiles from the rack to the board'},
+								{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: this.openQuickLoadModal},
+								{key: 'Tap & Place', value: 'click', className: 'md-down', tooltip: 'Tap the tile on the rack you want to place, then tap the space(s) where you want to place it'},
+								{key: 'Click & Place', value: 'click', className: 'lg-up', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
+								{key: 'Keyboard', value: 'keyboard', className: 'lg-up', tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'}
 							]} 
 							name="placementMode" label="Placement Mode" 
 							callback={this.modeChange} 

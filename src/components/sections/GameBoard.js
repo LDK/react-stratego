@@ -361,6 +361,7 @@ class GameBoard extends React.Component {
 					return;
 				}
 				else if (occupantInfo.color == color) {
+					this.props.app.tileSpaces[occupantInfo.rank].setState({remaining: this.props.app.tileSpaces[occupantInfo.rank].remaining+1});
 					this.props.app.tileSpaces[occupantInfo.rank].remaining++;
 				}
 			}

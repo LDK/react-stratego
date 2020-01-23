@@ -402,7 +402,7 @@ class GameBoard extends React.Component {
 			gameSpaces.push(newSpace);
 		}
 		return (
-			<div className="row no-gutters" key={row}>
+			<div className="gameSpaceRow text-center" key={row}>
 				{gameSpaces}
 			</div>
 		);

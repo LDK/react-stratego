@@ -15,6 +15,7 @@ body {
 	--green-light: #d7f7e7;
 	--green-grey: #97B797;
 	--green-dark: #174717;
+	--green-darker: #063606;
 	--white: #f7f7f7;
 	--red-button: rgb(199,55,55);
 	--red-button-glow: rgba(255,111,111,.5);
@@ -208,17 +209,26 @@ a.button:active {
 	pointer-events: auto;
 }
 
-.gameSpace {
-	height: 3.5rem;
+.gameSpace.col, .gameSpace {
+	height: 4rem;
+	width: 4rem;
 	background: var(--midtone1);
 	border: 1px dashed var(--space-border);
-}
-.gameSpace-wrapper {
-	height: 3.5rem;
 	padding: 0;
 	margin: 0;
+}
+.gameSpace-wrapper.col, .gameSpace-wrapper {
+	height: 4rem;
+	width: 4rem;
 	display: inline-block;
 	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+.gameSpace-wrapper.col, .gameSpace.col {
+	flex-basis: unset;
+	flex-grow: unset;
+	max-width: unset;
 }
 .gameSpace-wrapper.no-drop {
 	cursor: no-drop;
@@ -425,6 +435,10 @@ div.captured-tiles label {
 	border: 1px dashed var(--space-border);
 }
 
+.gameBoard {
+	background-color: var(--green-darker);
+}
+
 @media (min-width: 576px) {
 	.xl-only {
 		display: none !important;
@@ -444,6 +458,9 @@ div.captured-tiles label {
 @media (min-width: 992px) {
 	.md-down {
 		display: none !important;
+	}
+	.gameBoard {
+		height: 100vh;
 	}
 } 
 @media (min-width: 1200px) {

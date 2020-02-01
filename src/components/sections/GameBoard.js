@@ -23,6 +23,7 @@ class GameBoard extends React.Component {
 		this.obscuredSpaces = { 43: true, 44: true, 47: true, 48: true, 53: true, 54: true, 57: true, 58: true };
 		this.renderGameSpace = this.renderGameSpace.bind(this);
 		this.gameSpaceRow = this.gameSpaceRow.bind(this);
+		this.borderRow = this.borderRow.bind(this);
 		this.gameSpaceRows = this.gameSpaceRows.bind(this);
 		this.placePiece = this.placePiece.bind(this);
 		this.emptySpace = this.emptySpace.bind(this);
@@ -387,9 +388,32 @@ class GameBoard extends React.Component {
 		spaces[id] = this.renderGameSpace(space.props.y,space.props.x,id,space.props.children);
 		this.setState({ spaces: spaces })
 	}
+	borderRow(id,cols) {
+		if (!cols) {
+			cols = 12;
+		}
+		var borderSpaces = [];
+		for (var i = 1; i <= cols; i++) {
+			borderSpaces.push(
+				<div className="gameSpace-wrapper border-wrapper col px-0 mx-0">
+					<div className="gameSpace borderSpace" id={id+"-"+i}></div>
+				</div>
+			);
+		}
+		return (
+			<div className="gameSpaceRow borderSpaceRow text-center" id={id} key={id}>
+				{borderSpaces}
+			</div>
+		);
+	}
 	gameSpaceRow(row,start,end,colSize) {
 		var offset = (row - 1) * (colSize || 10);
 		var gameSpaces = [];
+		gameSpaces.push(
+				<div className="gameSpace-wrapper border-wrapper left-wrapper col px-0 mx-0">
+					<div className="gameSpace borderSpace left-border" id={"left-border-"+row}></div>
+				</div>
+		);
 		for (var i = start; i <= end; i++) {
 			var newSpace = null;
 			if (!this.state.spaces[offset+i]) {
@@ -401,6 +425,11 @@ class GameBoard extends React.Component {
 			}
 			gameSpaces.push(newSpace);
 		}
+		gameSpaces.push(
+				<div className="gameSpace-wrapper border-wrapper right-wrapper col px-0 mx-0">
+					<div className="gameSpace borderSpace right-border" id={"right-border-"+row}></div>
+				</div>
+		);
 		return (
 			<div className="gameSpaceRow text-center" key={row}>
 				{gameSpaces}
@@ -409,9 +438,11 @@ class GameBoard extends React.Component {
 	}
 	gameSpaceRows(start,end,cols) {
 		var rows = [];
+		rows.push(this.borderRow('top-border'));
 		for (var i = start; i <= end; i++) {
 			rows.push(this.gameSpaceRow(i,1,10,10));
 		}
+		rows.push(this.borderRow('bottom-border'));
 		return rows;
 	}
 	render() {

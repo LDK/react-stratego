@@ -18,11 +18,11 @@ class GameSpace extends React.Component {
 	}
 	render() {
 		return (
-			<div id={this.props.id} 
+			<div id={"gameSpace-"+this.props.id} 
 				data-col={this.props.col} 
 				data-row={this.props.row} 
 				data-territory={this.territory}
-				className={"gameSpace col " + this.props.spaceKey + (this.passable ? ' passable' : '') + ' ' + this.state.extraClass} 
+				className={"gameSpace col " + this.props.spaceKey + (this.props.passable ? ' passable' : '') + ' ' + this.state.extraClass} 
 			>
 				{this.props.children}
 				{this.props.passable ? '' : 'X'}

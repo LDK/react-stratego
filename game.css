@@ -36,6 +36,7 @@ body {
 	--darker: #1b6666;
 	--water: #3880be;
 	--grass: #7cc43f;
+	--unpassable: rgba(255,64,64,.75);
 }
 .status {
   margin-bottom: 10px;
@@ -308,8 +309,8 @@ a.button:active {
 /* Game piece and tile faces */
 .gamePiece,
 .tileFace {
-	width: 40px;
-	height: 50px;
+	width: 35px;
+	height: 45px;
 	display: block;
 	top: 0;
 	left: 0;
@@ -324,6 +325,8 @@ a.button:active {
 .gamePiece {
 	background-image: url('/img/stratego-piece-red.svg');
 	background-size: contain;
+	left: -6px;
+	top: 5px;
 }
 .gamePiece.blue {
 	background-image: url('/img/stratego-piece-blue.svg');
@@ -336,7 +339,6 @@ a.button:active {
 	background-repeat: no-repeat;
 }
 .gamePiece {
-	left: 5px;
 	position: relative;
 }
 .tileFace.rank-B {
@@ -647,6 +649,18 @@ div.captured-tiles label {
 #gameSpace-1 {
 	background-image: url(img/tiles/top-left-corner.png);	
 }
+#gameSpace-12,
+#gameSpace-19,
+#gameSpace-26,
+#gameSpace-72,
+#gameSpace-78,
+#gameSpace-86 {
+	background-image: url(img/tiles/sand-2.png);
+}
+#gameSpace-14,
+#gameSpace-89 {
+	background-image: url(img/tiles/sand-3.png);
+}
 #gameSpace-2,
 #gameSpace-3, 
 #gameSpace-4, 
@@ -689,6 +703,8 @@ div.captured-tiles label {
 	background-image: url(img/tiles/bottom-left-edge.png);
 }
 #gameSpace-63, #gameSpace-64, #gameSpace-67, #gameSpace-68 {
+	border-top-color: var(--unpassable);
+	border-top-style: solid;
 	background-image: url(img/tiles/bottom-edge.png);
 }
 #gameSpace-65, #gameSpace-69 {
@@ -747,7 +763,27 @@ div.captured-tiles label {
 }
 
 .gameSpace:not(.borderSpace):not(.passable) {
-	background: var(--water);
+	background-color: var(--water);
+	background-image: unset;
+	border-color: var(--unpassable);
+	border-left-style: solid;
+	border-top-style: solid;
+}
+.gameSpace-wrapper:not(.passable) + .gameSpace-wrapper.passable > .gameSpace {
+	border-left-color: var(--unpassable);
+	border-left-style: solid;
+}
+.gameSpace:not(.borderSpace):not(.passable)#gameSpace-44,
+.gameSpace:not(.borderSpace):not(.passable)#gameSpace-58 {
+	background-image: url(img/tiles/water-rocks.png);
+}
+.gameSpace:not(.borderSpace):not(.passable)#gameSpace-54,
+.gameSpace:not(.borderSpace):not(.passable)#gameSpace-48 {
+	background-image: url(img/tiles/water-ripple.png);
+}
+.gameSpace:not(.borderSpace):not(.passable)#gameSpace-43,
+.gameSpace:not(.borderSpace):not(.passable)#gameSpace-57 {
+	background-image: url(img/tiles/water-deep.png);
 }
 .gameSpace.borderSpace {
 	border: none !important;

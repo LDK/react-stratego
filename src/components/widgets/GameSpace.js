@@ -25,7 +25,6 @@ class GameSpace extends React.Component {
 				className={"gameSpace col " + this.props.spaceKey + (this.props.passable ? ' passable' : '') + ' ' + this.state.extraClass} 
 			>
 				{this.props.children}
-				{this.props.passable ? '' : 'X'}
 			</div>
 		)
 	}
@@ -167,8 +166,9 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	if (!game.state.started && game.state.placementMode == 'keyboard' && board.state.selectedSpace == id) {
 		highlightClass = ' selectedSpace';
 	}
+	var passableClass = passable ? ' passable' : ' not-passable';
 	return (
-		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+highlightClass} onClick={handleClick}>
+		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+highlightClass+passableClass} onClick={handleClick}>
 			<div className="gameSpace-overlay"></div>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}

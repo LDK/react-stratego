@@ -309,7 +309,7 @@ a.button:active {
 /* Game piece and tile faces */
 .gamePiece,
 .tileFace {
-	width: 35px;
+	width: 36px;
 	height: 45px;
 	display: block;
 	top: 0;
@@ -325,7 +325,7 @@ a.button:active {
 .gamePiece {
 	background-image: url('/img/stratego-piece-red.svg');
 	background-size: contain;
-	left: -6px;
+	left: -2px;
 	top: 5px;
 }
 .gamePiece.blue {

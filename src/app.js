@@ -358,6 +358,7 @@ class App extends React.Component {
 						app.gameBoard.placePiece(piece, space.id, true);
 					}
 				}
+				app.gameOpened = (new Date()).getTime() / 1000;
 				app.setState({activeGame: gm});
 				app.nav.setState({});
 			});
@@ -408,7 +409,8 @@ class App extends React.Component {
 		var formData = new FormData();
 		var app = this;
 		var game = this.gameBoard.props.game;
-		formData.append('game_id',app.state.activeGame.props.id);
+		var gameId = app.state.activeGame.props.id;
+		formData.append('game_id',gameId);
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
 		var spaces;
@@ -421,6 +423,9 @@ class App extends React.Component {
 					return;
 				}
 				var gameData = JSON.parse(text);
+				if (gameData.game_id && gameData.game_id != gameId) {
+					return;
+				}
 				var opponentReady = gameData.opponent_ready;
 				spaces = JSON.parse(gameData.opponent_spaces);
 				var started = gameData.started;
@@ -453,9 +458,11 @@ class App extends React.Component {
 				if (attacks != game.state.attacks) {
 					// Trigger battle modal and populate with last_attack data 
 					var last_attack = JSON.parse(gameData.last_attack);
-					game.setState({attacks: attacks, last_attack: last_attack});
-					app.gameBoard.openBattleModal();
-					app.gameBoard.getBattleContent(last_attack);
+					if (app.gameOpened && app.gameOpened < last_attack.time) {
+						game.setState({attacks: attacks, last_attack: last_attack});
+						app.gameBoard.openBattleModal();
+						app.gameBoard.getBattleContent(last_attack);
+					}
 				}
 				var newSpaceIds = [];
 				var oldSpaceIds = [];

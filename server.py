@@ -333,6 +333,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
+    postRes['game_id'] = gameId;
     starterUid = int(gameData[0])
     uid = int(uid)
     spaceInfo = json.loads(gameData[2])

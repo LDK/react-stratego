@@ -270,41 +270,6 @@ a.button:active {
 	height: 100%;
 	background: var(--dark);
 }
-.terrain-grass1 {
-	background-position-x: -2px;
-	background-position-y: -2px;
-	height: 50px;
-	width: 50px;
-	background-image: url('/img/rpg-tiles.jpg');
-}
-.terrain-grass2 {
-	background-position-x: -2px;
-	background-position-y: -60px;
-	height: 50px;
-	width: 50px;
-	background-image: url('/img/rpg-tiles.jpg');
-}
-.terrain-grass3 {
-	background-position-x: -21px;
-	background-position-y: -60px;
-	height: 50px;
-	width: 50px;
-	background-image: url('/img/rpg-tiles.jpg');
-}
-.terrain-grass4 {
-	background-position-x: -21px;
-	background-position-y: -2px;
-	height: 50px;
-	width: 50px;
-	background-image: url('/img/rpg-tiles.jpg');
-}
-.terrain-water {
-	background-position-x: -455px;
-	background-position-y: -331px;
-	height: 50px;
-	width: 50px;
-	background-image: url('/img/rpg-tiles.jpg');
-}
 
 /* Game piece and tile faces */
 .gamePiece,

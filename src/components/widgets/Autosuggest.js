@@ -19,6 +19,12 @@ class Autosuggest extends React.Component {
 		this.onChange = this.onChange.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.selectOption = this.selectOption.bind(this);
+		if (props.parentObj && props.refName) {
+			props.parentObj[refName] = this;
+		}
+		else if (props.parentObj) {
+			props.parentObj.autoSuggest = this;
+		}
 	}
 	selectOption(activeSuggestion, filteredSuggestions) {
 		var userInput = activeSuggestion ? filteredSuggestions[activeSuggestion-1] : this.state.userInput;

@@ -267,13 +267,22 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def newGame(self, starterId, opponentId):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT s.username as starter_name, o.username as opponent_name from user s left join user o where s.id = '{sid}' and o.id = '{oid}'".\
+    if not opponentId:
+        selectSql = "SELECT s.username as starter_name from user s where s.id = '{sid}'".\
+        format(sid=starterId)
+    else:
+        selectSql = "SELECT s.username as starter_name, o.username as opponent_name from user s left join user o where s.id = '{sid}' and o.id = '{oid}'".\
         format(sid=starterId, oid=opponentId)
     c.execute(selectSql)
     userData = c.fetchone()
-    title = "{starter} vs {opponent}".format(starter=userData[0], opponent=userData[1])
-    insertSql = "INSERT INTO `game` (starting_user_id, opponent_user_id, title) VALUES ('{starterId}','{oppId}','{title}')".\
-        format(starterId=starterId, oppId=opponentId, title=title)
+    if opponentId:
+        title = "{starter} vs {opponent}".format(starter=userData[0], opponent=userData[1])
+    else:
+        title = "{starter} vs (open)".format(starter=userData[0])
+        opponentId = "NULL"
+    gameStatus = 'pending' if opponentId else 'open'
+    insertSql = "INSERT INTO `game` (starting_user_id, opponent_user_id, title, status) VALUES ('{starterId}','{oppId}','{title}','{gameStatus}')".\
+        format(starterId=starterId, oppId=opponentId, title=title, gameStatus=gameStatus)
     c.execute(insertSql)
     conn.commit()
     conn.close()
@@ -431,7 +440,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameList(self, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'active' AND (starting_user_id = '{uid}' OR opponent_user_id = '{uid}')".format(uid=uid)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status IN ('active','open') AND (starting_user_id = '{uid}' OR opponent_user_id = '{uid}')".format(uid=uid)
     c.execute(selectSql)
     games = c.fetchall()
     conn.close()
@@ -586,7 +595,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             self.respond(401)
             return
         self.respond(200)
-        oppId = postvars['opponent_id'][0]
+        oppId = postvars['opponent_id'][0] if ('opponent_id' in postvars) else None
         postRes = self.newGame(uid,oppId)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()

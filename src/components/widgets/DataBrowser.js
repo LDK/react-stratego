@@ -13,8 +13,15 @@ class DataBrowser extends React.Component {
 			label: props.label || '',
 			items: props.items || []
 		};
+		if (props.parentObj && props.refName) {
+			props.parentObj[props.refName] = this;
+		}
+		else if (props.parentObj) {
+			props.parentObj.dataBrowser = this;
+		}
 	}
 	callback(event) {
+		console.log('target',event.target.value);
 		if (event.target.hasAttribute('data-key')) {
 			var val = event.target.getAttribute('data-key');
 		}
@@ -35,7 +42,7 @@ class DataBrowser extends React.Component {
 			items.unshift({ id: null, name: this.props.emptyOption });
 		}
 		const dataItems = items.map((opt,i) => 
-			<option key={i} value={opt.id}>
+			<option key={i} value={opt.id || this.props.emptyVal || ''}>
 				{opt.name}
 			</option>
 		);

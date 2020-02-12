@@ -599,7 +599,7 @@ class App extends React.Component {
 					return;
 				}
 				var opps = JSON.parse(text);
-				var opponents = [{ id: null, name: ' - Select Username - '}];
+				var opponents = [];
 				for (var oppId in opps) {
 					var oppName = opps[oppId];
 					var oppEntry = {
@@ -649,7 +649,7 @@ class App extends React.Component {
 		return (
 			<div className="userMenu p-3">
 				{newGameForm}
-				<DataBrowser label="Active Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Active and Open Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={app.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: app.acceptInvite},{label: 'decline', action: app.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />

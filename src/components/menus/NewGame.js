@@ -29,7 +29,11 @@ class NewGameMenu extends React.Component {
 			opponentSelectMode: mode
 		};
 		var opponentId = this.state.opponentId;
-		if (this.state.opponentSelectMode == 'past' || mode == 'open') {
+		if (this.state.opponentSelectMode == 'past' 
+			|| mode == 'open'
+			|| mode == 'join'
+			|| mode == 'name'
+			) {
 			opponentId = null;
 		}
 		if (mode == 'past') {
@@ -84,6 +88,7 @@ class NewGameMenu extends React.Component {
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
 		var mode = this.state.opponentSelectMode;
+		formData.append('mode',mode);
 		var menu = this;
 		if (opponentId) {
 			formData.append('opponent_id',opponentId);
@@ -157,10 +162,28 @@ class NewGameMenu extends React.Component {
 						onChange={this.changeOpponentSelectMode}
 					/>
 				</div>
+				<div onClick={() => this.focusModeOption('join')} className="mr-2">
+					<label>Join an Open Game</label>
+					<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
+						value="join"
+						checked={this.state.opponentSelectMode == 'join'} 
+						onChange={this.changeOpponentSelectMode}
+					/>
+				</div>
+				<div onClick={() => this.focusModeOption('random')} className="mr-2">
+					<label>Random Opponent</label>
+					<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
+						value="random"
+						checked={this.state.opponentSelectMode == 'random'} 
+						onChange={this.changeOpponentSelectMode}
+					/>
+				</div>
 				{opponentIndicator}
 				<input type="submit" value="Submit" size="3" onClick={this.handleSubmit} disabled={
 					!this.state.opponentId && 
-					this.state.opponentSelectMode != 'open'
+					this.state.opponentSelectMode != 'open' &&
+					this.state.opponentSelectMode != 'join' &&
+					this.state.opponentSelectMode != 'random'
 				} />
 			</form>
 		);

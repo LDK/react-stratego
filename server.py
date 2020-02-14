@@ -264,6 +264,52 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['accepted'] = gameRes
     return postRes
 
+  def joinGame(self, mode, uid, gameId):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    postRes = {}
+    usernameSql = "SELECT username from user where id = '{uid}'".format(uid=uid)
+    c.execute(usernameSql)
+    userData = c.fetchone()
+    userName = userData[0]
+    if (mode == 'random'):
+        # Find random open game not started by user
+        selectSql = "select id, title from game where opponent_user_id IS NULL and starting_user_id <> {uid} ORDER BY RANDOM() LIMIT 1".format(uid=uid)
+        c.execute(selectSql)
+        gameData = c.fetchone()
+        if gameData:
+            gameId = gameData[0]
+            title = gameData[1].replace('(open)',userName)
+            # Set opponent id of random game to user id
+            # Set game to active
+            # Update game title
+            joinSql = "UPDATE game SET opponent_user_id = {uid}, title = '{title}', status = 'active' where id = {gid}".format(uid=uid, title=title,gid=gameId)
+            c.execute(joinSql)
+            postRes['game_id'] = gameId
+            postRes['title'] = title
+        else:
+            # Find random user
+            oppSql = "SELECT id FROM user WHERE id <> {uid} ORDER BY RANDOM() LIMIT 1".format(uid=uid)
+            c.execute(oppSql)
+            oppData = c.fetchone()
+            oppId = oppData[0]
+            # Create pending game request with random user as opponent
+            postRes = self.newGame(uid,oppId)
+    if (mode == 'join'):
+        selectSql = "select title from game where id = {gid}".format(gid=gid)
+        c.execute(selectSql)
+        gameData = c.fetchone()
+        title = gameData[0].replace('(open)',userName)
+        # update game with id of gameId to have user as opponent
+        # update game title
+        joinSql = "UPDATE game SET opponent_user_id = {uid}, title = {title}, status = 'active' where game_id = {gid}".format(uid=uid, title=title)
+        c.execute(joinSql)
+        postRes['game_id'] = gameId
+        postRes['title'] = title
+    conn.commit()
+    conn.close()
+    return postRes
+
   def newGame(self, starterId, opponentId):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -281,7 +327,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         title = "{starter} vs (open)".format(starter=userData[0])
         opponentId = "NULL"
     gameStatus = 'pending' if opponentId else 'open'
-    insertSql = "INSERT INTO `game` (starting_user_id, opponent_user_id, title, status) VALUES ('{starterId}','{oppId}','{title}','{gameStatus}')".\
+    insertSql = "INSERT INTO `game` (starting_user_id, opponent_user_id, title, status) VALUES ('{starterId}',{oppId},'{title}','{gameStatus}')".\
         format(starterId=starterId, oppId=opponentId, title=title, gameStatus=gameStatus)
     c.execute(insertSql)
     conn.commit()
@@ -294,7 +340,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
   def getGameData(self, id, uid):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
+    selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=id)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -596,7 +642,12 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         oppId = postvars['opponent_id'][0] if ('opponent_id' in postvars) else None
-        postRes = self.newGame(uid,oppId)
+        gameId = postvars['game_id'][0] if ('game_id' in postvars) else None
+        actionMode = postvars['mode'][0]
+        if (actionMode == 'random' or actionMode == 'join'):
+            postRes = self.joinGame(actionMode, uid, gameId)
+        else:
+            postRes = self.newGame(uid,oppId)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import Modal from '../widgets/Modal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
+import RegistrationMenu from '../menus/Registration.js';
 
 class Navigation extends React.Component {
 	constructor(props) {
@@ -53,8 +54,7 @@ class Navigation extends React.Component {
 				var res = JSON.parse(text);
 				if (res.error) {
 					if (res.error == 'no-user') {
-						nav.setState({regFormOpen: true});
-						nav.render();
+						app.RegistrationMenu.setState({formOpen: true});
 					}
 				}
 				else if (props.loginCallback) {
@@ -111,6 +111,7 @@ class Navigation extends React.Component {
 						[<a className="text-white anchor no-underline" onClick={this.props.logoutCallback}>Log out</a>]
 					</div>
 				</div>
+				<RegistrationMenu app={app} parentObj={this} />
 			</div>
 		)
 	}

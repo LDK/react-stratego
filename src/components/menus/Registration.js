@@ -22,18 +22,17 @@ class RegistrationMenu extends React.Component {
 	}
 	sendRegistration(event) {
 		event.preventDefault();
-		if (!this.state.passInput || this.state.passInput != this.state.pass2Input) {
+		var app = this.props.app;
+		var parentObj = this.props.parentObj;
+		var Reg = this;
+		if (!parentObj.state.passInput || parentObj.state.passInput != parentObj.state.pass2Input) {
 			// return for now.  todo: some validation and subsequent reporting
 			return;
 		}
-		var app = this.props.app;
-		var state = cloneDeep(this.state);
 		var formData = new FormData();
-		var props = this.props;
-		var nav = this;
-		formData.append('username',state.userInput);
-		formData.append('email',state.emailInput);
-		formData.append('password',state.passInput);
+		formData.append('username',parentObj.state.userInput);
+		formData.append('email',parentObj.state.emailInput);
+		formData.append('password',parentObj.state.passInput);
 		window.fetch(app.gameServer+'register', {
 			method: 'POST', 
 			body: formData
@@ -50,9 +49,9 @@ class RegistrationMenu extends React.Component {
 					}
 				}
 				else {
-					nav.setState({regFormOpen: false});
-					if (props.loginCallback) {
-						props.loginCallback(res);
+					Reg.setState({formOpen: false});
+					if (parentObj.props.loginCallback) {
+						parentObj.props.loginCallback(res);
 					}
 				}
 			});
@@ -107,44 +106,35 @@ class RegistrationMenu extends React.Component {
 		if (this.state.opponentFound) {
 			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
 		}
-		var RegistrationForm = (
-			<form action={app.state.gameServer+"new_game"} onSubmit={this.handleSubmit}>
-				<h3 className="mb-2">Select a game to join!</h3>
-				<div>
-					<DataBrowser 
-						label="Open Games:" 
-						items={app.openGames} 
-						emptyOption='- Select A Game -'
-						emptyVal={null}
-						view="select" 
-						id="openGameList" 
-						parentObj={this}
-						// refName='pastOpponents'
-						callback={this.updateChosen}
-					/>
-				</div>
-				<input type="submit" value="Submit" size="3" onClick={this.handleSubmit} disabled={!this.state.gameFound} />
-			</form>
-		);
 		var app = this.props.app;
 		var formClass = app.state.currentUser ? 'd-none' : '';
 		var userClass = !app.state.currentUser ? 'd-none' : '';
 		var username = app.state.currentUser.username;
-		const RegistrationForm = (
+		var parentObj = this.props.parentObj;
+		const RegForm = (
 			<form action={app.state.gameServer+"register"} onSubmit={this.sendRegistration}>
+				{parentObj.state.passInput}12{parentObj.state.userInput}
 				<h3 className="mb-2">That username was not found in the database.<br />Maybe you should register!</h3>
-				<input type="text" value={this.state.userInput} onChange={this.updateUserInput} size="22" className="mr-2" name="username" placeholder="Username" /><br />
-				<input type="text" value={this.state.emailInput} onChange={this.updateEmailInput} size="22" className="mr-2" name="email" placeholder="E-mail Address" /><br />
-				<input type="password" value={this.state.passInput} onChange={this.updatePassInput} name="password" size="22" className="mr-2" placeholder="Password" /><br />
-				<input type="password" value={this.state.pass2Input} onChange={this.updatePass2Input} name="password2" size="22" className="mr-2" placeholder="Enter Password Again" /><br />
-				<input type="submit" value="Go" size="3" onClick={this.sendRegistration} />
+				<input type="text" value={parentObj.state.userInput} onChange={parentObj.updateUserInput} size="22" className="mr-2" name="username" placeholder="Username" /><br />
+				<input type="text" value={parentObj.state.emailInput} onChange={parentObj.updateEmailInput} size="22" className="mr-2" name="email" placeholder="E-mail Address" /><br />
+				<input type="password" value={parentObj.state.passInput} onChange={parentObj.updatePassInput} name="password" size="22" className="mr-2" placeholder="Password" /><br />
+				<input type="password" value={parentObj.state.pass2Input} onChange={parentObj.updatePass2Input} name="password2" size="22" className="mr-2" placeholder="Enter Password Again" /><br />
+				<input type="submit" value="Go" size="3" onClick={this.sendRegistration} 
+					disabled={
+						!parentObj.state.userInput ||
+						!parentObj.state.passInput ||
+						!parentObj.state.pass2Input ||
+						!parentObj.state.emailInput ||
+						parentObj.state.pass2Input != parentObj.state.passInput
+					}
+				/>
 			</form>
 		);
 		
 		return (
 		<Modal 
 			id="registration-modal"
-			content={RegistrationForm}
+			content={RegForm}
 			open={this.state.formOpen}
 			additionalClasses={"p-5 text-black"}
 		/>

@@ -21,7 +21,6 @@ class DataBrowser extends React.Component {
 		}
 	}
 	callback(event) {
-		console.log('target',event.target.value);
 		if (event.target.hasAttribute('data-key')) {
 			var val = event.target.getAttribute('data-key');
 		}

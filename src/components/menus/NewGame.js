@@ -106,8 +106,13 @@ class NewGameMenu extends React.Component {
 				if (!text.length) {
 					return;
 				}
+				var gameData = JSON.parse(text);
 				menu.setState({ formOpen: false });
 				app.getRequests();
+				app.getGames();
+				if (gameData.gameId && !isNaN(gameData.gameId)) {
+					app.loadGame(gameData.gameId);
+				}
 			});
 		});
 	}

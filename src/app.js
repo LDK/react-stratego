@@ -89,7 +89,7 @@ class App extends React.Component {
 				}
 				var result = JSON.parse(text);
 				if (result.accepted) {
-					app.loadGame(result.accepted.id)
+					app.loadGame(result.accepted.id);
 				}
 			});
 		});
@@ -364,7 +364,9 @@ class App extends React.Component {
 				}
 				app.gameOpened = (new Date()).getTime() / 1000;
 				app.setState({activeGame: gm});
-				app.nav.setState({});
+				if (app.nav && app.nav.gameBrowser) {
+					app.nav.gameBrowser.setState({value: id});
+				}
 			});
 		});
 	}

@@ -43,6 +43,7 @@ class JoinGameMenu extends React.Component {
 				menu.setState({ formOpen: false });
 				app.getRequests();
 				app.getGames();
+				app.loadGame(gameId);
 			});
 		});
 	}

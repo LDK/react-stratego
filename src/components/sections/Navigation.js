@@ -20,6 +20,7 @@ class Navigation extends React.Component {
 		this.updatePassInput = this.updatePassInput.bind(this);
 		this.updatePass2Input = this.updatePass2Input.bind(this);
 		this.updateEmailInput = this.updateEmailInput.bind(this);
+		this.goHome = this.goHome.bind(this);
 		props.app.nav = this;
 	}
 	updateUserInput(event) {
@@ -115,6 +116,10 @@ class Navigation extends React.Component {
 		}
 		app.loadGame(id);
 	}
+	goHome() {
+		var app = this.props.app;
+		app.setState({ activeGame: null });
+	}
 	render() {
 		var app = this.props.app;
 		var formClass = app.state.currentUser ? 'd-none' : '';
@@ -134,14 +139,15 @@ class Navigation extends React.Component {
 		var gameBrowser = '';
 		var games = app.state.games;
 		if (games.length) {
-			gameBrowser = <DataBrowser label="Game:" emptyOption='- User Menu -' items={games} view="select" callback={this.gameChange} id="gameList" value={app.state.activeGame ? app.state.activeGame.props.id : null} />
+			gameBrowser = <DataBrowser label="Game:" emptyOption='- Select a Game -' items={games} view="select" callback={this.gameChange} id="gameList" value={app.state.activeGame ? app.state.activeGame.props.id : null} />
 		}
 		return (
 			<div className="navigation row py-3 px-3">
-				<div className="col-3 col-md-4 col-lg-7">
+				<a className="anchor no-underline" onClick={this.goHome}>Home</a>
+				<div className="col-3 col-md-4 col-lg-6">
 					{gameBrowser}
 				</div>
-				<div className="col-9 col-md-8 col-lg-5 text-right">
+				<div className="col-8 col-md-7 col-lg-5 text-right">
 					<form onSubmit={this.sendLogin} action={app.gameServer+'login'} className={formClass}>
 						<label className="mr-2">Register/Login</label>
 						<input type="text" value={this.state.userInput} onChange={this.updateUserInput} size="14" className="mr-2" name="username" placeholder="Username" />

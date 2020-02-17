@@ -81,13 +81,18 @@ class NewGameMenu extends React.Component {
 		var uid = app.state.currentUser.user_id;
 		var userKey = app.state.currentUser.userKey;
 		var opponentId = this.state.opponentId;
+		var mode = this.state.opponentSelectMode;
 		if (!uid || !userKey) {
 			return [];
+		}
+		if (mode == 'join') {
+			this.setState({ formOpen: false });
+			this.props.app.JoinGameMenu.setState({ formOpen: true });
+			return;
 		}
 		var formData = new FormData();
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
-		var mode = this.state.opponentSelectMode;
 		formData.append('mode',mode);
 		var menu = this;
 		if (opponentId) {

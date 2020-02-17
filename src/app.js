@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
+import JoinGameMenu from './components/menus/JoinGame.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
@@ -40,6 +41,8 @@ class App extends React.Component {
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
 		this.getUsernames = this.getUsernames.bind(this);
+		this.getOpenGames = this.getOpenGames.bind(this);
+		this.getPastOpponents = this.getPastOpponents.bind(this);
 		this.pollGames = this.pollGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
@@ -271,6 +274,7 @@ class App extends React.Component {
 	newGame(event){
 	}
 	openNewGameMenu(){
+		this.getOpenGames();
 		this.newGameMenu.setState({ formOpen: true });
 		return;
 	}
@@ -615,6 +619,42 @@ class App extends React.Component {
 			});
 		});
 	}
+	getOpenGames() {
+		if (!this.state.currentUser) {
+			return false;
+		}
+		var app = this;
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		var formData = new FormData();
+		formData.append('user_id',uid);
+		formData.append('userKey',userKey);
+		window.fetch(this.gameServer+'open_games', {
+			method: 'POST', 
+			body: formData
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gms = JSON.parse(text);
+				var games = [];
+				for (var gameId in gms) {
+					var title = gms[gameId].title;
+					var oppName = gms[gameId].starter_name;
+					var gameEntry = {
+						id: gameId,
+						name: title,
+						opponent: oppName
+					}
+					if (gameEntry && gameEntry.id) {
+						games.push(gameEntry);
+					}
+				}
+				app.openGames = games;
+			});
+		});
+	}
 	getUsernames() {
 		if (!this.state.currentUser) {
 			return false;
@@ -646,9 +686,11 @@ class App extends React.Component {
 	userMenuBody() {
 		var app = this;
 		const newGameForm = <NewGameMenu app={app} />;
+		const joinGameForm = <JoinGameMenu app={app} />;
 		return (
 			<div className="userMenu p-3">
 				{newGameForm}
+				{joinGameForm}
 				<DataBrowser label="Active and Open Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={app.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: app.acceptInvite},{label: 'decline', action: app.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />

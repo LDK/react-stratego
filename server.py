@@ -296,13 +296,13 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             # Create pending game request with random user as opponent
             postRes = self.newGame(uid,oppId)
     if (mode == 'join'):
-        selectSql = "select title from game where id = {gid}".format(gid=gid)
+        selectSql = "select title from game where id = {gid}".format(gid=gameId)
         c.execute(selectSql)
         gameData = c.fetchone()
         title = gameData[0].replace('(open)',userName)
         # update game with id of gameId to have user as opponent
         # update game title
-        joinSql = "UPDATE game SET opponent_user_id = {uid}, title = {title}, status = 'active' where game_id = {gid}".format(uid=uid, title=title)
+        joinSql = "UPDATE game SET opponent_user_id = {uid}, title = '{title}', status = 'active' where id = {gid}".format(uid=uid, title=title, gid=gameId)
         c.execute(joinSql)
         postRes['game_id'] = gameId
         postRes['title'] = title
@@ -321,12 +321,12 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         format(sid=starterId, oid=opponentId)
     c.execute(selectSql)
     userData = c.fetchone()
+    gameStatus = 'pending' if opponentId else 'open'
     if opponentId:
         title = "{starter} vs {opponent}".format(starter=userData[0], opponent=userData[1])
     else:
         title = "{starter} vs (open)".format(starter=userData[0])
         opponentId = "NULL"
-    gameStatus = 'pending' if opponentId else 'open'
     insertSql = "INSERT INTO `game` (starting_user_id, opponent_user_id, title, status) VALUES ('{starterId}',{oppId},'{title}','{gameStatus}')".\
         format(starterId=starterId, oppId=opponentId, title=title, gameStatus=gameStatus)
     c.execute(insertSql)
@@ -481,6 +481,25 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['opponent_ready'] = opponentReady
     conn.commit()
     conn.close()
+    return postRes
+
+  def getOpenGames(self, uid):
+    if not uid:
+        return {}
+    uid = int(uid)
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "SELECT DISTINCT g.id, g.title, u.username FROM game g INNER JOIN user u ON u.id = g.starting_user_id WHERE u.id <> {uid} AND g.opponent_user_id IS NULL".format(uid=uid)
+    c.execute(selectSql)
+    games = c.fetchall()
+    conn.close()
+    postRes = {}
+    for game in games:
+        gameId = game[0]
+        entry = {}
+        entry['title'] = game[1]
+        entry['starter_name'] = game[2]
+        postRes[gameId] = entry
     return postRes
 
   def getGameList(self, uid):
@@ -666,6 +685,21 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return
+                
+    elif (self.path == '/join_game'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        gid = postvars['game_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.joinGame('join', uid, gid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
         
     elif (self.path == '/cancel_request'):
         postvars = self.parse_POST()
@@ -722,6 +756,20 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         self.respond(200)
         postRes = self.getPastOpponents(uid)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+        
+    elif (self.path == '/open_games'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.getOpenGames(uid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return

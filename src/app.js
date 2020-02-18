@@ -751,7 +751,7 @@ class App extends React.Component {
 		const body = this.getBody();
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
-					<Navigation app={this} loginCallback={this.setCurrentUser} logoutCallback={this.logUserOut} />
+					<Navigation app={this} />
 					{body}
 				</div>
 		);

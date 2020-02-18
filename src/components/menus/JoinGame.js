@@ -87,6 +87,8 @@ class JoinGameMenu extends React.Component {
 			id="JoinGame-modal"
 			content={JoinGameForm}
 			open={true}
+			height="medium"
+			width="small"
 			additionalClasses={"p-5 text-black"}
 		/>
 		);

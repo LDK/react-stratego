@@ -10,6 +10,12 @@ class Modal extends React.Component {
 		var parentObj = this.props.parentObj;
 		var props = this.props;
 		var wrapperClass =  props.additionalClasses + " modal-wrapper";
+		if (props.height) {
+			wrapperClass += " height-"+props.height;
+		}
+		if (props.width) {
+			wrapperClass += " width-"+props.width;
+		}
 		var closeButton = '';
 		if (props.closeButton) {
 			closeButton = (<a className="close-button button" onClick={props.closeCallback}>X</a>);

@@ -5,7 +5,7 @@ body, html{
 	overflow: hidden;
 }
 body {
-	font: 14px "Century Gothic", Futura, sans-serif;
+/*	font: 14px "Century Gothic", Futura, sans-serif;*/
 	--blue-button: #3777c7;
 	--blue-shadow: #275797;
 	--blue-highlight: #6797c7;
@@ -37,6 +37,9 @@ body {
 	--water: #3880be;
 	--grass: #7cc43f;
 	--unpassable: rgba(255,64,64,.75);
+}
+h3 {
+	font-size: 1.5rem;
 }
 .status {
   margin-bottom: 10px;
@@ -110,11 +113,6 @@ div.contextMenu-wrapper:not(.open) select {
 			user-select: none; /* Non-prefixed version, currently
 								  supported by Chrome and Opera */
 }
-a:not([href]):not([tabindex]){
-	color: blue;
-	text-decoration: underline;
-}
-
 a.anchor {
 	color: blue;
 	cursor: pointer;
@@ -166,18 +164,16 @@ a.button:active {
 .modal-wrapper {
 	position: fixed;
 	display: block;
-	width: 76%;
 	background: white;
-	height: 86%;
-	top: 7%;
-	left: 12%;
 	z-index: 3;
 	margin: 0px;
-	border-radius: 1rem;
-	border: 1px solid #333;
 	opacity: 0;
 	transition: all .35s;
 	pointer-events: none;
+	height: 100%;
+	top: 0;
+	width: 100%;
+	left: 0;
 }
 .modal-container.open .modal-wrapper {
 	transition: all .35s;
@@ -754,4 +750,136 @@ div.captured-tiles label {
 }
 .gameSpace.borderSpace {
 	border: none !important;
+}
+
+@media (min-width: 576px) {
+	.modal-wrapper {
+		height: 88%;
+		top: 6%;
+		width: 84%;
+		left: 8%;
+		border-radius: 1rem;
+		border: 1px solid #333;
+	}
+	.modal-wrapper.height-xlarge {
+		height: 100%;
+		top: 0;
+	}
+	.modal-wrapper.width-xlarge {
+		width: 100%;
+		left: 0;
+	}
+	.modal-wrapper.height-large {
+		height: 94%;
+		top: 3%;
+	}
+	.modal-wrapper.width-large {
+		width: 94%;
+		left: 3%;
+	}
+	.modal-wrapper.height-small {
+		height: 82%;
+		top: 9%;
+	}
+	.modal-wrapper.width-small {
+		width: 82%;
+		left: 9%;
+	}
+}
+
+@media (min-width: 768px) {
+	.modal-wrapper {
+		height: 72%;
+		top: 14%;
+		width: 76%;
+		left: 12%;
+	}
+	.modal-wrapper.height-xlarge {
+		height: 90%;
+		top: 5%;
+	}
+	.modal-wrapper.width-xlarge {
+		width: 92%;
+		left: 4%;
+	}
+	.modal-wrapper.height-large {
+		height: 82%;
+		top: 9%;
+	}
+	.modal-wrapper.width-large {
+		width: 84%;
+		left: 8%;
+	}
+	.modal-wrapper.height-small {
+		height: 72%;
+		top: 14%;
+	}
+	.modal-wrapper.width-small {
+		width: 72%;
+		left: 14%;
+	}
+}
+
+@media (min-width: 992px) {
+	.modal-wrapper {
+		height: 72%;
+		top: 14%;
+		width: 70%;
+		left: 15%;
+	}
+	.modal-wrapper.height-xlarge {
+		height: 90%;
+		top: 5%;
+	}
+	.modal-wrapper.width-xlarge {
+		width: 86%;
+		left: 7%;
+	}
+	.modal-wrapper.height-large {
+		height: 82%;
+		top: 9%;
+	}
+	.modal-wrapper.width-large {
+		width: 76%;
+		left: 12%;
+	}
+	.modal-wrapper.height-small {
+		height: 66%;
+		top: 17%;
+	}
+	.modal-wrapper.width-small {
+		width: 64%;
+		left: 18%;
+	}
+}
+
+@media (min-width: 1200px) {
+	.modal-wrapper {
+		width: 50%;
+		left: 25%;
+	}
+	.modal-wrapper.height-xlarge {
+		height: 86%;
+		top: 7%;
+	}
+	.modal-wrapper.width-xlarge {
+		width: 76%;
+		left: 12%;
+	}
+	.modal-wrapper.height-large {
+		height: 76%;
+		top: 12%;
+	}
+	.modal-wrapper.width-large {
+		width: 64%;
+		left: 18%;
+	}
+	.modal-wrapper.height-small {
+		height: 50%;
+		top: 25%;
+	}
+	.modal-wrapper.width-small {
+		width: 36%;
+		left: 32%;
+	}
 }

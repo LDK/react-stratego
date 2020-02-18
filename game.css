@@ -164,13 +164,15 @@ a.button:active {
 	color: white;
 }
 .modal-wrapper {
-	position: absolute;
+	position: fixed;
 	display: block;
-	width: 55%;
+	width: 76%;
 	background: white;
-	height: 80%;
+	height: 86%;
+	top: 7%;
+	left: 12%;
 	z-index: 3;
-	margin: 0px 15%;
+	margin: 0px;
 	border-radius: 1rem;
 	border: 1px solid #333;
 	opacity: 0;

@@ -5,21 +5,16 @@ import cloneDeep from 'lodash/cloneDeep';
 class UserOptionsMenu extends React.Component {
 	constructor(props) {
 		super(props);
+		var currentUser = props.app.state.currentUser;
 		this.state = {
 			formOpen: false,
-			usernameInput: props.app.state.currentUser.username || '',
+			usernameInput: currentUser.username || '',
 			passInput: '',
 			newPassInput: '',
 			newPass2Input: '',
-			emailInput: props.app.state.currentUser.email || '',
-			invitesAvailable: 
-				(typeof props.app.state.currentUser.invitesAvailable != 'undefined') ?
-					props.app.state.currentUser.invitesAvailable : 
-					true,
-			randomAvailable: 
-				(typeof props.app.state.currentUser.randomAvailable != 'undefined') ?
-					props.app.state.currentUser.randomAvailable : 
-					true
+			emailInput: currentUser.email || '',
+			invitesAvailable: currentUser.invite_available != 'false',
+			randomAvailable: currentUser.random_available != 'false'
 		};
 		this.saveOptions = this.saveOptions.bind(this);
 		this.updateUsernameInput = this.updateUsernameInput.bind(this);
@@ -27,6 +22,8 @@ class UserOptionsMenu extends React.Component {
 		this.updateNewPassInput = this.updateNewPassInput.bind(this);
 		this.updateNewPass2Input = this.updateNewPass2Input.bind(this);
 		this.updateEmailInput = this.updateEmailInput.bind(this);
+		this.toggleInvitesAvailable = this.toggleInvitesAvailable.bind(this);
+		this.toggleRandomAvailable = this.toggleRandomAvailable.bind(this);
 		props.app.UserOptions = this;
 	}
 	updateUsernameInput(event) {
@@ -43,6 +40,12 @@ class UserOptionsMenu extends React.Component {
 	}
 	updateNewPass2Input(event) {
 		this.setState({newPass2Input: event.target.value});
+	}
+	toggleInvitesAvailable(event) {
+		this.setState({invitesAvailable: !this.state.invitesAvailable});
+	}
+	toggleRandomAvailable(event) {
+		this.setState({randomAvailable: !this.state.randomAvailable});
 	}
 	saveOptions(event) {
 		event.preventDefault();
@@ -68,6 +71,8 @@ class UserOptionsMenu extends React.Component {
 		currentUser.email = state.emailInput;
 		formData.append('username',state.usernameInput);
 		formData.append('email',state.emailInput);
+		formData.append('random_available',state.randomAvailable);
+		formData.append('invite_available',state.invitesAvailable);
 		formData.append('user_id',uid);
 		formData.append('userKey',userKey);
 		window.fetch(app.gameServer+'save_user_options', {
@@ -100,6 +105,14 @@ class UserOptionsMenu extends React.Component {
 						changes = true;
 						currentUser.password = res.password;
 					} 
+					if (res.invite_available) {
+						changes = true;
+						currentUser.invite_available = res.invite_available;
+					} 
+					if (res.random_available) {
+						changes = true;
+						currentUser.random_available = res.random_available;
+					} 
 					if (changes) {
 						app.setCurrentUser(currentUser);
 					}
@@ -123,23 +136,31 @@ class UserOptionsMenu extends React.Component {
 						<div className="col-12 col-md-4">
 							<label className="mr-2 small">Username:</label>
 						</div>
-						<div className="col-12 col-md-8">
-							<input type="text" value={state.usernameInput} onChange={this.updateUsernameInput} size="22" className="small" name="username" placeholder="Username" />
+						<div className="col-12 col-md-8 mb-2">
+							<input type="text" value={state.usernameInput} onChange={this.updateUsernameInput} size="24" className="small" name="username" placeholder="Username" />
 						</div>
 						<div className="col-12 col-md-4">
 							<label className="mr-2 small">E-mail Address:</label>
 						</div>
 						<div className="col-12 col-md-8">
-							<input type="text" value={state.emailInput} onChange={this.updateEmailInput} size="32" className="small" name="email" placeholder="E-mail Address" />
+							<input type="text" value={state.emailInput} onChange={this.updateEmailInput} size="24" className="small" name="email" placeholder="E-mail Address" />
 						</div>
 						<div className="col-12 mt-4">
 							<label className="small d-block">Current Password (Required if changing password):</label>
-							<input type="password" onChange={this.updatePassInput} name="current-password" size="22" className="small" placeholder="Current Password" />
+							<input type="password" onChange={this.updatePassInput} name="current-password" size="24" className="small" placeholder="Current Password" />
 						</div>
 						<div className="col-12 mt-3">
 							<label className="small d-block">New Password (Both fields must match):</label>
-							<input type="password" value={state.newPassInput} onChange={this.updateNewPassInput} name="new-password" size="22" className="small" /><br />
-							<input type="password" value={state.newPass2Input} onChange={this.updateNewPass2Input} name="new-password2" size="22" className="small" />
+							<input type="password" value={state.newPassInput} onChange={this.updateNewPassInput} name="new-password" size="24" className="small" /><br />
+							<input type="password" value={state.newPass2Input} onChange={this.updateNewPass2Input} name="new-password2" size="24" className="small" />
+						</div>
+						<div className="col-12 mt-4">
+							<input type="checkbox" name="invite-available" checked={state.invitesAvailable} onChange={this.toggleInvitesAvailable} />
+							<label className="small ml-2">Available for Game Invites</label>
+						</div>
+						<div className="col-12">
+							<input type="checkbox" name="random-available" checked={state.randomAvailable} onChange={this.toggleRandomAvailable} />
+							<label className="small ml-2">Available to Be Selected As Random Opponent</label>
 						</div>
 						<div className="col-12 mt-4">
 							<input type="submit" value="Go" size="3" onClick={this.saveOptions} 
@@ -161,7 +182,7 @@ class UserOptionsMenu extends React.Component {
 			content={OptionsForm}
 			open={this.state.formOpen}
 			width="small"
-			additionalClasses={"p-5 text-black"}
+			additionalClasses={"py-4 px-5 text-black"}
 		/>
 		);
 	}

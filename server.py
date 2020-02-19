@@ -598,16 +598,18 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         emailChange = ", email = '{email}'".format(email=postvars['email'][0])
     updateSql = "UPDATE user set id = {uid}{pwChange}{emailChange}{nameChange} where id = {uid}".\
         format(uid=uid, pwChange=pwChange, emailChange=emailChange, nameChange=nameChange)
-    if 'random_available' in postvars and postvars['random_available'][0] != userData['randomAvailable']:
-        postRes['random_available'] = postvars['randomAvailable']
+    if 'random_available' in postvars and postvars['random_available'][0] != userData['random_available']:
+        postRes['random_available'] = postvars['random_available'][0]
         updateSql = "UPDATE user_options set option_value = '{val}' where option_name = '{opt}' and user_id = {uid}"\
-        .format(val=postvars['random_available'],opt='randomAvailable',uid=uid)
-    if 'invite_available' in postvars and postvars['invite_available'][0] != userData['inviteAvailable']:
-        postRes['invite_available'] = postvars['inviteAvailable']
+        .format(val=postvars['random_available'][0],opt='randomAvailable',uid=uid)
+        c.execute(updateSql)
+        conn.commit()
+    if 'invite_available' in postvars and postvars['invite_available'][0] != userData['invite_available']:
+        postRes['invite_available'] = postvars['invite_available'][0]
         updateSql = "UPDATE user_options set option_value = '{val}' where option_name = '{opt}' and user_id = {uid}"\
-        .format(val=postvars['invite_available'],opt='inviteAvailable',uid=uid)
-    c.execute(updateSql)
-    conn.commit()
+        .format(val=postvars['invite_available'][0],opt='inviteAvailable',uid=uid)
+        c.execute(updateSql)
+        conn.commit()
     conn.close()
     return postRes
 

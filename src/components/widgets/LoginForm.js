@@ -11,6 +11,7 @@ class LoginForm extends React.Component {
 		this.updateUserInput = this.updateUserInput.bind(this);
 		this.updatePassInput = this.updatePassInput.bind(this);
 		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
+		this.openUserOptions = this.openUserOptions.bind(this);
 		props.app.LoginForm = this;
 	}
 	updateUserInput(event) {
@@ -20,6 +21,10 @@ class LoginForm extends React.Component {
 	updatePassInput(event) {
 		this.setState({passInput: event.target.value});
 		this.props.app.RegistrationMenu.setState({passInput: event.target.value});
+	}
+	openUserOptions() {
+		var app = this.props.app;
+		app.UserOptions.setState({ formOpen: true });
 	}
 	sendLogin(event) {
 		event.preventDefault();
@@ -69,6 +74,7 @@ class LoginForm extends React.Component {
 				</form>
 				<div className={userClass}>
 					<span className="username mr-2">{username} is playing.</span>
+					[<a className="text-white anchor no-underline" onClick={this.openUserOptions}>Options</a>]
 					[<a className="text-white anchor no-underline" onClick={this.props.logoutCallback}>Log out</a>]
 				</div>
 			</div>

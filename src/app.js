@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
 import JoinGameMenu from './components/menus/JoinGame.js';
+import UserOptionsMenu from './components/menus/UserOptions.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
@@ -689,10 +690,12 @@ class App extends React.Component {
 		var app = this;
 		const newGameForm = <NewGameMenu app={app} />;
 		const joinGameForm = <JoinGameMenu app={app} />;
+		const userOptionsForm = <UserOptionsMenu app={app} />;
 		return (
 			<div className="userMenu p-3">
 				{newGameForm}
 				{joinGameForm}
+				{userOptionsForm}
 				<DataBrowser label="Active and Open Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={app.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: app.acceptInvite},{label: 'decline', action: app.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />

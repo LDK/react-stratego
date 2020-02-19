@@ -395,7 +395,7 @@ class GameBoard extends React.Component {
 		var borderSpaces = [];
 		for (var i = 1; i <= cols; i++) {
 			borderSpaces.push(
-				<div className="gameSpace-wrapper border-wrapper col px-0 mx-0">
+				<div className="gameSpace-wrapper border-wrapper col px-0 mx-0" key={id+"-"+i}>
 					<div className="gameSpace borderSpace" id={id+"-"+i}></div>
 				</div>
 			);
@@ -410,7 +410,7 @@ class GameBoard extends React.Component {
 		var offset = (row - 1) * (colSize || 10);
 		var gameSpaces = [];
 		gameSpaces.push(
-				<div className="gameSpace-wrapper border-wrapper left-wrapper col px-0 mx-0">
+				<div className="gameSpace-wrapper border-wrapper left-wrapper col px-0 mx-0" key={"left-border-"+row}>
 					<div className="gameSpace borderSpace left-border" id={"left-border-"+row}></div>
 				</div>
 		);
@@ -426,7 +426,7 @@ class GameBoard extends React.Component {
 			gameSpaces.push(newSpace);
 		}
 		gameSpaces.push(
-				<div className="gameSpace-wrapper border-wrapper right-wrapper col px-0 mx-0">
+				<div className="gameSpace-wrapper border-wrapper right-wrapper col px-0 mx-0" key={"right-border-"+row}>
 					<div className="gameSpace borderSpace right-border" id={"right-border-"+row}></div>
 				</div>
 		);

@@ -687,18 +687,11 @@ class App extends React.Component {
 		});
 	}
 	userMenuBody() {
-		var app = this;
-		const newGameForm = <NewGameMenu app={app} />;
-		const joinGameForm = <JoinGameMenu app={app} />;
-		const userOptionsForm = <UserOptionsMenu app={app} />;
 		return (
 			<div className="userMenu p-3">
-				{newGameForm}
-				{joinGameForm}
-				{userOptionsForm}
-				<DataBrowser label="Active and Open Games:" items={app.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Invites:" items={app.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: app.acceptInvite},{label: 'decline', action: app.declineInvite}]} />
-				<DataBrowser label="Outgoing Requests:" items={app.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: app.cancelRequest}]} />
+				<DataBrowser label="Active and Open Games:" items={this.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
+				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);
@@ -756,6 +749,9 @@ class App extends React.Component {
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />
 					{body}
+					<NewGameMenu app={this} />
+					<JoinGameMenu app={this} />
+					<UserOptionsMenu app={this} />
 				</div>
 		);
 	}

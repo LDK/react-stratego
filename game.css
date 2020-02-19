@@ -811,12 +811,12 @@ div.captured-tiles label {
 		left: 8%;
 	}
 	.modal-wrapper.height-small {
-		height: 72%;
-		top: 14%;
+		height: 56%;
+		top: 22%;
 	}
 	.modal-wrapper.width-small {
-		width: 72%;
-		left: 14%;
+		width: 56%;
+		left: 22%;
 	}
 }
 

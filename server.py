@@ -556,6 +556,61 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         postRes[game[1]]['opponent_name'] = game[3]
     return postRes
 
+  def getUserData(self, uid):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    selectSql = "select u.id, u.username, u.password, u.email, rand.option_value as randomAvailable, invite.option_value as inviteAvailable \
+    from user u \
+    left join user_options invite \
+    on invite.user_id = u.id \
+    and invite.option_name = 'inviteAvailable' \
+    left join user_options rand \
+    on rand.user_id = u.id \
+    and rand.option_name = 'randomAvailable' \
+    where u.id = {uid}".format(uid=uid)
+    c.execute(selectSql)
+    userData = c.fetchone()
+    postRes = {}
+    postRes['id'] = userData[0]
+    postRes['username'] = userData[1]
+    postRes['password'] = userData[2]
+    postRes['email'] = userData[3]
+    postRes['random_available'] = userData[4]
+    postRes['invite_available'] = userData[5]
+    return postRes
+
+  def saveUserOptions(self, uid, postvars):
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    userData = self.getUserData(uid)
+    nameChange = ''
+    pwChange = ''
+    emailChange = ''
+    postRes = {}
+    if 'username' in postvars and postvars['username'][0] != userData['username']:
+        postRes['username'] = postvars['username'][0]
+        nameChange = ", username = '{name}'".format(name=postvars['username'][0])
+    if 'new_password' in postvars and postvars['new_password'][0] != userData['password']:
+        postRes['password'] = postvars['new_password'][0]
+        pwChange = ", password = '{pw}'".format(pw=postvars['new_password'][0])
+    if 'email' in postvars and postvars['email'][0] != userData['email']:
+        postRes['email'] = postvars['email'][0]
+        emailChange = ", email = '{email}'".format(email=postvars['email'][0])
+    updateSql = "UPDATE user set id = {uid}{pwChange}{emailChange}{nameChange} where id = {uid}".\
+        format(uid=uid, pwChange=pwChange, emailChange=emailChange, nameChange=nameChange)
+    if 'random_available' in postvars and postvars['random_available'][0] != userData['randomAvailable']:
+        postRes['random_available'] = postvars['randomAvailable']
+        updateSql = "UPDATE user_options set option_value = '{val}' where option_name = '{opt}' and user_id = {uid}"\
+        .format(val=postvars['random_available'],opt='randomAvailable',uid=uid)
+    if 'invite_available' in postvars and postvars['invite_available'][0] != userData['inviteAvailable']:
+        postRes['invite_available'] = postvars['inviteAvailable']
+        updateSql = "UPDATE user_options set option_value = '{val}' where option_name = '{opt}' and user_id = {uid}"\
+        .format(val=postvars['invite_available'],opt='inviteAvailable',uid=uid)
+    c.execute(updateSql)
+    conn.commit()
+    conn.close()
+    return postRes
+
   def checkCreds(self,user_id,userKey):
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -591,10 +646,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 }
         else:
             self.respond(200)
-            postRes = {}
+            postRes = self.getUserData(user_match[0])
             postRes['user_id'] = user_match[0]
             postRes['userKey'] = user_match[1]
-            postRes['username'] = uName
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return
@@ -675,17 +729,31 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]
         uid = postvars['user_id'][0]
-        gid = postvars['game_id'][0]
         authorized = self.checkCreds(uid,userKey)
         if not authorized:
             self.respond(401)
             return
+        gid = postvars['game_id'][0]
         self.respond(200)
         postRes = self.getOpponentData(gid,uid)
         self.wfile.write(json.dumps(postRes).encode("utf-8"))
         conn.close()
         return
-                
+    
+    elif (self.path == '/save_user_options'):
+        postvars = self.parse_POST()
+        userKey = postvars['userKey'][0]
+        uid = postvars['user_id'][0]
+        authorized = self.checkCreds(uid,userKey)
+        if not authorized:
+            self.respond(401)
+            return
+        self.respond(200)
+        postRes = self.saveUserOptions(uid,postvars)
+        self.wfile.write(json.dumps(postRes).encode("utf-8"))
+        conn.close()
+        return
+
     elif (self.path == '/join_game'):
         postvars = self.parse_POST()
         userKey = postvars['userKey'][0]

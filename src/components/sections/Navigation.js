@@ -47,7 +47,7 @@ class Navigation extends React.Component {
 				<div className="col-3 col-md-4 col-lg-3">
 					{gameBrowser}
 				</div>
-				<LoginForm wrapperClass="pl-0 col-8 col-md-7 col-lg-8 text-right" loginCallback={app.setCurrentUser} logoutCallback={app.logUserOut} app={app} />
+				<LoginForm wrapperClass="pl-0 col-8 col-md-7 col-lg-8 text-right" loginCallback={app.setCurrentUser} app={app} />
 				<RegistrationMenu app={app} />
 			</div>
 		)

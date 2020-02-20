@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Icon from '../widgets/Icon.js';
 import DataBrowser from '../widgets/DataBrowser.js';
+import Cookies from 'universal-cookie';
 
 class LoginForm extends React.Component {
 	constructor(props) {
@@ -16,7 +17,15 @@ class LoginForm extends React.Component {
 		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
 		this.openUserOptions = this.openUserOptions.bind(this);
 		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
+		this.closeUserDropdown = this.closeUserDropdown.bind(this);
+		this.logUserOut = this.logUserOut.bind(this);
 		props.app.LoginForm = this;
+	}
+	logUserOut() {
+		const cookies = new Cookies();
+		cookies.remove("stratego-user");
+		this.props.app.setState({currentUser: false, activeGame: null, games: []});
+		this.closeUserDropdown();
 	}
 	updateUserInput(event) {
 		this.setState({userInput: event.target.value});
@@ -29,9 +38,13 @@ class LoginForm extends React.Component {
 	openUserOptions() {
 		var app = this.props.app;
 		app.UserOptions.setState({ formOpen: true });
+		this.closeUserDropdown();
 	}
 	toggleUserDropdown() {
 		this.setState({ userDropdownOpen: !this.state.userDropdownOpen });
+	}
+	closeUserDropdown() {
+		this.setState({ userDropdownOpen: false });
 	}
 	sendLogin(event) {
 		event.preventDefault();
@@ -71,7 +84,7 @@ class LoginForm extends React.Component {
 		var username = app.state.currentUser.username;
 		var dropdownItems = [
 			{ value: 'options', name: 'User Options', onSelect: this.openUserOptions },
-			{ value: 'logout', name: 'Log out', onSelect: this.props.logoutCallback }
+			{ value: 'logout', name: 'Log out', onSelect: this.logUserOut }
 		];
 		return (
 			<div className={this.props.wrapperClass}>

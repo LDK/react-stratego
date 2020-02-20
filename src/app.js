@@ -33,7 +33,6 @@ class App extends React.Component {
 		};
 		this.pastOpponents = [];
 		this.setCurrentUser = this.setCurrentUser.bind(this);
-		this.logUserOut = this.logUserOut.bind(this);
 		this.acceptInvite = this.acceptInvite.bind(this);
 		this.declineInvite = this.declineInvite.bind(this);
 		this.cancelRequest = this.cancelRequest.bind(this);
@@ -573,11 +572,6 @@ class App extends React.Component {
 				}
 			});
 		});
-	}
-	logUserOut() {
-		const cookies = new Cookies();
-		cookies.remove("stratego-user");
-		this.setState({currentUser: false, activeGame: null, games: []});
 	}
 	preLoginBody() {
 		return (

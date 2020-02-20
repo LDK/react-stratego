@@ -751,7 +751,19 @@ div.captured-tiles label {
 .gameSpace.borderSpace {
 	border: none !important;
 }
-
+#nav-user-menu {
+	position: relative;
+}
+#user-dropdown-wrapper {
+	position: absolute;
+	right: 0rem;
+	text-align: left;
+}
+#user-dropdown {
+	background: var(--darker);
+	padding: .5rem 1.5rem;
+	list-style-type: none;
+}
 @media (min-width: 576px) {
 	.modal-wrapper {
 		height: 88%;

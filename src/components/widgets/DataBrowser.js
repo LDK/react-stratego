@@ -41,7 +41,7 @@ class DataBrowser extends React.Component {
 			items.unshift({ id: null, name: this.props.emptyOption });
 		}
 		const dataItems = items.map((opt,i) => 
-			<option key={i} value={opt.id || this.props.emptyVal || ''}>
+			<option key={i} value={opt.id || this.props.emptyVal || ''} onClick={this.props.onSelect || null}>
 				{opt.name}
 			</option>
 		);
@@ -95,12 +95,12 @@ class DataBrowser extends React.Component {
 		else {
 			 dataItems = items.map((opt,i) => 
 				<li key={i}>
-					<a onClick={cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>
+					<a onClick={opt.onSelect || cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>
 				</li>
 			);
 		}
 		return (
-			<div className={wrapperClass}>
+			<div className={wrapperClass} id={this.props.id || null}>
 				<label>{this.state.label}</label>
 				<ul id={elId}>
 					{dataItems}

@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import Icon from '../widgets/Icon.js';
+import DataBrowser from '../widgets/DataBrowser.js';
 
 class LoginForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			userInput: '',
-			passInput: ''
+			passInput: '',
+			userDropdownOpen: !!props.open
 		};
 		this.sendLogin = this.sendLogin.bind(this);
 		this.updateUserInput = this.updateUserInput.bind(this);
 		this.updatePassInput = this.updatePassInput.bind(this);
 		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
 		this.openUserOptions = this.openUserOptions.bind(this);
+		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
 		props.app.LoginForm = this;
 	}
 	updateUserInput(event) {
@@ -26,6 +29,9 @@ class LoginForm extends React.Component {
 	openUserOptions() {
 		var app = this.props.app;
 		app.UserOptions.setState({ formOpen: true });
+	}
+	toggleUserDropdown() {
+		this.setState({ userDropdownOpen: !this.state.userDropdownOpen });
 	}
 	sendLogin(event) {
 		event.preventDefault();
@@ -63,6 +69,10 @@ class LoginForm extends React.Component {
 		var formClass = app.state.currentUser ? 'd-none' : '';
 		var userClass = !app.state.currentUser ? 'd-none' : '';
 		var username = app.state.currentUser.username;
+		var dropdownItems = [
+			{ value: 'options', name: 'User Options', onSelect: this.openUserOptions },
+			{ value: 'logout', name: 'Log out', onSelect: this.props.logoutCallback }
+		];
 		return (
 			<div className={this.props.wrapperClass}>
 				<form onSubmit={this.sendLogin} className={formClass}>
@@ -73,12 +83,14 @@ class LoginForm extends React.Component {
 					<input type="password" value={this.state.passInput} onChange={this.updatePassInput} name="password" size="14" className="mr-2" placeholder="Password" />
 					<input type="submit" value="Go" size="3" onClick={this.sendLogin} />
 				</form>
-				<div className={userClass}>
+				<div className={userClass} id="nav-user-menu">
 					<span className="username mr-2">{username} is playing.</span>
-					<a className="text-white anchor no-underline" onClick={this.openUserOptions}>
+					<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown}>
 						<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" additionalClasses="mr-3" id="user-icon" />
 					</a>
-					[<a className="text-white anchor no-underline" onClick={this.props.logoutCallback}>Log out</a>]
+					<div id="user-dropdown-wrapper" className={this.state.userDropdownOpen ? '' : 'd-none'}>
+						<DataBrowser label={null} items={dropdownItems} view="list" id="user-dropdown" />
+					</div>
 				</div>
 			</div>
 		);

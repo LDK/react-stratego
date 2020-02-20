@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Icon from '../widgets/Icon.js';
 
 class LoginForm extends React.Component {
 	constructor(props) {
@@ -74,7 +75,9 @@ class LoginForm extends React.Component {
 				</form>
 				<div className={userClass}>
 					<span className="username mr-2">{username} is playing.</span>
-					[<a className="text-white anchor no-underline" onClick={this.openUserOptions}>Options</a>]
+					<a className="text-white anchor no-underline" onClick={this.openUserOptions}>
+						<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" additionalClasses="mr-3" id="user-icon" />
+					</a>
 					[<a className="text-white anchor no-underline" onClick={this.props.logoutCallback}>Log out</a>]
 				</div>
 			</div>

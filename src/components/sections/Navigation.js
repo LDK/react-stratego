@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DataBrowser from '../widgets/DataBrowser.js';
 import RegistrationMenu from '../menus/Registration.js';
 import LoginForm from '../widgets/LoginForm.js';
+import Icon from '../widgets/Icon.js';
 
 class Navigation extends React.Component {
 	constructor(props) {
@@ -40,7 +41,9 @@ class Navigation extends React.Component {
 		}
 		return (
 			<div className="navigation row py-3 px-3">
-				<a className="anchor no-underline" onClick={this.goHome}>Home</a>
+				<a className="anchor no-underline" onClick={this.goHome}>
+					<Icon icon="home" fill="white" width="1rem" height="1rem" />
+				</a>
 				<div className="col-3 col-md-4 col-lg-3">
 					{gameBrowser}
 				</div>

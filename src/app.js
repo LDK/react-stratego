@@ -11,7 +11,6 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import DataBrowser from './components/widgets/DataBrowser.js';
 import {PIECES} from './components/Helpers.js';
 import {keyCodes} from './components/Helpers.js';
-import Hotkeys from 'react-hot-keys';
 
 class App extends React.Component {
 	constructor(props) {
@@ -739,6 +738,11 @@ class App extends React.Component {
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
 						this.gameBoard.placeByKeyboard(this.keyCodeLookup[e.keyCode]);
 					}
+				}
+			break;
+			case keyCodes['esc']:
+				if (this.activeModal && this.activeModal.props.onKeyDown) {
+					this.activeModal.props.onKeyDown(e);
 				}
 			break;
 		}

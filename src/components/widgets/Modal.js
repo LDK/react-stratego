@@ -4,6 +4,20 @@ class Modal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.onKeyDown = this.onKeyDown.bind(this);
+		props.app.activeModal = this;
+	}
+	onKeyDown(event) {
+		if (!this.props.onKeyDown) {
+			return;
+		}
+		return this.props.onKeyDown(event);
+	}
+	componentDidMount(){
+		 this.modalContainer.focus();
+	}
+	componentDidUnmount(){
+		props.app.activeModal = null;
 	}
 	render() {
 		const content = this.props.content;
@@ -21,7 +35,7 @@ class Modal extends React.Component {
 			closeButton = (<a className="close-button button" onClick={props.closeCallback}>X</a>);
 		}
 		return (
-			<section className={"modal-container " + (props.open ? ' open' : '')}>
+			<section ref={(section) => { this.modalContainer = section; }} className={"modal-container " + (props.open ? ' open' : '')} onKeyDown={this.onKeyDown}>
 				<div className="modal-overlay" />
 				<div className={wrapperClass}>
 					{closeButton}

@@ -70,6 +70,7 @@ class RegistrationMenu extends React.Component {
 			return null;
 		}
 		var state = this.state;
+		var app = this.props.app;
 		const RegForm = (
 			<form onSubmit={this.sendRegistration}>
 				<h3 className="mb-2">That username was not found in the database.<br />Maybe you should register!</h3>
@@ -92,6 +93,7 @@ class RegistrationMenu extends React.Component {
 		return (
 		<Modal 
 			id="registration-modal"
+			app={app}
 			content={RegForm}
 			open={this.state.formOpen}
 			additionalClasses={"p-5 text-black"}

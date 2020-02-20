@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
+import {keyCodes} from '../Helpers.js';
+import Hotkeys from 'react-hot-keys';
 
 class UserOptionsMenu extends React.Component {
 	constructor(props) {
@@ -24,6 +26,8 @@ class UserOptionsMenu extends React.Component {
 		this.updateEmailInput = this.updateEmailInput.bind(this);
 		this.toggleInvitesAvailable = this.toggleInvitesAvailable.bind(this);
 		this.toggleRandomAvailable = this.toggleRandomAvailable.bind(this);
+		this.closeForm = this.closeForm.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		props.app.UserOptions = this;
 	}
 	updateUsernameInput(event) {
@@ -46,6 +50,9 @@ class UserOptionsMenu extends React.Component {
 	}
 	toggleRandomAvailable(event) {
 		this.setState({randomAvailable: !this.state.randomAvailable});
+	}
+	closeForm() {
+		this.setState({ formOpen: false });
 	}
 	saveOptions(event) {
 		event.preventDefault();
@@ -123,6 +130,14 @@ class UserOptionsMenu extends React.Component {
 			console.log('Request failed', error);
 		});
 	}
+	onKeyDown (e) {
+		if (!e.keyCode) { return; }
+		switch (e.keyCode) {
+			case keyCodes['esc']:
+				this.closeForm();
+			break;
+		}
+	}
 	render() {
 		if (!this.state.formOpen) {
 			return null;
@@ -180,8 +195,12 @@ class UserOptionsMenu extends React.Component {
 		<Modal 
 			id="user-options-modal"
 			content={OptionsForm}
+			app={this.props.app}
 			open={this.state.formOpen}
 			width="small"
+			onKeyDown={this.onKeyDown} 
+			closeButton={true}
+			closeCallback={this.closeForm}
 			additionalClasses={"py-4 px-5 text-black"}
 		/>
 		);

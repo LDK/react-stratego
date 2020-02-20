@@ -119,6 +119,7 @@ class QuickLoadMenu extends React.Component {
 		return (
 			<Modal 
 				id="quickLoad-modal"
+				app={app}
 				content={presetSelector}
 				closeButton={true}
 				closeCallback={this.closeMenu}

@@ -85,6 +85,7 @@ class JoinGameMenu extends React.Component {
 		return (
 		<Modal 
 			id="JoinGame-modal"
+			app={app}
 			content={JoinGameForm}
 			open={true}
 			height="medium"

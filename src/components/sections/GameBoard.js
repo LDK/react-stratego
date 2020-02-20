@@ -455,6 +455,7 @@ class GameBoard extends React.Component {
 					closeButton={true}
 					closeCallback={this.closeBattleModal}
 					id="battle-modal"
+					app={app}
 					content={this.state.battleContent}
 					open={this.state.battleModalOpen}
 					additionalClasses={"p-5 text-black"}

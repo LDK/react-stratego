@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Modal from '../widgets/Modal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Autosuggest from '../widgets/Autosuggest.js';
+import {keyCodes} from '../Helpers.js';
 
 class NewGameMenu extends React.Component {
 	constructor(props) {
@@ -18,7 +19,12 @@ class NewGameMenu extends React.Component {
 		this.updateUserSearch = this.updateUserSearch.bind(this);
 		this.updatePastOpp = this.updatePastOpp.bind(this);
 		this.changeOpponentSelectMode = this.changeOpponentSelectMode.bind(this);
+		this.closeForm = this.closeForm.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		props.app.newGameMenu = this;
+	}
+	closeForm() {
+		this.setState({ formOpen: false });
 	}
 	focusModeOption(mode) {
 		if (mode == this.state.opponentSelectMode || !this.state.formOpen) {
@@ -116,6 +122,14 @@ class NewGameMenu extends React.Component {
 			});
 		});
 	}
+	onKeyDown (e) {
+		if (!e.keyCode) { return; }
+		switch (e.keyCode) {
+			case keyCodes['esc']:
+				this.closeForm();
+			break;
+		}
+	}
 	render() {
 		if (!this.state.formOpen) {
 			return null;
@@ -200,8 +214,12 @@ class NewGameMenu extends React.Component {
 		return (
 		<Modal 
 			id="newGame-modal"
+			app={app}
 			content={newGameForm}
 			open={true}
+			onKeyDown={this.onKeyDown} 
+			closeButton={true}
+			closeCallback={this.closeForm}
 			additionalClasses={"p-5 text-black"}
 		/>
 		);

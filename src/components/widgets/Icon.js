@@ -11,7 +11,7 @@ class Icon extends React.Component {
 		var output = [];
 		for (var i in paths) {
 			const d = paths[i];
-			output.push(<path d={d} />)
+			output.push(<path key={i} d={d} />)
 		}
 		return output;
 	}

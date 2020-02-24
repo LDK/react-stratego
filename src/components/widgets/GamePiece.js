@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {PIECES} from '../Helpers.js';
 import { useDrag } from 'react-dnd';
+import { CSSTransition } from 'react-transition-group';
 
 class GamePiece extends React.Component {
 	constructor(props) {

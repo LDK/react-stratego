@@ -460,9 +460,10 @@ class App extends React.Component {
 					players[opponentColor].soldiers = gameData['soldiers_remaining'];
 					game.setState({players: players});
 				}
+				var last_attack = null;
 				if (attacks != game.state.attacks) {
 					// Trigger battle modal and populate with last_attack data 
-					var last_attack = JSON.parse(gameData.last_attack);
+					last_attack = JSON.parse(gameData.last_attack);
 					if (app.gameOpened && app.gameOpened < last_attack.time) {
 						game.setState({attacks: attacks, last_attack: last_attack});
 						app.gameBoard.openBattleModal();

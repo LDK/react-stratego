@@ -54,6 +54,17 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     self.send_header('Access-Control-Allow-Origin', '*')
     self.end_headers()
 
+  def updateLastMove(self, gameId, moveData):
+    # Update last_move field in db
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    moveData['ts'] = time.time()
+    updateSql = "UPDATE `game` SET last_move='{move}' WHERE id = '{id}'".format(id=gameId, move=json.dumps(moveData))
+    c.execute(updateSql)
+    conn.commit()
+    conn.close()
+    return moveData
+
   def saveGameData(self, data):
     # Grab existing game data
     gameData = self.getGameData(data['id'], False)
@@ -62,10 +73,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Decode spaces json data into list
     spaceInfo = json.loads(gameData['spaces'])
     newSpaceInfo = json.loads(data['spaces'])
-    # Get move data if any exists
-    moveData = json.loads(data['moveData']) if data['moveData'] else {}
-    if ('distance' in moveData):
-        moveData['ts'] = time.time()
     # Decode player json data into list
     players = json.loads(data['players'])
     if (players['blue']['ready']):
@@ -97,8 +104,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}', turn={turn}, last_move='{move}' WHERE id = '{id}'".\
-        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started, turn=turn, move=json.dumps(moveData))
+    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}', turn={turn} WHERE id = '{id}'".\
+        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started, turn=turn)
     c.execute(updateSql)
     conn.commit()
     conn.close()
@@ -903,12 +910,13 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
             return
         if ('game_id' in postvars and postvars['game_id'][0]):
             gameId = postvars['game_id'][0]
+            if "moveData" in postvars:
+                self.updateLastMove(gameId,json.loads(postvars['moveData'][0]))
             self.saveGameData({
                 "spaces": postvars['spaces'][0],
                 "players": postvars['players'][0],
                 "captured": postvars['captured'][0],
                 "started": postvars['started'][0],
-                "moveData": postvars['moveData'][0] if ('moveData' in postvars) else None,
                 "id": gameId,
                 "sender": uid,
                 "turn": turn

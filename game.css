@@ -38,6 +38,7 @@ body {
 	--grass: #7cc43f;
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
+	--square-size-tablet: 50px;
 }
 h3 {
 	font-size: 1.5rem;
@@ -480,12 +481,12 @@ div.captured-tiles label {
 		background-color: var(--grass);
 	}
 	.gameSpace-wrapper.col, .gameSpace-wrapper {
-		height: 50px;
-		width: 50px;
+		height: var(--square-size-tablet);
+		width: var(--square-size-tablet);
 	}
 	.gameSpace {
-		height: 50px;
-		width: 50px;
+		height: var(--square-size-tablet);
+		width: var(--square-size-tablet);
 	}
 }
 @media (max-width: 1199px) {

@@ -37,6 +37,7 @@ body {
 	--water: #3880be;
 	--grass: #7cc43f;
 	--unpassable: rgba(255,64,64,.75);
+	--square-size-default: 54px;
 }
 h3 {
 	font-size: 1.5rem;
@@ -211,8 +212,8 @@ a.button:active {
 }
 
 .gameSpace {
-	height: 54px;
-	width: 54px;
+	height: var(--square-size-default);
+	width: var(--square-size-default);
 	background-color: var(--midtone1);
 	border-left: 1px dashed var(--space-border);
 	border-top: 1px dashed var(--space-border);
@@ -227,8 +228,8 @@ a.button:active {
 	border-right: 1px dashed var(--space-border);
 }
 .gameSpace-wrapper.col, .gameSpace-wrapper {
-	height: 54px;
-	width: 54px;
+	height: var(--square-size-default);
+	width: var(--square-size-default);
 	display: inline-block;
 /*	overflow: hidden; */
 	padding: 0;

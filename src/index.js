@@ -488,7 +488,7 @@ class App extends React.Component {
 					var id = newSpaceIds[i];
 					if (!oldSpaceIds.includes(id)) {
 						var piece = { rank: null, color: opponentColor, tileSpace: null };
-						app.gameBoard.placePiece(piece, id, false);
+						app.gameBoard.placePiece(piece, id, true);
 					}
 				}
 				for (var i in oldSpaceIds) {
@@ -513,7 +513,8 @@ class App extends React.Component {
 		}
 		return rList;
 	}
-	saveActiveGame(){
+	saveActiveGame(moveData){
+		console.log('sAG',moveData);
 		if (!this.state.activeGame || !this.state.currentUser) {
 			return false;
 		}
@@ -541,6 +542,9 @@ class App extends React.Component {
 		formData.append('started',started);
 		if (turn) {
 			formData.append('turn',turn);
+		}
+		if (moveData) {
+			formData.append('moveData',JSON.stringify(moveData));
 		}
 		formData.append('players',JSON.stringify(players));
 		var capturedList = this.getCapturedList(captured);

@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import DropSpace from '../widgets/GameSpace.js';
 import DragPiece from '../widgets/GamePiece.js';
 import Modal from '../widgets/Modal.js';
-import { PIECES } from '../Helpers.js';
-import { xyToId } from '../Helpers.js';
-import { idToXy } from '../Helpers.js';
+import { PIECES, xyToId, idToXy, getVector } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 
 class GameBoard extends React.Component {
@@ -278,7 +276,7 @@ class GameBoard extends React.Component {
 		app.tileRack.resetCounts();
 	}
 	// 'id' in placePiece refers to the board square id
-	placePiece(pieceInfo,id,loading) {
+	placePiece(pieceInfo,id,loading,moveInfo) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
 		var game = this.props.game;
@@ -286,6 +284,7 @@ class GameBoard extends React.Component {
 		var playerColor = app.tileRack.playerColor;
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
+		moveInfo = moveInfo || null;
 		if (x == pieceInfo.fromX && y == pieceInfo.fromY) {
 			return;
 		}
@@ -376,10 +375,14 @@ class GameBoard extends React.Component {
 			}
 			tileSpace.setState({ remaining: tileSpace.remaining });
 		}
-		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} game={this.props.game} />);
+		if (pieceInfo.fromId) {
+			var moveVector = getVector(pieceInfo.fromId,id);
+			moveInfo = {from: pieceInfo.fromId, to: id, color: pieceInfo.color, direction: moveVector.direction, distance: moveVector.distance }
+		}
+		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} moveInfo={moveInfo} game={this.props.game} />);
 		this.setState({spaces: spaces});
 		if (!loading && !battle) {
-			app.saveActiveGame();
+			app.saveActiveGame(moveInfo);
 		}
 	}
 	resetSpace(id) {

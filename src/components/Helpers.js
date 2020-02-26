@@ -73,3 +73,24 @@ export const getSpaceId = function(startX,startY,distance,direction) {
 	}
 	return spaceId;
 }
+
+export const getVector = function(fromId,toId) {
+	const from = idToXy(fromId);
+	const to = idToXy(toId);
+	var rv = {
+		distance: Math.max(Math.abs(from.x-to.x),Math.abs(from.y-to.y))
+	};
+	if (from.y > to.y) {
+		rv.direction = 'up';
+	}
+	else if (from.y < to.y) {
+		rv.direction = 'down';
+	}
+	else if (from.x > to.x) {
+		rv.direction = 'left';
+	}
+	else if (from.x < to.x) {
+		rv.direction = 'right';
+	}
+	return rv;
+}

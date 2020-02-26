@@ -62,6 +62,10 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Decode spaces json data into list
     spaceInfo = json.loads(gameData['spaces'])
     newSpaceInfo = json.loads(data['spaces'])
+    # Get move data if any exists
+    moveData = json.loads(data['moveData']) if data['moveData'] else {}
+    if ('distance' in moveData):
+        moveData['ts'] = time.time()
     # Decode player json data into list
     players = json.loads(data['players'])
     if (players['blue']['ready']):
@@ -93,8 +97,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     # Update spaces field in db
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}', turn={turn} WHERE id = '{id}'".\
-        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started, turn=turn)
+    updateSql = "UPDATE `game` SET spaces='{spaces}', started='{started}', starter_ready='{starterReady}', opponent_ready='{oppReady}', turn={turn}, last_move='{move}' WHERE id = '{id}'".\
+        format(spaces=spaceString, starterReady=starterReady, oppReady=oppReady, id=data['id'], started=started, turn=turn, move=json.dumps(moveData))
     c.execute(updateSql)
     conn.commit()
     conn.close()
@@ -384,7 +388,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         return {}
     conn = sqlite3.connect(sqlite_file)
     c = conn.cursor()
-    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started, g.turn, g.attacks, g.last_attack FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
+    selectSql = "SELECT g.starting_user_id, g.opponent_user_id, g.spaces, g.starter_ready, g.opponent_ready, g.started, g.turn, g.attacks, g.last_attack, g.last_move FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id INNER JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '{id}'".format(id=gameId)
     c.execute(selectSql)
     gameData = c.fetchone()
     postRes = {}
@@ -413,6 +417,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     postRes['turn'] = gameData[6]
     postRes['attacks'] = gameData[7]
     postRes['last_attack'] = gameData[8]
+    postRes['last_move'] = gameData[9]
     postRes['soldiers_remaining'] = oppSoldiers
     conn.commit()
     conn.close()
@@ -903,6 +908,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 "players": postvars['players'][0],
                 "captured": postvars['captured'][0],
                 "started": postvars['started'][0],
+                "moveData": postvars['moveData'][0] if ('moveData' in postvars) else None,
                 "id": gameId,
                 "sender": uid,
                 "turn": turn

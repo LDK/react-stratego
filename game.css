@@ -218,6 +218,7 @@ a.button:active {
 	border-top: 1px dashed var(--space-border);
 	padding: 0;
 	margin: 0;
+	position: relative;
 }
 .gameSpaceRow:nth-child(12) .gameSpace {
 	border-bottom: 1px dashed var(--space-border);
@@ -229,7 +230,7 @@ a.button:active {
 	height: 54px;
 	width: 54px;
 	display: inline-block;
-	overflow: hidden;
+/*	overflow: hidden; */
 	padding: 0;
 	margin: 0;
 }
@@ -894,4 +895,14 @@ div.captured-tiles label {
 		width: 36%;
 		left: 32%;
 	}
+}
+
+.gamePiece-wrapper {
+	position: relative;
+	z-index: 1;
+	transform: translate(0px,0px);
+	transition: transform 1s;
+}
+.gameSpace-wrapper {
+	overflow: visible;
 }

@@ -1,0 +1,36 @@
+.gamePiece-wrapper.down-1.piece-moving-appear {
+    transform: translate(0px,-56px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.up-1.piece-moving-appear {
+    transform: translate(0px,56px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.right-1.piece-moving-appear {
+    transform: translate(-56px,0px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.left-1.piece-moving-appear {
+    transform: translate(56px,0px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.down-2.piece-moving-appear {
+    transform: translate(0px,-104px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.up-2.piece-moving-appear {
+    transform: translate(0px,104px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.right-2.piece-moving-appear {
+    transform: translate(-104px,0px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.left-2.piece-moving-appear {
+    transform: translate(104px,0px);
+    transition: transform 1s;
+}
+.gamePiece-wrapper.piece-moving-enter-done.no-drag.piece-moving-appear-done {
+    transform: translate(0px,0px);
+    transition: transform 1s;
+}

@@ -32,8 +32,12 @@ class GamePiece extends React.Component {
 		var divClass = "gamePiece text-center mx-auto" + (this.props.className || '');
 		var wrapperClass = "gamePiece-wrapper " + (this.props.wrapperClass || '');
 		wrapperClass = wrapperClass.trim();
+		var moveClass = '';
 		divClass = divClass.trim();
 		var tileFace = '';
+		if (!!this.props.moveInfo) {
+			moveClass = ' ' + this.props.moveInfo.direction + '-' + this.props.moveInfo.distance;
+		}
 		if (this.props.rank) {
 			tileFace = <div className={"tileFace rank-"+this.props.rank}></div>;
 		}
@@ -41,11 +45,18 @@ class GamePiece extends React.Component {
 			wrapperClass += ' no-drag';
 		}
 		return (
-			<div className={wrapperClass} onClick={this.pieceClicked}>
-				<div className={divClass + " " + this.props.color}>
-					{tileFace}
+			<CSSTransition
+			in={!!this.props.moveInfo}
+			timeout={1000}
+			classNames="piece-moving"
+			appear
+			>
+				<div className={wrapperClass+moveClass} onClick={this.pieceClicked}>
+					<div className={divClass + " " + this.props.color}>
+						{tileFace}
+					</div>
 				</div>
-			</div>
+			</CSSTransition>
 		)
 	}
 }
@@ -135,7 +146,7 @@ function DragPiece(props) {
 			style={styles}
 			className={wrapperClass}
 		>
-			<GamePiece color={props.color} rank={props.rank} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} />
+			<GamePiece color={props.color} rank={props.rank} moveInfo={props.moveInfo || null} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} />
 			{countLabel}
 		</div>
   );

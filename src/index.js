@@ -436,6 +436,11 @@ class App extends React.Component {
 				var started = gameData.started;
 				var turn = gameData.turn;
 				var attacks = gameData.attacks;
+				var last_move = gameData.last_move ? JSON.parse(gameData.last_move) : {};
+				var gameChanges = {};
+				if (last_move && app.tileRack.playerColor != last_move.color && (!game.state.last_move || last_move.ts != game.state.last_move.ts)) {
+					gameChanges.last_move = last_move;
+				}
 				var opponentColor;
 				if (app.tileRack.playerColor == 'blue') {
 					opponentColor = 'red';
@@ -446,20 +451,21 @@ class App extends React.Component {
 				if (opponentReady != game.state.players[opponentColor].ready) {
 					var players = game.state.players;
 					players[opponentColor].ready = opponentReady;
-					game.setState({players: players});
+					gameChanges.players = players;
 				}
 				if (started != game.state.started) {
-					game.setState({started: started});
+					gameChanges.started = started;
 				}
 				if (turn != game.state.turn) {
-					game.setState({turn: turn});
+					gameChanges.turn = turn;
 				}
 				var remaining = game.state.players[opponentColor].soldiers;
 				if (!remaining || remaining != gameData['soldiers_remaining']) {
 					var players = game.state.players;
 					players[opponentColor].soldiers = gameData['soldiers_remaining'];
-					game.setState({players: players});
+					gameChanges.players = players;
 				}
+				game.setState(gameChanges);
 				var last_attack = null;
 				if (attacks != game.state.attacks) {
 					// Trigger battle modal and populate with last_attack data 
@@ -514,7 +520,6 @@ class App extends React.Component {
 		return rList;
 	}
 	saveActiveGame(moveData){
-		console.log('sAG',moveData);
 		if (!this.state.activeGame || !this.state.currentUser) {
 			return false;
 		}

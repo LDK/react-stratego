@@ -379,7 +379,13 @@ class GameBoard extends React.Component {
 			var moveVector = getVector(pieceInfo.fromId,id);
 			moveInfo = {from: pieceInfo.fromId, to: id, color: pieceInfo.color, direction: moveVector.direction, distance: moveVector.distance }
 		}
-		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} moveInfo={moveInfo} game={this.props.game} />);
+		var lastMove = null;
+		if (game.state.last_move) {
+			if (id == game.state.last_move.to) {
+				lastMove = game.state.last_move;
+			}
+		}
+		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} moveInfo={lastMove} game={this.props.game} />);
 		this.setState({spaces: spaces});
 		if (!loading && !battle) {
 			app.saveActiveGame(moveInfo);

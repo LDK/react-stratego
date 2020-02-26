@@ -16,8 +16,8 @@ class Modal extends React.Component {
 	componentDidMount(){
 		 this.modalContainer.focus();
 	}
-	componentDidUnmount(){
-		props.app.activeModal = null;
+	componentWillUnmount(){
+		this.props.app.activeModal = null;
 	}
 	render() {
 		const content = this.props.content;

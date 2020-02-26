@@ -14,9 +14,6 @@ class Navigation extends React.Component {
 		this.goHome = this.goHome.bind(this);
 		props.app.nav = this;
 	}
-	logout(event) {
-		event.preventDefault();
-	}
 	gameChange(id) {
 		var app = this.props.app;
 		if (!id) {

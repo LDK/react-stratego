@@ -46,7 +46,6 @@ class App extends React.Component {
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
-		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
 
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.keyCodeLookup = {};
@@ -64,7 +63,6 @@ class App extends React.Component {
 		this.getUsernames();
 		this.gameStates = {};
 		this.gameSpaces = [];
-		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 		this.gamesPoll = setInterval( this.pollGames, 15000 );
 	}
 	acceptInvite(id){
@@ -398,110 +396,6 @@ class App extends React.Component {
 						}
 					}
 					app.setState({requests: reqs});
-				}
-			});
-		});
-	}
-	pollOpponentStatus(){
-		if (!this.state.activeGame || !this.state.activeGame.props.id || !this.tileRack || !this.gameBoard || !this.tileSpaces) {
-			return null;
-		}
-		var uid = this.state.currentUser.user_id;
-		var userKey = this.state.currentUser.userKey;
-		if (!uid || !userKey) {
-			return null;
-		}
-		var formData = new FormData();
-		var app = this;
-		var game = this.gameBoard.props.game;
-		var gameId = app.state.activeGame.props.id;
-		formData.append('game_id',gameId);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
-		var spaces;
-		window.fetch(this.gameServer+'opponent_status', {
-			method: 'POST', 
-			body: formData
-		}).then(function(data){
-			data.text().then(function(text) {
-				if (!text.length) {
-					return;
-				}
-				var gameData = JSON.parse(text);
-				if (gameData.game_id && gameData.game_id != gameId) {
-					return;
-				}
-				var opponentReady = gameData.opponent_ready;
-				spaces = JSON.parse(gameData.opponent_spaces);
-				var started = gameData.started;
-				var turn = gameData.turn;
-				var attacks = gameData.attacks;
-				var last_move = gameData.last_move ? JSON.parse(gameData.last_move) : {};
-				var gameChanges = {};
-				if (last_move && app.tileRack.playerColor != last_move.color && (!game.state.last_move || last_move.ts != game.state.last_move.ts)) {
-					gameChanges.last_move = last_move;
-				}
-				var opponentColor;
-				if (app.tileRack.playerColor == 'blue') {
-					opponentColor = 'red';
-				}
-				else {
-					opponentColor = 'blue';
-				}
-				if (opponentReady != game.state.players[opponentColor].ready) {
-					var players = game.state.players;
-					players[opponentColor].ready = opponentReady;
-					gameChanges.players = players;
-				}
-				if (started != game.state.started) {
-					gameChanges.started = started;
-				}
-				if (turn != game.state.turn) {
-					gameChanges.turn = turn;
-				}
-				var remaining = game.state.players[opponentColor].soldiers;
-				if (!remaining || remaining != gameData['soldiers_remaining']) {
-					var players = game.state.players;
-					players[opponentColor].soldiers = gameData['soldiers_remaining'];
-					gameChanges.players = players;
-				}
-				game.setState(gameChanges);
-				var last_attack = null;
-				if (attacks != game.state.attacks) {
-					// Trigger battle modal and populate with last_attack data 
-					last_attack = JSON.parse(gameData.last_attack);
-					if (app.gameOpened && app.gameOpened < last_attack.time) {
-						game.setState({attacks: attacks, last_attack: last_attack});
-						app.gameBoard.openBattleModal();
-						app.gameBoard.getBattleContent(last_attack);
-					}
-				}
-				var newSpaceIds = [];
-				var oldSpaceIds = [];
-				for (var i in spaces) {
-					newSpaceIds.push(spaces[i].id);
-				}
-				for (var i in app.gameBoard.state.spaces) {
-					if (!app.gameBoard.state.spaces[i].props.children) {
-						continue;
-					}
-					if 
-						(app.gameBoard.state.spaces[i].props.children.props.color == opponentColor) {
-							oldSpaceIds.push(app.gameBoard.state.spaces[i].props.id);
-						}
-				}
-				for (var i in newSpaceIds) {
-					var id = newSpaceIds[i];
-					if (!oldSpaceIds.includes(id)) {
-						var piece = { rank: null, color: opponentColor, tileSpace: null };
-						app.gameBoard.placePiece(piece, id, true);
-					}
-				}
-				for (var i in oldSpaceIds) {
-					var id = oldSpaceIds[i];
-					if (!newSpaceIds.includes(id)) {
-						app.gameBoard.emptySpace(id);
-					}
 				}
 			});
 		});

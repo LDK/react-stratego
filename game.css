@@ -702,6 +702,12 @@ div.captured-tiles label {
 #gameSpace-100 {
 	background-image: url(img/tiles/bottom-right-corner.png);
 }
+#gameSpace-44, #gameSpace-48, #gameSpace-54, #gameSpace-58 {
+	border-left-width: 0;
+}
+#gameSpace-53, #gameSpace-54, #gameSpace-57, #gameSpace-58 {
+	border-top-width: 0;
+}
 #top-border .gameSpace {
 	background-image: url(img/tiles/top-coast.png);
 }

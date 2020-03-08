@@ -15,7 +15,7 @@ import {keyCodes} from './components/Helpers.js';
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.gameServer = 'http://localhost:8081/';
+		this.gameServer = 'http://localhost:3000/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;
@@ -71,14 +71,12 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('game_id',id);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey, game_id: id };
 		window.fetch(this.gameServer+'accept_invite', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -97,14 +95,12 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('game_id',id);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey, game_id: id };
 		window.fetch(this.gameServer+'decline_invite', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -135,13 +131,12 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(this.gameServer+'games', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -186,13 +181,12 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(this.gameServer+'outgoing_requests', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -222,13 +216,12 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(this.gameServer+'incoming_invites', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -302,15 +295,13 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('id',id);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey, id: id };
 		var spaces;
 		window.fetch(this.gameServer+'game', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -373,14 +364,12 @@ class App extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('game_id',id);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { game_id: id, user_id: uid, userKey: userKey};
 		window.fetch(this.gameServer+'cancel_request', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -433,21 +422,22 @@ class App extends React.Component {
 			started = this.gameStates[id].started ? 1 : 0;
 			turn = this.gameStates[id].turn;
 		}
-		var formData = new FormData();
 		var app = this;
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
-		formData.append('game_id',id);
-		formData.append('started',started);
+		var payload = {
+			user_id: uid,
+			userKey: userKey,
+			game_id: id,
+			started: started,
+			players: JSON.stringify(players)
+		};
 		if (turn) {
-			formData.append('turn',turn);
+			payload.turn = turn;
 		}
 		if (moveData) {
-			formData.append('moveData',JSON.stringify(moveData));
+			payload.moveData = JSON.stringify(moveData);
 		}
-		formData.append('players',JSON.stringify(players));
 		var capturedList = this.getCapturedList(captured);
-		formData.append('captured',JSON.stringify(capturedList));
+		payload.capturedList = JSON.stringify(capturedList);
 		var spaces = this.gameBoard.state.spaces;
 		var saveSpaces = {};
 		for (var i in spaces) {
@@ -465,10 +455,11 @@ class App extends React.Component {
 				delete saveSpaces[i];
 			}
 		}
-		formData.append('spaces',JSON.stringify(saveSpaces));
+		payload.spaces = JSON.stringify(saveSpaces);
 		window.fetch(this.gameServer+'saveGame', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -491,12 +482,11 @@ class App extends React.Component {
 		var app = this;
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
-		var formData = new FormData();
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(this.gameServer+'past_opponents', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -526,12 +516,11 @@ class App extends React.Component {
 		var app = this;
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
-		var formData = new FormData();
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(this.gameServer+'open_games', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -562,12 +551,11 @@ class App extends React.Component {
 		var app = this;
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
-		var formData = new FormData();
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(this.gameServer+'usernames', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {

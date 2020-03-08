@@ -323,21 +323,33 @@ class GameBoard extends React.Component {
 						return [];
 					}
 					var gameId = app.state.activeGame.props.id;
-					var formData = new FormData();
 					var app = this.props.app;
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);
-					formData.append('game_id',gameId);
-					formData.append('user_id',uid);
-					formData.append('userKey',userKey);
-					formData.append('from_space_id',pieceInfo.fromId);
-					formData.append('space_id',id);
-					formData.append('spaces',spaces);
-					formData.append('attack_rank',rank);
-					formData.append('attack_color',color);
+					var saveSpaces = {};
+					for (var i in spaces) {
+						var space = {};
+						if (spaces[i].props.occupied) {
+							space.id = spaces[i].props.id;
+							space.rank = spaces[i].props.children.props.rank;
+							space.color = spaces[i].props.children.props.color;
+							saveSpaces[space.id] = space;
+						}
+					}
+					var payload = {
+						game_id: gameId,
+						spaces: saveSpaces,
+						user_id: uid,
+						userKey: userKey,
+						from_space_id: pieceInfo.fromId,
+						space_id: id,
+						attack_rank: rank,
+						attack_color: color
+					}
 					var board = this;
 					window.fetch(app.gameServer+'battle', {
 						method: 'POST', 
-						body: formData
+						headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+						body: JSON.stringify(payload)
 					}).then(function(data){
 						data.text().then(function(text) {
 							if (!text.length) {

@@ -50,13 +50,12 @@ class LoginForm extends React.Component {
 		event.preventDefault();
 		var app = this.props.app;
 		var state = this.state;
-		var formData = new FormData();
 		var props = this.props;
-		formData.append('username',state.userInput);
-		formData.append('password',state.passInput);
+		var payload = { username: state.userInput, password: state.passInput };
 		window.fetch(app.gameServer+'login', {
-			method: 'POST', 
-			body: formData
+			method: 'POST',
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		})
 		.then(function(data) {
 			data.text().then(function(text) {

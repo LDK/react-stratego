@@ -59,16 +59,14 @@ class Game extends React.Component {
 		if (!uid || !userKey) {
 			return null;
 		}
-		var formData = new FormData();
 		var game = this;
 		var gameId = app.state.activeGame.props.id;
-		formData.append('game_id',gameId);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { game_id: gameId, user_id: uid, userKey: userKey};
 		var spaces;
 		window.fetch(app.gameServer+'opponent_status', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -85,7 +83,7 @@ class Game extends React.Component {
 				var attacks = gameData.attacks;
 				var last_move = gameData.last_move ? JSON.parse(gameData.last_move) : {};
 				var gameChanges = {};
-				if (last_move && app.tileRack.playerColor != last_move.color && (!game.state.last_move || last_move.ts != game.state.last_move.ts)) {
+				if (last_move && (app.tileRack.playerColor != last_move.color) && (!game.state.last_move || (last_move.ts != game.state.last_move.ts))) {
 					gameChanges.last_move = last_move;
 				}
 				var opponentColor;

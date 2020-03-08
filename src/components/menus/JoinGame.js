@@ -24,17 +24,16 @@ class JoinGameMenu extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var formData = new FormData();
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
+		var payload = { user_id: uid, userKey: userKey };
 		var gameId = this.state.gameId;
 		var menu = this;
 		if (gameId) {
-			formData.append('game_id',gameId);
+			payload.game_id = gameId;
 		}
 		window.fetch(app.gameServer+'join_game', {
-			method: 'POST', 
-			body: formData
+			method: 'POST',
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {
@@ -48,10 +47,10 @@ class JoinGameMenu extends React.Component {
 		});
 	}
 	updateChosen(value) {
-		var gameId = parseInt(value) || null;
+		var gameId = !isNaN(parseInt(value)) ? parseInt(value) : null;
 		this.setState({ 
 			gameId: gameId,
-			gameFound: !!gameId
+			gameFound: !isNaN(gameId)
 		});
 	}
 	render() {

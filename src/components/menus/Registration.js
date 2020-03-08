@@ -34,17 +34,19 @@ class RegistrationMenu extends React.Component {
 		event.preventDefault();
 		var app = this.props.app;
 		var Reg = this;
-		if (!state.passInput || state.passInput != state.pass2Input) {
+		if (!this.state.passInput || this.state.passInput != this.state.pass2Input) {
 			// return for now.  todo: some validation and subsequent reporting
 			return;
 		}
-		var formData = new FormData();
-		formData.append('username',this.state.userInput);
-		formData.append('email',this.state.emailInput);
-		formData.append('password',this.state.passInput);
+		var payload = {
+			username: this.state.userInput,
+			email: this.state.emailInput,
+			password: this.state.passInput
+		};
 		window.fetch(app.gameServer+'register', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		})
 		.then(function(data) {
 			data.text().then(function(text) {
@@ -59,6 +61,7 @@ class RegistrationMenu extends React.Component {
 				}
 				else {
 					Reg.setState({formOpen: false});
+					app.setCurrentUser(res);
 				}
 			});
 		}).catch(function(error) {

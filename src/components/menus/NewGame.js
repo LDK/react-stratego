@@ -96,17 +96,15 @@ class NewGameMenu extends React.Component {
 			this.props.app.JoinGameMenu.setState({ formOpen: true });
 			return;
 		}
-		var formData = new FormData();
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
-		formData.append('mode',mode);
+		var payload = { user_id: uid, userKey: userKey, mode: mode };
 		var menu = this;
 		if (opponentId) {
-			formData.append('opponent_id',opponentId);
+			payload.opponent_id = opponentId;
 		}
 		window.fetch(app.gameServer+'new_game', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		}).then(function(data){
 			data.text().then(function(text) {
 				if (!text.length) {

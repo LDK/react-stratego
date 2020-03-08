@@ -69,22 +69,24 @@ class UserOptionsMenu extends React.Component {
 			// return for now.  todo: some validation and subsequent reporting
 			return;
 		}
-		var formData = new FormData();
+		currentUser.email = state.emailInput;
+		var payload = {
+			username: state.usernameInput,
+			email: state.emailInput,
+			random_available: !!state.randomAvailable,
+			invite_available: !!state.invitesAvailable,
+			user_id: uid,
+			userKey: userKey
+		};
 		if (state.newPassInput) {
-			formData.append('current_password',state.passInput);
-			formData.append('new_password',state.newPassInput);
+			payload.current_password = state.passInput;
+			payload.new_password = state.newPassInput;
 			currentUser.password = state.newPassInput;
 		}
-		currentUser.email = state.emailInput;
-		formData.append('username',state.usernameInput);
-		formData.append('email',state.emailInput);
-		formData.append('random_available',state.randomAvailable);
-		formData.append('invite_available',state.invitesAvailable);
-		formData.append('user_id',uid);
-		formData.append('userKey',userKey);
 		window.fetch(app.gameServer+'save_user_options', {
 			method: 'POST', 
-			body: formData
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		})
 		.then(function(data) {
 			var changes = false;

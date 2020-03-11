@@ -15,7 +15,7 @@ import {keyCodes} from './components/Helpers.js';
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.gameServer = 'http://localhost:3000/';
+		this.gameServer = 'http://stratego-api.electric-bungalow.com/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;
@@ -276,10 +276,11 @@ class App extends React.Component {
 			this.setState({ activeGame: null });
 			return;
 		}
-		if (this.gameBoard) {
-			this.gameBoard.setState({ spaces: []});
+		var app = this;
+		if (app.gameBoard && app.gameOpened) {
+			app.gameBoard.setState({ spaces: []});
 		}
-		if (this.tileSpaces) {
+		if (app.tileSpaces) {
 			for (var rank in this.tileSpaces) {
 				var space = this.tileSpaces[rank];
 				var initCount = PIECES[rank].count;
@@ -287,17 +288,17 @@ class App extends React.Component {
 				space.setState({ remaining: space.remaining });
 			}
 		}
-		if (this.tileRack) {
-			this.tileRack.remaining = 40;
+		if (app.tileRack) {
+			app.tileRack.remaining = 40;
 		}
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
 		if (!uid || !userKey) {
 			return [];
 		}
-		var app = this;
 		var payload = { user_id: uid, userKey: userKey, id: id };
 		var spaces;
+		app.gameOpened = false;
 		window.fetch(this.gameServer+'game', {
 			method: 'POST', 
 			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },

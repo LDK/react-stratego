@@ -67,6 +67,9 @@ class GameBoard extends React.Component {
 			game.setState({ players: players });
 		}
 	}
+	componentWillUnmount() {
+		this.props.app.gameBoard = null;
+	}
 	placementArrowMove(keyCode) {
 		var { x, y } = idToXy(this.state.selectedSpace);
 		switch (keyCode) {

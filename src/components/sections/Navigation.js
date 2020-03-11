@@ -25,6 +25,7 @@ class Navigation extends React.Component {
 	goHome() {
 		var app = this.props.app;
 		app.setState({ activeGame: null });
+		app.gameOpened = false;
 		if (app.nav && app.nav.gameBrowser) {
 			app.nav.gameBrowser.setState({value: null});
 		}

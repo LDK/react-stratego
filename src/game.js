@@ -51,7 +51,7 @@ class Game extends React.Component {
 	}
 	pollOpponentStatus(){
 		var app = this.props.app;
-		if (!app.state.activeGame || !app.state.activeGame.props.id || !app.tileRack || !app.gameBoard || !app.tileSpaces) {
+		if (!app.state.activeGame || !app.state.activeGame.props.id || !app.tileRack || !app.gameBoard || !app.tileSpaces || !app.gameOpened) {
 			return null;
 		}
 		var uid = app.state.currentUser.user_id;
@@ -200,6 +200,12 @@ class Game extends React.Component {
 	openQuickLoadModal() {
 		var app = this.props.app;
 		app.gameBoard.QuickLoadMenu.setState({ formOpen: true });
+	}
+	componentWillUnmount() {
+		clearInterval(this.opponentPoll);
+		var app = this.props.app
+		app.gameRef = null;
+		app.gameOpened = false;
 	}
 	render() {
 		var app = this.props.app;

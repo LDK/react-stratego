@@ -53,6 +53,10 @@ class TileRack extends React.Component {
 		game.setState({players: players});
 		app.saveActiveGame();
 	}
+	componentWillUnmount() {
+		this.props.app.tileRacks = null;
+		this.props.app.tileSpaces = null;
+	}
 	render() {
 		var readyButton = '';
 		var startButton = '';

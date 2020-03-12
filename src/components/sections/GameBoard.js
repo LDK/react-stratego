@@ -34,6 +34,7 @@ class GameBoard extends React.Component {
 	}
 	componentDidMount() {
 		var app = this.props.app;
+		app.gameBoard = this;
 		var game = this.props.game;
 		var spaces = this.props.game.props.spaces;
 		var uid = app.state.currentUser.user_id;

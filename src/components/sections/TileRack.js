@@ -12,11 +12,14 @@ class TileRack extends React.Component {
 		this.setReady = this.setReady.bind(this);
 		this.resetCounts = this.resetCounts.bind(this);
 		this.app = props.app;
-		this.app.tileSpaces = {};
 		this.app.tileRack = this;
+		this.app.tileSpaces = {};
 		this.state = { 
 			allPlaced: false
 		};
+	}
+	componentDidMount() {
+		this.app.tileRack = this;
 		if (this.app.state.currentUser.user_id == this.app.state.activeGame.props.starter) {
 			this.playerColor = 'blue';
 		}
@@ -54,8 +57,8 @@ class TileRack extends React.Component {
 		app.saveActiveGame();
 	}
 	componentWillUnmount() {
-		this.props.app.tileRacks = null;
-		this.props.app.tileSpaces = null;
+		this.app.tileRack = null;
+		this.app.tileSpaces = {};
 	}
 	render() {
 		var readyButton = '';

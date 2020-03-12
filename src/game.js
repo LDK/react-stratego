@@ -38,7 +38,6 @@ class Game extends React.Component {
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
-		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 		if (props.captured) {
 			for (var i in props.captured) {
 				var pieceId = props.captured[i];
@@ -47,7 +46,6 @@ class Game extends React.Component {
 				this.addCaptured({color: pieceColor, rank: pieceRank },true);
 			}
 		}
-		props.app.gameRef = this;
 	}
 	pollOpponentStatus(){
 		var app = this.props.app;
@@ -150,6 +148,10 @@ class Game extends React.Component {
 				}
 			});
 		});
+	}
+	componentDidMount() {
+		this.props.app.gameRef = this;
+		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 	}
 	clearCaptured() {
 		this.state.captured = { blue: {}, red: {} };

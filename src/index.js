@@ -351,7 +351,7 @@ class App extends React.Component {
 						app.gameBoard.placePiece(piece, space.id, true);
 					}
 				}
-				app.gameOpened = (new Date()).getTime() / 1000;
+				app.gameOpened = (new Date()).getTime();
 				app.setState({activeGame: gm});
 				if (app.nav && app.nav.gameBrowser) {
 					app.nav.gameBrowser.setState({value: id});

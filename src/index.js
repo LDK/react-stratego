@@ -318,6 +318,12 @@ class App extends React.Component {
 				var started = gameData.started;
 				var turn = gameData.turn;
 				var attacks = gameData.attacks;
+				
+				var players = {
+					blue: { id: starterUid, ready: !!starterReady, name: starterName },
+					red: { id: opponentUid, ready: !!starterReady, name: opponentName }
+				}
+				
 				var last_attack = JSON.parse(gameData.last_attack);
 				var captured = JSON.parse(gameData.captured);
 				spaces = JSON.parse(gameData.spaces);
@@ -326,7 +332,8 @@ class App extends React.Component {
 					app.gameRef.setState({
 						id: id,
 						started: started,
-						turn: turn
+						turn: turn,
+						players: players
 					});
 					app.gameRef.clearCaptured();
 					for (var i in captured) {

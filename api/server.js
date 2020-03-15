@@ -301,11 +301,18 @@ var getBattleResult = function(data) {
 			var attacks = parseInt(gameData.attacks) + 1;
 			var defeated = '';
 			var victory = false;
+			var remaining = {
+				blue: 0,
+				red: 0
+			};
 			for (var spaceIndex in spaces) {
 				var space = spaces[spaceIndex];
 				if (spaceId == space.id) {
 					defendRank = space.rank;
 					defendColor = space.color;
+				}
+				if (space.rank != 'B' && space.rank != 'F') {
+					remaining[space.color]++;
 				}
 				delete spaces[fromId];
 			}
@@ -373,12 +380,23 @@ var getBattleResult = function(data) {
 					delete spaces[fromId];
 				}
 			}
+			if (defeated == defendRank && defendRank != 'B' && defendRank != 'F') {
+				remaining[defeated]--;
+			}
+			else if (defeated == attackRank) {
+				remaining[defeated]--;
+			}
+			else if (defeated == 'both') {
+				remaining.blue--;
+				remaining.red--;
+			}
 			var result = {
 				defend_rank: defendRank,
 				attack_rank: attackRank,
 				defend_color: defendColor,
 				attack_color: attackColor,
 				defeated: defeated,
+				remaining: remaining,
 				space_id: spaceId,
 				from_space_id: fromId,
 				time: Date.now()

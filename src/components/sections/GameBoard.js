@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DropSpace from '../widgets/GameSpace.js';
 import DragPiece from '../widgets/GamePiece.js';
 import Modal from '../widgets/Modal.js';
+import cloneDeep from 'lodash/cloneDeep';
 import { PIECES, xyToId, idToXy, getVector } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 
@@ -48,7 +49,6 @@ class GameBoard extends React.Component {
 			}
 		}
 		if (spaces && app.tileSpaces) {
-			var soldiers = 0;
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;
@@ -56,16 +56,10 @@ class GameBoard extends React.Component {
 					targetSpace = app.tileSpaces[space.rank];
 				}
 				this.placePiece({ rank: space.rank, color: space.color, tileSpace: targetSpace }, space.id, true);
-				if (space.rank && space.rank != 'F' && space.rank != 'B') {
-					soldiers++;
-				}
 				if (targetSpace) {
 					targetSpace.setState({ remaining: targetSpace.remaining });
 				}
 			}
-			var players = game.state.players;
-			players[app.tileRack.playerColor].soldiers = soldiers;
-			game.setState({ players: players });
 		}
 	}
 	componentWillUnmount() {
@@ -145,8 +139,10 @@ class GameBoard extends React.Component {
 		var outcome = '';
 		var resultText = '';
 		var spaces = this.state.spaces;
-		var remaining = 0;
-		var players = game.state.players;
+		var remaining = result.remaining[playerColor];
+		var players = cloneDeep(game.state.players);
+		players.blue.soldiers = result.remaining.blue;
+		players.red.soldiers = result.remaining.red;
 		var afterText = '';
 		
 		if (defeated == 'both') {
@@ -165,9 +161,6 @@ class GameBoard extends React.Component {
 		}
 		for (var i in spaces) {
 			var space = spaces[i];
-			if (space.rank && space.color == playerColor && space.rank != 'F' && space.rank) {
-				remaining++;
-			}
 		}
 		if (defendRank == 'Bomb') {
 			this.emptySpace(result.space_id);
@@ -176,8 +169,6 @@ class GameBoard extends React.Component {
 		if (defeated == 'both') {
 			this.emptySpace(result.space_id);
 			this.emptySpace(result.from_space_id);
-			players[oppColor].soldiers--;
-			players[playerColor].soldiers = remaining - 1;
 			game.setState({ players: players });
 			outcome = 'Draw!';
 			resultText = (<span>Your <strong>{playerRank}</strong> and <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong> defeated each other!</span>)
@@ -185,7 +176,6 @@ class GameBoard extends React.Component {
 		else if (defeated == playerColor) {
 			outcome = 'Defeat!';
 			var action = 'defeated';
-			players[playerColor].soldiers = remaining - 1;
 			game.setState({ players: players });
 			if (defendRank == 'Bomb' && attacking) {
 				outcome = 'Catastrope!';
@@ -210,7 +200,6 @@ class GameBoard extends React.Component {
 		}
 		else {
 			outcome = 'Victory!';
-			players[oppColor].soldiers--;
 			game.setState({ players: players });
 			var action = 'defeated';
 			if (defendRank == 'Bomb' && attacking) {
@@ -233,7 +222,6 @@ class GameBoard extends React.Component {
 			}
 			resultText = (<span>Your <strong>{playerRank}</strong> {action} <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong>!</span>)
 		}
-		var players = game.state.players;
 		var content = (
 			<div className="row">
 				<h3 className="col-12 text-center battle-heading">{outcome}</h3>

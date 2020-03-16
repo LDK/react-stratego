@@ -767,6 +767,7 @@ div.captured-tiles label {
 	position: absolute;
 	right: 0rem;
 	text-align: left;
+	z-index: 1;
 }
 #user-dropdown {
 	background: var(--darker);

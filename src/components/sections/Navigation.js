@@ -35,13 +35,15 @@ class Navigation extends React.Component {
 		var gameBrowser = '';
 		var games = app.state.games;
 		if (games.length) {
-			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" emptyOption='- Select a Game -' items={games} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
+			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
 		}
 		return (
 			<div className="navigation row py-3 px-3">
-				<a className="anchor no-underline" onClick={this.goHome}>
-					<Icon icon="home" fill="white" width="1rem" height="1rem" />
-				</a>
+				<div className="d-inline-block px-3 pt-1">
+					<a className="anchor no-underline" onClick={this.goHome}>
+						<Icon icon="home" fill="white" width="1rem" height="1rem" />
+					</a>
+				</div>
 				<div className="col-3 col-md-4 col-lg-3">
 					{gameBrowser}
 				</div>

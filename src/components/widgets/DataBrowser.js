@@ -47,7 +47,7 @@ class DataBrowser extends React.Component {
 		);
 		return (
 			<div className={wrapperClass}>
-				<label>{this.state.label}</label>
+				<label className={this.props.labelClass}>{this.state.label}</label>
 				<select onChange={cb} id={elId} value={this.state.value || ''}>
 					{dataItems}
 				</select>
@@ -101,7 +101,7 @@ class DataBrowser extends React.Component {
 		}
 		return (
 			<div className={wrapperClass} id={this.props.id || null}>
-				<label>{this.state.label}</label>
+				<label className={this.props.labelClass}>{this.state.label}</label>
 				<ul id={elId}>
 					{dataItems}
 				</ul>

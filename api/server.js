@@ -149,7 +149,7 @@ var updateLastMove = function(gameId, moveData) {
 
 var getGameData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
-		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'"
+		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
 		db.get(selectSql, [], function(error,row){
 			if (!row) {
 				reject('No game data found.');
@@ -292,6 +292,7 @@ var getBattleResult = function(data) {
 		getGameData(data.game_id, false).then(function(gameData){
 			var spaces = gameData.spaces ? JSON.parse(gameData.spaces) : {};
 			var captured = gameData.captured ? JSON.parse(gameData.captured) : [];
+			var gameStatus = gameData.status;
 			var gameId = gameData.id;
 			var spaceId = data.space_id;
 			var fromId = parseInt(data.from_id);
@@ -305,6 +306,18 @@ var getBattleResult = function(data) {
 				blue: 0,
 				red: 0
 			};
+			var starterUid = gameData.starter_uid;
+			var opponentUid = gameData.opponent_uid;
+			var uid = data.uid;
+			var userColor = (starterUid == uid) ? 'blue' : 'red';
+			var starterColor = 'blue';
+			var oppColor = 'red';
+			var gameResult = null;
+			var winnerUid = null;
+			var loserUid = null;
+			var attackUid = (attackColor == userColor) ? uid : (userColor == starterColor ? opponentUid : starterUid);
+			var defendUid = (defendColor == userColor) ? uid : (userColor == starterColor ? opponentUid : starterUid);
+			// console.log(attackUid,'attacks',defendUid);
 			for (var spaceIndex in spaces) {
 				var space = spaces[spaceIndex];
 				if (spaceId == space.id) {
@@ -326,7 +339,11 @@ var getBattleResult = function(data) {
 			else if (defendRank == 'F') {
 				// Flag has been found!
 				victory = attackColor;
+				// if user is attacker, winner uid is user id
+				// If user is defender, winner uid is either starterUid or opponentUid, whichever the user is not.
+				// I know how convoluted that is.
 				defeated = defendColor;
+				gameResult = 'flag';
 			}
 			else if (defendRank == 'B') {
 				// Miners defuse bombs.
@@ -380,15 +397,37 @@ var getBattleResult = function(data) {
 					delete spaces[fromId];
 				}
 			}
-			if (defeated == defendRank && defendRank != 'B' && defendRank != 'F') {
+			if (defeated == defendColor && defendRank != 'B' && defendRank != 'F') {
 				remaining[defeated]--;
 			}
-			else if (defeated == attackRank) {
+			else if (defeated == attackColor) {
 				remaining[defeated]--;
 			}
 			else if (defeated == 'both') {
 				remaining.blue--;
 				remaining.red--;
+			}
+			if (remaining.red < 1 && remaining.blue < 1) {
+				victory = 'draw';
+				gameResult = 'soldiers';
+			}
+			else if (remaining.red < 1) {
+				victory = 'blue';
+				gameResult = 'soldiers';
+			}
+			else if (remaining.blue < 1) {
+				victory = 'red';
+				gameResult = 'soldiers';
+			}
+			if (victory) {
+				if (victory != 'draw') {
+					winnerUid = (victory == 'blue') ? starterUid : opponentUid;
+					loserUid = (victory == 'red') ? starterUid : opponentUid;
+					gameStatus = 'done';
+				}
+				else {
+					gameStatus = 'draw';
+				}
 			}
 			var result = {
 				defend_rank: defendRank,
@@ -399,12 +438,15 @@ var getBattleResult = function(data) {
 				remaining: remaining,
 				space_id: spaceId,
 				from_space_id: fromId,
-				time: Date.now()
+				time: Date.now(),
+				status: gameStatus
 			}
 			if (victory) {
 				result.victory = victory;
+				result.winner = winnerUid;
+				result.loser = loserUid;
 			}
-			var updateSql = "UPDATE `game` SET spaces='"+JSON.stringify(spaces)+"', captured='"+JSON.stringify(captured)+"', turn='"+defendColor+"', attacks='"+attacks+"', last_attack='"+JSON.stringify(result)+"' WHERE id = '"+gameId+"'";
+			var updateSql = "UPDATE `game` SET status='"+gameStatus+"', spaces='"+JSON.stringify(spaces)+"', captured='"+JSON.stringify(captured)+"', turn='"+defendColor+"', attacks='"+attacks+"', last_attack='"+JSON.stringify(result)+"', result=" + (gameResult ? "'" + gameResult + "'" : 'NULL') + ", winner = " + (winnerUid ? winnerUid : 'NULL') + ", loser = " + (loserUid ? loserUid : 'NULL') + " WHERE id = '"+gameId+"'";
 			db.run(updateSql, [], function(error) {
 				if (error) {
 					reject(error);
@@ -412,6 +454,8 @@ var getBattleResult = function(data) {
 				else {
 					result.captured = captured;
 					resolve(result);
+					updateRecord(winnerUid);
+					updateRecord(loserUid);
 				}
 			});
 		});
@@ -438,6 +482,18 @@ var cancelRequest = function(uid,gameId) {
 				}
 			});
 		});
+	});
+}
+
+var updateRecord = function(uid) {
+	var updateSql = "UPDATE `user` set wins = (SELECT count(id) from game where winner = "+uid+"), losses = (SELECT count(id) from game where loser = "+uid+") where id = "+uid;
+	db.run(updateSql, [], function(error){
+		if (error) {
+			console.log(error);
+		}
+		else {
+			// Success
+		}
 	});
 }
 
@@ -473,7 +529,7 @@ var acceptInvite = function(uid, gameId) {
 				result.error = 'User id mismatch';
 				reject(result);
 			}
-			var updateSql = "UPDATE `game` SET status='accepted' WHERE id = '"+gameId+"'";
+			var updateSql = "UPDATE `game` SET status='active' WHERE id = '"+gameId+"'";
 			db.run(updateSql, [], function(error){
 				if (error) {
 					reject(error);

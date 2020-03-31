@@ -172,12 +172,6 @@ class GameBoard extends React.Component {
 			game.setState({ players: players });
 			outcome = 'Draw!';
 			resultText = (<span>Your <strong>{playerRank}</strong> and <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong> defeated each other!</span>);
-			if (players[playerColor].soldiers < 1 && players[oppColor].soldiers < 1) {
-				outcome = 'Mutual Destruction!';
-				afterText = (
-					<p className="mx-auto text-center">Both armies have been entirely depleted! The game is a draw.</p>
-				);
-			}
 		}
 		else if (defeated == playerColor) {
 			outcome = 'Defeat!';
@@ -227,6 +221,12 @@ class GameBoard extends React.Component {
 				);
 			}
 			resultText = (<span>Your <strong>{playerRank}</strong> {action} <strong className='text-opponent-color'>{oppName}&apos;s</strong> <strong>{oppRank}</strong>!</span>)
+		}
+		if (players[playerColor].soldiers < 1 && players[oppColor].soldiers < 1) {
+			outcome = 'Mutual Destruction!';
+			afterText = (
+				<p className="mx-auto text-center">Both armies have been entirely depleted! The game is a draw.</p>
+			);
 		}
 		var content = (
 			<div className="row">

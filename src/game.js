@@ -254,11 +254,14 @@ class Game extends React.Component {
 			);
 		}
 		else {
-			var turnLabel;
+			var turnLabel, winLabel;
 			var turnClass;
-			if (this.state.turn) {
+			if (this.state.turn && this.state.status && this.state.status != 'done') {
 				turnLabel = (<h6 className="text-center mx-auto">Current Turn: <span className={"text-"+this.state.turn}>{this.state.players[this.state.turn].name}</span></h6>);
 				turnClass = ' turn-'+this.state.turn;
+			}
+			else if (this.state.status && this.state.status == 'done') {
+				winLabel = (<h5 className="text-center mx-auto mt-4">Someone is the winner!</h5>);
 			}
 			var captured = { red: [], blue: [] };
 			for (var color in this.state.captured) {
@@ -269,6 +272,7 @@ class Game extends React.Component {
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
 				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-md-2">
+					{winLabel}
 					<h4 className="mx-auto d-block my-3">Captured</h4>
 					<div className="row no-gutters">
 						<div className="col-12 col-md-6 px-3">

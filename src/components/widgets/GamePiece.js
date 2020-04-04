@@ -84,6 +84,10 @@ function DragPiece(props) {
 		if (!game.state.started && game.state.placementMode != 'drag' && !props.placed) {
 			return false;
 		}
+		// Game is over! No need to drag anything.
+		if (game.state.status && game.state.status == 'done') {
+			return false;
+		}
 		// rv = return value
 		// Start by assuming that if we have a rank, the piece is draggable.
 		var rv = true;

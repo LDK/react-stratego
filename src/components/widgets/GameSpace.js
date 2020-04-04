@@ -42,6 +42,9 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		if (!passable) {
 			return;
 		}
+		if (game.state.status == 'done') {
+			return;
+		}
 		board.placePiece(dropped,id);
 	}
 	const handleHover = function(x,y,territory,item) {

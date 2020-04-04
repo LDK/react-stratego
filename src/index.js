@@ -15,7 +15,9 @@ import {keyCodes} from './components/Helpers.js';
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.gameServer = 'http://stratego-api.electric-bungalow.com/';
+		
+		// this.gameServer = 'http://stratego-api.electric-bungalow.com/';
+		this.gameServer = 'http://localhost:3000/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;
@@ -143,32 +145,34 @@ class App extends React.Component {
 					return;
 				}
 				var gameData = JSON.parse(text);
-				var games = [];
-				for (var i in gameData) {
-					var game = gameData[i];
-					var opponent = '';
-					var opponent_id = null;
-					var started = 0;
-					if (parseInt(game.starter_uid) == parseInt(uid)) {
-						opponent = game.opponent_name;
-						opponent_id = game.opponent_uid;
-					}
-					else {
-						opponent = game.starter_name;
-						opponent_id = game.starter_uid;
-					}
-					if (parseInt(game.started)) {
-						started = 1;
-					}
-					var gameEntry = {
-						id: game.id,
-						name: game.title,
-						opponent_name: opponent,
-						opponent_id: opponent_id,
-						started: started
-					}
-					if (gameEntry && gameEntry.id) {
-						games.push(gameEntry);
+				var games = { recent: [], active: []};
+				for (var listName in games) {
+					for (var i in gameData[listName]) {
+						var game = gameData[listName][i];
+						var opponent = '';
+						var opponent_id = null;
+						var started = 0;
+						if (parseInt(game.starter_uid) == parseInt(uid)) {
+							opponent = game.opponent_name;
+							opponent_id = game.opponent_uid;
+						}
+						else {
+							opponent = game.starter_name;
+							opponent_id = game.starter_uid;
+						}
+						if (parseInt(game.started)) {
+							started = 1;
+						}
+						var gameEntry = {
+							id: game.id,
+							name: game.title,
+							opponent_name: opponent,
+							opponent_id: opponent_id,
+							started: started
+						}
+						if (gameEntry && gameEntry.id) {
+							games[listName].push(gameEntry);
+						}
 					}
 				}
 				app.setState({games: games});
@@ -582,7 +586,8 @@ class App extends React.Component {
 	userMenuBody() {
 		return (
 			<div className="userMenu p-3">
-				<DataBrowser label="Active and Open Games:" items={this.state.games} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />

@@ -34,8 +34,8 @@ class Navigation extends React.Component {
 		var app = this.props.app;
 		var gameBrowser = '';
 		var games = app.state.games;
-		if (games.length) {
-			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
+		if (games.active && games.active.length) {
+			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games.active} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
 		}
 		return (
 			<div className="navigation row py-3 px-3">

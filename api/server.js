@@ -135,7 +135,7 @@ var updateLastMove = function(gameId, moveData) {
 			reject('No Move Data');
 		}
 		moveData['ts'] = Date.now();
-		var updateSql = "UPDATE `game` SET last_move='"+JSON.stringify(moveData)+"' WHERE id = '"+gameId+"'";
+		var updateSql = "UPDATE `game` SET last_move='"+JSON.stringify(moveData)+"', last_move_ts = " + moveData.ts + " WHERE id = '"+gameId+"'";
 		db.run(updateSql, [], function(error){
 			if (error) {
 				reject(error);
@@ -441,12 +441,14 @@ var getBattleResult = function(data) {
 				time: Date.now(),
 				status: gameStatus
 			}
+			var ts = 'NULL';
 			if (victory) {
 				result.victory = victory;
 				result.winner = winnerUid;
 				result.loser = loserUid;
+				ts = Date.now();
 			}
-			var updateSql = "UPDATE `game` SET status='"+gameStatus+"', spaces='"+JSON.stringify(spaces)+"', captured='"+JSON.stringify(captured)+"', turn='"+defendColor+"', attacks='"+attacks+"', last_attack='"+JSON.stringify(result)+"', result=" + (gameResult ? "'" + gameResult + "'" : 'NULL') + ", winner = " + (winnerUid ? winnerUid : 'NULL') + ", loser = " + (loserUid ? loserUid : 'NULL') + " WHERE id = '"+gameId+"'";
+			var updateSql = "UPDATE `game` SET status='"+gameStatus+"', spaces='"+JSON.stringify(spaces)+"', captured='"+JSON.stringify(captured)+"', turn='"+defendColor+"', attacks='"+attacks+"', last_attack='"+JSON.stringify(result)+"', result=" + (gameResult ? "'" + gameResult + "'" : 'NULL') + ", winner = " + (winnerUid ? winnerUid : 'NULL') + ", loser = " + (loserUid ? loserUid : 'NULL') + ", finished_ts = " + ts + " WHERE id = '"+gameId+"'";
 			db.run(updateSql, [], function(error) {
 				if (error) {
 					reject(error);
@@ -633,6 +635,18 @@ var getOpenGames = function(uid) {
 				};
 			}
 			resolve(gameList);
+		});
+	});
+};
+
+var getRecentGames = function(uid) {
+	return new Promise((resolve, reject) => {
+		var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'done' AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.last_move_ts DESC LIMIT 3";
+		db.all(query, [], (err, games) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(games);
 		});
 	});
 };
@@ -842,18 +856,6 @@ restapi.post('/login', function(req, res) {
 	});
 });
 
-//             c.execute(insertSql)
-//             conn.commit()
-//             self.respond(200)
-//             postRes = {
-//                 "username" : uName,
-//                 "email" : uEmail,
-//                 "userKey" : uKey
-//             }
-//     self.wfile.write(json.dumps(postRes).encode("utf-8"))
-//     conn.close()
-//     return
-//
 restapi.post('/register', function(req, res) {
 	var uName = req.body.username;
 	var uPass = req.body.password;
@@ -894,8 +896,6 @@ restapi.post('/register', function(req, res) {
 		}
 	});
 });
-
-
 
 restapi.post('/game', function(req, res) {
 	checkCreds(req.body).then(
@@ -1055,21 +1055,21 @@ restapi.post('/open_games', function(req, res) {
 });
 
 restapi.post('/games', function(req, res) {
-	checkCreds(req.body).then(
-		function(uid) {
-			var query = "SELECT g.title, g.id, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status IN ('active','open') AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "')";
-
+	checkCreds(req.body).then(function(uid) {
+		getRecentGames(uid).then(function(recentGames) {
+			var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.status FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status IN ('active','open') AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.started DESC, g.last_move_ts DESC";
 			db.all(query, [], (err, rows) => {
 				if (err) {
 					throw err;
 				}
-				res.json(rows);
+				var activeGames = rows;
+				res.json({ recent: recentGames, active: activeGames });
 			});
 		},
 		function(err) {
 			res.status(401).json({ error: err });
-		}
-	);
+		})
+	});
 });
 
 restapi.post('/incoming_invites', function(req, res) {

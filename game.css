@@ -162,6 +162,8 @@ a.button:active {
 .navigation.row {
 	background: var(--darker);
 	color: white;
+	z-index: 2;
+	position: relative;
 }
 .modal-wrapper {
 	position: fixed;
@@ -170,7 +172,7 @@ a.button:active {
 	z-index: 3;
 	margin: 0px;
 	opacity: 0;
-	transition: all .35s;
+	transition: all .25s;
 	pointer-events: none;
 	height: 100%;
 	top: 0;
@@ -178,7 +180,7 @@ a.button:active {
 	left: 0;
 }
 .modal-container.open .modal-wrapper {
-	transition: all .35s;
+	transition: all .25s;
 	opacity: 1;
 	pointer-events: auto;
 }
@@ -190,7 +192,7 @@ a.button:active {
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
-	transition: all .35s;
+	transition: all .25s;
 }
 .modal-overlay {
 	opacity: 0;
@@ -204,7 +206,7 @@ a.button:active {
 	height: 100%;
 }
 .modal-container.open {
-	transition: all .35s;
+	transition: all .25s;
 	pointer-events: auto;
 }
 .modal-container.open .modal-overlay {
@@ -914,4 +916,21 @@ div.captured-tiles label {
 }
 .gameSpace-wrapper {
 	overflow: visible;
+}
+.dropdown-overlay {
+	opacity: 0;
+	z-index: 1;
+	background-color: rgba(0,0,0,.66);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	transition: all .25s;
+	pointer-events: none;
+}
+.dropdown-overlay.open {
+	opacity: 1;
+	transition: all .25s;
+	pointer-events: unset;
 }

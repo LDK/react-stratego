@@ -19,7 +19,12 @@ class LoginForm extends React.Component {
 		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
 		this.closeUserDropdown = this.closeUserDropdown.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
+		this.close = this.close.bind(this);
 		props.app.LoginForm = this;
+		props.app.nav.subItems.LoginForm = this;
+	}
+	close() {
+		this.closeUserDropdown();
 	}
 	logUserOut() {
 		const cookies = new Cookies();
@@ -37,11 +42,13 @@ class LoginForm extends React.Component {
 	}
 	openUserOptions() {
 		var app = this.props.app;
+		app.nav.closeAll();
 		app.UserOptions.setState({ formOpen: true });
-		this.closeUserDropdown();
 	}
 	toggleUserDropdown() {
-		this.setState({ userDropdownOpen: !this.state.userDropdownOpen });
+		var isOpen = this.state.userDropdownOpen;
+		this.setState({ userDropdownOpen: !isOpen });
+		this.props.app.nav.setState({ dropdownOpen: !isOpen });
 	}
 	closeUserDropdown() {
 		this.setState({ userDropdownOpen: false });

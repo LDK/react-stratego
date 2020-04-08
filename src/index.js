@@ -147,7 +147,6 @@ class App extends React.Component {
 					return;
 				}
 				var notifications = JSON.parse(text);
-				console.log('hello notifications!',notifications);
 				// var requests = [];
 				// for (var i in gameData) {
 				// 	var game = gameData[i];

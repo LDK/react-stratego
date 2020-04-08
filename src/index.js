@@ -39,6 +39,7 @@ class App extends React.Component {
 		this.declineInvite = this.declineInvite.bind(this);
 		this.cancelRequest = this.cancelRequest.bind(this);
 		this.getGames = this.getGames.bind(this);
+		this.getNotifications = this.getNotifications.bind(this);
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
 		this.getUsernames = this.getUsernames.bind(this);
@@ -126,6 +127,43 @@ class App extends React.Component {
 		this.getGames();
 		this.getInvites();
 		this.getRequests();
+		this.getNotifications();
+	}
+	getNotifications() {
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var app = this;
+		var payload = { user_id: uid, userKey: userKey };
+		window.fetch(this.gameServer+'notifications', {
+			method: 'POST', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var notifications = JSON.parse(text);
+				console.log('hello notifications!',notifications);
+				// var requests = [];
+				// for (var i in gameData) {
+				// 	var game = gameData[i];
+				// 	var gameEntry = {
+				// 		id: game.game_id,
+				// 		name: game.title,
+				// 		opponent_name: game.opponent_name,
+				// 		opponent_id: game.opponent_id
+				// 	}
+				// 	if (gameEntry && gameEntry.id) {
+				// 		requests.push(gameEntry);
+				// 	}
+				// }
+				// app.setState({requests: requests});
+			});
+		});
 	}
 	getGames() {
 		var uid = this.state.currentUser.user_id;

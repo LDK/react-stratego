@@ -506,9 +506,8 @@ var updateRecord = function(uid) {
 var declineInvite = function(uid, gameId) {
 	return new Promise((resolve, reject) => {
 		getGameData(gameId, false).then(function(gameData) {
-			var opponentUid = gameData.opponent_uid;
 			var result = {};
-			if (uid != opponentUid) {
+			if (uid != gameData.opponent_uid) {
 				result.error = 'User id mismatch';
 				reject(result);
 			}
@@ -518,7 +517,13 @@ var declineInvite = function(uid, gameId) {
 					reject(error);
 				}
 				else {
-					result.declined = gameId;
+					result.declined = {
+						starter_uid: gameData.starter_uid,
+						opponent_uid: gameData.opponent_uid,
+						starter_name: gameData.starter_name,
+						opponent_name: gameData.opponent_name,
+						id: gameId
+					};
 					resolve(result);
 				}
 			});
@@ -529,9 +534,8 @@ var declineInvite = function(uid, gameId) {
 var acceptInvite = function(uid, gameId) {
 	return new Promise((resolve, reject) => {
 		getGameData(gameId, false).then(function(gameData) {
-			var opponentUid = gameData.opponent_uid;
 			var result = {};
-			if (uid != opponentUid) {
+			if (uid != gameData.opponent_uid) {
 				result.error = 'User id mismatch';
 				reject(result);
 			}
@@ -542,10 +546,13 @@ var acceptInvite = function(uid, gameId) {
 				}
 				else {
 					result.accepted = {
-						starter_uid: uid,
-						opponent_uid: opponentUid,
+						starter_uid: gameData.starter_uid,
+						opponent_uid: gameData.opponent_uid,
+						starter_name: gameData.starter_name,
+						opponent_name: gameData.opponent_name,
 						id: gameId
 					};
+					console.log('game data',gameData);
 					resolve(result);
 				}
 			});
@@ -575,10 +582,38 @@ var newGame = function(starterId, opponentId) {
 					reject(error);
 				}
 				else {
-					resolve({ game_id: this.lastID });
+					resolve({
+						created: {
+							starter_uid: starterId,
+							opponent_uid: opponentId,
+							starter_name: userData.starter_name,
+							opponent_name: userData.opponent_name,
+							id: this.lastID
+						}
+					});
 				}
 			});
 		});
+	});
+};
+
+var addNotification = function(notification) {
+	return new Promise((resolve, reject) => {
+		if (!notification || !notification.user_id || !notification.text) {
+			reject("Insufficient data.  addNotification requires an object with at least a user_id and text");
+		}
+		else {
+			var ts = Date.now();
+			var insertSql = "INSERT INTO `notification` (user_id, text, category, added_ts, additional) VALUES (" + notification.user_id + ",'" + notification.text + "','" + (notification.category || 'general') + "',"+ts+",'" + JSON.stringify(notification.additional || {}) + "')";
+			db.run(insertSql, [], function(error) {
+				if (error) {
+					reject(error);
+				}
+				else {
+					resolve({ notification_id: this.lastID });
+				}
+			});
+		}
 	});
 };
 
@@ -730,6 +765,7 @@ var joinGame = function(mode, uid, gameId) {
 						reject(err);
 					}
 					if (row) {
+						console.log('random open',row);
 						var gameId = row.id;
 						var title = row.title.replace('open',username);
 						// Set opponent id of random game to user id
@@ -740,13 +776,23 @@ var joinGame = function(mode, uid, gameId) {
 							if (error) {
 								reject(error);
 							}
-							result.game_id = gameId;
-							result.title = title;
-							resolve(result);
+							getGameData(gameId).then(function(gameData){
+								result.game_id = gameId;
+								result.title = title;
+								result.joined = {
+									starter_uid: gameData.starter_uid,
+									opponent_uid: gameData.opponent_uid,
+									starter_name: gameData.starter_name,
+									opponent_name: gameData.opponent_name,
+									id: gameId
+								};
+								resolve(result);
+							});
 						});
 					}
 					else {
 						// Find random user
+						console.log('random new');
 						var oppSql = "SELECT id FROM user WHERE id <> "+uid+" ORDER BY RANDOM() LIMIT 1";
 						db.get(oppSql, [], function(error, oppData) {
 							if (error) {
@@ -767,9 +813,17 @@ var joinGame = function(mode, uid, gameId) {
 						if (error) {
 							reject(error);
 						}
-						resolve({
-							game_id: gameId,
-							title: title
+						getGameData(gameId).then(function(gameData){
+							result.game_id = gameId;
+							result.title = title;
+							result.joined = {
+								starter_uid: gameData.starter_uid,
+								opponent_uid: gameData.opponent_uid,
+								starter_name: gameData.starter_name,
+								opponent_name: gameData.opponent_name,
+								id: gameId
+							};
+							resolve(result);
 						});
 					});
 				});
@@ -924,10 +978,44 @@ restapi.post('/new_game', function(req, res) {
 			if (actionMode == 'random' || actionMode == 'join') {
 				joinGame(actionMode, uid, gameId).then(function(result){
 					res.status(200).json(result);
+					if (result.joined) {
+						addNotification({
+							text: '[%oppName] has joined your open game!',
+							user_id: result.joined.starter_uid,
+							category: 'open-joined',
+							additional: {
+								game_id: result.joined.id,
+								link_type: 'game',
+								oppName: result.joined.opponent_name
+							}
+						}).then(function() {
+							// success!
+						}, function(err) {
+							// what!
+							console.log('add notification error',err);
+						});
+					}
 				});
 			} else {
 				newGame(uid, opponentId).then(function(result){
 					res.status(200).json(result);
+					if (result.created) {
+						addNotification({
+							text: '[%starterName] has invited you to a game!',
+							user_id: result.created.opponent_uid,
+							category: 'invite-sent',
+							additional: {
+								game_id: result.created.id,
+								link_type: 'game',
+								starterName: result.created.starter_name
+							}
+						}).then(function() {
+							// success!
+						}, function(err) {
+							// what!
+							console.log('add notification error',err);
+						});
+					}
 				});
 			}
 		},
@@ -973,6 +1061,23 @@ restapi.post('/join_game', function(req, res) {
 			var gameId = req.body.game_id;
 			joinGame('join',uid,gameId).then(function(result){
 				res.status(200).json(result);
+				if (result.joined) {
+					addNotification({
+						text: '[%oppName] has joined your open game!',
+						user_id: result.joined.starter_uid,
+						category: 'open-joined',
+						additional: {
+							game_id: result.joined.id,
+							link_type: 'game',
+							oppName: result.joined.opponent_name
+						}
+					}).then(function() {
+						// success!
+					}, function(err) {
+						// what!
+						console.log('add notification error',err);
+					});
+				}
 			});
 		},
 		function(err) {
@@ -999,6 +1104,22 @@ restapi.post('/decline_invite', function(req, res) {
 	checkCreds(req.body).then(function(uid) {
 		declineInvite(uid,req.body.game_id).then(function(result) {
 			res.status(200).json(result);
+			if (result.declined) {
+				addNotification({
+					text: '[%oppName] has declined your game invite.',
+					user_id: result.declined.starter_uid,
+					category: 'invite-declined',
+					additional: {
+						game_id: result.declined.id,
+						oppName: result.declined.opponent_name
+					}
+				}).then(function() {
+					// success!
+				}, function(err) {
+					// what!
+					console.log('add notification error',err);
+				});
+			}
 		},function(err) {
 			res.status(401).json({ error: err });
 		});
@@ -1013,6 +1134,23 @@ restapi.post('/accept_invite', function(req, res) {
 	checkCreds(req.body).then(function(uid) {
 		acceptInvite(uid,req.body.game_id).then(function(result) {
 			res.status(200).json(result);
+			if (result.accepted) {
+				addNotification({
+					text: '[%oppName] has accepted your game invite!',
+					user_id: result.accepted.starter_uid,
+					category: 'invite-accepted',
+					additional: {
+						game_id: result.accepted.id,
+						link_type: 'game',
+						oppName: result.accepted.opponent_name
+					}
+				}).then(function() {
+					// success!
+				}, function(err) {
+					// what!
+					console.log('add notification error',err);
+				});
+			}
 		},function(err) {
 			res.status(401).json({ error: err });
 		});
@@ -1073,6 +1211,18 @@ restapi.post('/games', function(req, res) {
 		function(err) {
 			res.status(401).json({ error: err });
 		})
+	});
+});
+
+restapi.post('/notifications', function(req, res) {
+	checkCreds(req.body).then(function(uid) {
+		var query = "select text, category, added_ts, seen_ts, additional from notification where user_id = " + uid + " order by added_ts DESC";
+		db.all(query, [], (err, rows) => {
+			if (err) {
+				throw err;
+			}
+			res.json({ notifications: rows });
+		});
 	});
 });
 

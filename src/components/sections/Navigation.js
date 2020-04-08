@@ -41,7 +41,7 @@ class Navigation extends React.Component {
 	render() {
 		var app = this.props.app;
 		var gameBrowser = '';
-		var dropdown = (<div className={"dropdown-overlay" + (this.state.dropdownOpen ? ' open' : '')} onClick={this.closeAll} />);
+		var dropdown = (<div className={"dropdown-overlay" + (this.state.dropdownOpen ? ' open' : '')} onMouseEnter={this.closeAll} />);
 		var games = app.state.games;
 		if (games.active && games.active.length) {
 			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games.active} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />

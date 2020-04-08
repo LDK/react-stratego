@@ -29,6 +29,8 @@ class Game extends React.Component {
 			started: !!props.started,
 			status: props.status || 'pending',
 			attacks: props.attacks || 0,
+			winner_uid: props.winner_uid || false,
+			last_move_ts: props.last_move_ts || false,
 			last_attack: props.last_attack || {}
 		};
 		this.selectedRank =  null;
@@ -261,7 +263,16 @@ class Game extends React.Component {
 				turnClass = ' turn-'+this.state.turn;
 			}
 			else if (this.state.status && this.state.status == 'done') {
-				winLabel = (<h5 className="text-center mx-auto mt-4">Someone is the winner!</h5>);
+				var winnerName, winnerClass;
+				if (this.state.winner_uid == starterUid) {
+					winnerName = this.props.starterName;
+					winnerClass = 'text-blue';
+				}
+				else {
+					winnerName = this.props.opponentName;
+					winnerClass = 'text-red';
+				}
+				winLabel = (<h5 className="text-center mx-auto mt-4"><span className={winnerClass}>{winnerName}</span> is the winner!</h5>);
 			}
 			var captured = { red: [], blue: [] };
 			for (var color in this.state.captured) {

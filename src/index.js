@@ -323,7 +323,7 @@ class App extends React.Component {
 				var started = gameData.started;
 				var turn = gameData.turn;
 				var attacks = gameData.attacks;
-				
+				var winnerUid = gameData.winner_uid || false;
 				var players = {
 					blue: { id: starterUid, ready: !!starterReady, name: starterName },
 					red: { id: opponentUid, ready: !!starterReady, name: opponentName }
@@ -332,7 +332,7 @@ class App extends React.Component {
 				var last_attack = JSON.parse(gameData.last_attack);
 				var captured = JSON.parse(gameData.captured);
 				spaces = JSON.parse(gameData.spaces);
-				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} attacks={attacks} last_attack={last_attack} captured={captured} status={gameStatus} />;
+				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} attacks={attacks} last_attack={last_attack} captured={captured} status={gameStatus} winner_uid={winnerUid} />;
 				if (app.gameRef) {
 					app.gameRef.setState({
 						id: id,

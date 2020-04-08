@@ -149,7 +149,7 @@ var updateLastMove = function(gameId, moveData) {
 
 var getGameData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
-		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
+		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move, g.last_move_ts, g.finished_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
 		db.get(selectSql, [], function(error,row){
 			if (!row) {
 				reject('No game data found.');
@@ -191,6 +191,10 @@ var getGameData = function(gameId, uid) {
 			rv.attacks = row.attacks;
 			rv.last_attack = row.last_attack;
 			rv.last_move = row.last_move;
+			rv.winner_uid = row.winner;
+			rv.finished_ts = row.finished_ts;
+			rv.last_move_ts = row.last_move_ts;
+			rv.result = rv.result;
 			resolve(rv);
 		});
 	});

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Icon from '../widgets/Icon.js';
+import cloneDeep from 'lodash/cloneDeep';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Cookies from 'universal-cookie';
 
@@ -21,6 +22,7 @@ class LoginForm extends React.Component {
 		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
 		this.closeUserDropdown = this.closeUserDropdown.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
+		this.markVisibleSeen = this.markVisibleSeen.bind(this);
 		this.processNotifications = this.processNotifications.bind(this);
 		this.notificationAction = this.notificationAction.bind(this);
 		this.notificationButton = this.notificationButton.bind(this);
@@ -39,6 +41,41 @@ class LoginForm extends React.Component {
 	}
 	close() {
 		this.closeUserDropdown();
+	}
+	markVisibleSeen() {
+		if (!this.state.notifications.unseen) {
+			return;
+		}
+		var notifications = cloneDeep(this.state.notifications);
+		var ids = false;
+		for (var i in notifications.notifications) {
+			var notification = notifications.notifications[i];
+			if (!notification.seen_ts) {
+				if (!ids) {
+					ids = [];
+				}
+				ids.push(notification.id);
+				notifications.unseen--;
+				notification.seen_ts = Date.now();
+			}
+		}
+		this.setState({ notifications: notifications });
+		var app = this.props.app;
+		var uid = app.state.currentUser.user_id;
+		var userKey = app.state.currentUser.userKey;
+		var payload = { user_id: uid, userKey: userKey, notification_ids: ids };
+		window.fetch(app.gameServer+'markSeen', {
+			method: 'POST',
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		})
+		.then(function(data) {
+			data.text().then(function(text) {
+				var res = JSON.parse(text);
+			});
+		}).catch(function(error) {
+			console.log('Request failed', error);
+		});
 	}
 	logUserOut() {
 		const cookies = new Cookies();
@@ -61,6 +98,9 @@ class LoginForm extends React.Component {
 	}
 	toggleUserDropdown() {
 		var isOpen = this.state.userDropdownOpen;
+		if (isOpen) {
+			this.markVisibleSeen();
+		}
 		this.setState({ userDropdownOpen: !isOpen });
 		this.props.app.nav.setState({ dropdownOpen: !isOpen });
 	}

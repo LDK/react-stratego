@@ -241,6 +241,22 @@ var getPastOpponents = function(uid) {
 	});
 };
 
+var markSeen = function(uid,notification_ids) {
+	return new Promise((resolve, reject) => {
+		var idList = notification_ids.join(',');
+		// Update spaces field in db
+		var updateSql = "UPDATE `notification` SET seen_ts='"+Date.now()+"' WHERE id IN (" + idList + ") AND user_id = '" + uid + "'";
+		db.run(updateSql, [], function(error) {
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve(idList);
+			}
+		});
+	});
+}
+
 var saveGameData = function(data) {
 	return new Promise((resolve, reject) => {
 		getGameData(data.id, false).then(function(gameData){
@@ -552,7 +568,6 @@ var acceptInvite = function(uid, gameId) {
 						opponent_name: gameData.opponent_name,
 						id: gameId
 					};
-					console.log('game data',gameData);
 					resolve(result);
 				}
 			});
@@ -765,7 +780,6 @@ var joinGame = function(mode, uid, gameId) {
 						reject(err);
 					}
 					if (row) {
-						console.log('random open',row);
 						var gameId = row.id;
 						var title = row.title.replace('open',username);
 						// Set opponent id of random game to user id
@@ -792,7 +806,6 @@ var joinGame = function(mode, uid, gameId) {
 					}
 					else {
 						// Find random user
-						console.log('random new');
 						var oppSql = "SELECT id FROM user WHERE id <> "+uid+" ORDER BY RANDOM() LIMIT 1";
 						db.get(oppSql, [], function(error, oppData) {
 							if (error) {
@@ -1233,6 +1246,20 @@ restapi.post('/notifications', function(req, res) {
 			res.json({ notifications: rows, total: total, unseen: unseen, newest_ts: newest_ts });
 		});
 	});
+});
+
+restapi.post('/markSeen', function(req, res) {
+	checkCreds(req.body).then(
+		function(uid){
+			var notification_ids = req.body.notification_ids;
+			if (!notification_ids) {
+				return;
+			}
+			markSeen(uid, notification_ids).then(function(result) {
+				res.status(200).json(result);
+			});
+		}
+	);
 });
 
 restapi.post('/incoming_invites', function(req, res) {

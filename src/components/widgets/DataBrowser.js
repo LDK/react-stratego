@@ -57,7 +57,7 @@ class DataBrowser extends React.Component {
 	linkList(property, refVal) {
 		var links = [];
 		const linkItems = this.props[property].map((link,i) => 
-			<li key={i}>
+			<li key={i} className={link.className}>
 				<a className="anchor underline" onClick={() => link.action(refVal)}>{link.label}</a>
 			</li>
 		);
@@ -93,11 +93,32 @@ class DataBrowser extends React.Component {
 			);
 		}
 		else {
-			 dataItems = items.map((opt,i) => 
-				<li key={i}>
-					<a onClick={opt.onSelect || cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>
-				</li>
-			);
+			var content = null;
+			var dataItems=[];
+			for (var i in items) {
+				var opt = items[i];
+				if (opt.buttons) {
+					var buttons = opt.buttons.map((btn,i) => 
+						<li key={i}>
+							<a className="button" onClick={btn.action}>{btn.label}</a>
+						</li>
+					);
+					content = (
+						<div data-key={opt.id}>
+							<span>{opt.name}</span>
+							<ul className="item-buttons">{buttons}</ul>
+						</div>
+					);
+				}
+				else {
+					content = (<a onClick={opt.onSelect || cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>);
+				}
+				dataItems.push(
+					<li key={i} className={opt.className}>
+						{content}
+					</li>
+				);
+			}
 		}
 		return (
 			<div className={wrapperClass} id={this.props.id || null}>

@@ -1216,12 +1216,21 @@ restapi.post('/games', function(req, res) {
 
 restapi.post('/notifications', function(req, res) {
 	checkCreds(req.body).then(function(uid) {
-		var query = "select text, category, added_ts, seen_ts, additional from notification where user_id = " + uid + " order by added_ts DESC";
+		var query = "select id, text, category, added_ts, seen_ts, additional from notification where user_id = " + uid + " order by added_ts DESC";
 		db.all(query, [], (err, rows) => {
 			if (err) {
 				throw err;
 			}
-			res.json({ notifications: rows });
+			var unseen = 0;
+			var total = 0;
+			for (var i in rows) {
+				total++;
+				if (rows[i].seen_ts == null) {
+					unseen++;
+				}
+			}
+			var newest_ts = rows.length ? rows[0].added_ts : null;
+			res.json({ notifications: rows, total: total, unseen: unseen, newest_ts: newest_ts });
 		});
 	});
 });

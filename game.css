@@ -934,3 +934,17 @@ div.captured-tiles label {
 	transition: all .25s;
 	pointer-events: unset;
 }
+#user-anchor {
+	position: relative;
+}
+span.notification-counter {
+	font-size: .6rem;
+	width: .8rem;
+	height: .8rem;
+	display: inline-block;
+	background: red;
+	text-align: center;
+	left: .5rem;
+	position: absolute;
+	bottom: -.25rem;
+}

@@ -9,7 +9,9 @@ class LoginForm extends React.Component {
 		this.state = {
 			userInput: '',
 			passInput: '',
-			userDropdownOpen: !!props.open
+			notifications: {},
+			userDropdownOpen: !!props.open,
+			newest_notification_ts: null
 		};
 		this.sendLogin = this.sendLogin.bind(this);
 		this.updateUserInput = this.updateUserInput.bind(this);
@@ -19,9 +21,21 @@ class LoginForm extends React.Component {
 		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
 		this.closeUserDropdown = this.closeUserDropdown.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
+		this.processNotifications = this.processNotifications.bind(this);
+		this.notificationAction = this.notificationAction.bind(this);
+		this.notificationButton = this.notificationButton.bind(this);
+		
 		this.close = this.close.bind(this);
 		props.app.LoginForm = this;
 		props.app.nav.subItems.LoginForm = this;
+		this.getNotifications = this.getNotifications.bind(this);
+	}
+	componentDidMount() {
+		this.getNotifications();
+		this.notificationPoll = setInterval( this.getNotifications, 15000 );
+	}
+	componentWillUnmount() {
+		clearInterval(this.notificationPoll);
 	}
 	close() {
 		this.closeUserDropdown();
@@ -83,6 +97,93 @@ class LoginForm extends React.Component {
 	openRegistrationMenu() {
 		this.props.app.RegistrationMenu.setState({ formOpen: true });
 	}
+	getNotifications() {
+		var app = this.props.app;
+		var uid = app.state.currentUser.user_id;
+		var userKey = app.state.currentUser.userKey;
+		if (!uid || !userKey) {
+			return [];
+		}
+		var nav = app.nav;
+		var userMenu = this;
+		var payload = { user_id: uid, userKey: userKey };
+		window.fetch(app.gameServer+'notifications', {
+			method: 'POST', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var notifications = JSON.parse(text);
+				if (notifications.newest_ts > userMenu.state.newest_notification_ts) {
+					userMenu.setState({ notifications: notifications });
+				}
+				else {
+
+				}
+			});
+		});
+	}
+	notificationButton(action,type,data) {
+		if (type == 'game' && data.game_id) {
+			switch (action) {
+				case 'accept': 
+					this.props.app.acceptInvite(data.game_id);
+				break;
+				case 'decline': 
+					this.props.app.declineInvite(data.game_id);
+				break;
+			}
+		}
+		this.close();
+	}
+	notificationAction(data) {
+		if (!data.link_type) {
+			this.close();
+			return;
+		}
+		switch(data.link_type) {
+			case 'game':
+				if (!data.game_id) {
+					this.close();
+					return;
+				}
+				this.props.app.loadGame(data.game_id);
+			break;
+		}
+		this.close();
+	}
+	processNotifications() {
+		var notificationRows = [];
+		if (this.state.notifications.notifications) {
+			for (var i in this.state.notifications.notifications) {
+				var notification = this.state.notifications.notifications[i];
+				var additional = JSON.parse(notification.additional);
+				var text = notification.text;
+				for (var key in additional) {
+					text = text.replace('[%'+key+']',additional[key]);
+				}
+				var classes = 'notification ';
+				classes += notification.seen_ts ? 'seen' : 'unseen';
+				var browserItem = { 
+					value: 'notification-'+notification.id, 
+					name: text, 
+					onSelect: () => this.notificationAction(additional),
+					className: classes 
+				};
+				if (notification.category == 'invite-sent' && additional.game_id) {
+					browserItem.buttons = [
+						{ action: () => this.notificationButton('accept','game',additional), label: 'Accept' },
+						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' }
+					];
+				}
+				notificationRows.push(browserItem);
+			}
+		}
+		return notificationRows;
+	}
 	render() {
 		var app = this.props.app;
 		var formClass = app.state.currentUser ? 'd-none' : '';
@@ -92,6 +193,12 @@ class LoginForm extends React.Component {
 			{ value: 'options', name: 'User Options', onSelect: this.openUserOptions },
 			{ value: 'logout', name: 'Log out', onSelect: this.logUserOut }
 		];
+		var notificationCounter = null;
+		var notificationRows = this.processNotifications();
+		dropdownItems = notificationRows.concat(dropdownItems);
+		if (this.state.notifications.unseen) {
+			notificationCounter = (<span className="notification-counter">{this.state.notifications.unseen}</span>)
+		}
 		return (
 			<div className={this.props.wrapperClass}>
 				<form onSubmit={this.sendLogin} className={formClass}>
@@ -104,8 +211,9 @@ class LoginForm extends React.Component {
 				</form>
 				<div className={userClass} id="nav-user-menu">
 					<span className="username mr-2">{username} is playing.</span>
-					<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown}>
+					<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown} id="user-anchor">
 						<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" additionalClasses="mr-3" id="user-icon" />
+						{notificationCounter}
 					</a>
 					<div id="user-dropdown-wrapper" className={this.state.userDropdownOpen ? '' : 'd-none'}>
 						<DataBrowser label={null} items={dropdownItems} view="list" id="user-dropdown" />

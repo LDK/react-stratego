@@ -99,7 +99,7 @@ class DataBrowser extends React.Component {
 				var opt = items[i];
 				if (opt.buttons) {
 					var buttons = opt.buttons.map((btn,i) => 
-						<li key={i}>
+						<li key={i} className="mr-3 py-2">
 							<a className="button" onClick={btn.action}>{btn.label}</a>
 						</li>
 					);

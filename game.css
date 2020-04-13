@@ -772,9 +772,20 @@ div.captured-tiles label {
 	z-index: 1;
 }
 #user-dropdown {
+	list-style-type: none;
+	padding: 0;
+}
+#user-dropdown > li {
 	background: var(--darker);
 	padding: .5rem 1.5rem;
-	list-style-type: none;
+}
+#user-dropdown > li.notification {
+	background: var(--disabled-light);
+	color: black;
+	border-top: 1px solid var(--darker);
+}
+#user-dropdown > li.notification.unseen {
+	background: var(--white);
 }
 @media (min-width: 576px) {
 	.modal-wrapper {
@@ -947,4 +958,17 @@ span.notification-counter {
 	left: .5rem;
 	position: absolute;
 	bottom: -.25rem;
+}
+ul.item-buttons {
+    padding: 0;
+}
+ul.item-buttons li {
+    display: inline-block;
+}
+ul.item-buttons li a.button {
+    font-size: .8rem;
+    min-width: unset;
+    display: block;
+    text-align: center;
+    width: 5rem;
 }

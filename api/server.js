@@ -1229,21 +1229,19 @@ restapi.post('/games', function(req, res) {
 
 restapi.post('/notifications', function(req, res) {
 	checkCreds(req.body).then(function(uid) {
-		var query = "select id, text, category, added_ts, seen_ts, additional from notification where user_id = " + uid + " order by added_ts DESC";
-		db.all(query, [], (err, rows) => {
-			if (err) {
-				throw err;
+		var ctQuery = "select count(id) as total, count(seen_ts) as seen from notification where user_id = " + uid;
+		db.get(ctQuery, [], function(error, row) {
+			if (row.total) {
+				var unseen = row.total - row.seen;
+				var query = "select id, text, category, added_ts, seen_ts, additional from notification where user_id = " + uid + " order by added_ts DESC LIMIT 8";
+				db.all(query, [], (err, rows) => {
+					if (err) {
+						throw err;
+					}
+					var newest_ts = rows.length ? rows[0].added_ts : null;
+					res.json({ notifications: rows, total: row.total, unseen: unseen, newest_ts: newest_ts });
+				});
 			}
-			var unseen = 0;
-			var total = 0;
-			for (var i in rows) {
-				total++;
-				if (rows[i].seen_ts == null) {
-					unseen++;
-				}
-			}
-			var newest_ts = rows.length ? rows[0].added_ts : null;
-			res.json({ notifications: rows, total: total, unseen: unseen, newest_ts: newest_ts });
 		});
 	});
 });

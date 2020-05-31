@@ -7,8 +7,10 @@ import GamePiece from './components/widgets/GamePiece.js';
 import OptionIndicator from './components/widgets/OptionIndicator.js';
 import ReactTooltip from 'react-tooltip';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import { useDrag } from 'react-dnd';
+import MultiBackend from 'react-dnd-multi-backend';
 
 class Game extends React.Component {
 	constructor(props) {
@@ -310,9 +312,10 @@ class Game extends React.Component {
 				</div>
 			);
 		}
+		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
 			<div className={gameClass}>
-				<DndProvider backend={HTML5Backend}>
+			<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row">
 						<div className="col-12 col-md-8 col-lg-9 px-0 order-2 order-md-1">
 							{gameBoard}

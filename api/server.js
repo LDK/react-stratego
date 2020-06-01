@@ -1239,8 +1239,11 @@ restapi.post('/notifications', function(req, res) {
 						throw err;
 					}
 					var newest_ts = rows.length ? rows[0].added_ts : null;
-					res.json({ notifications: rows, total: row.total, unseen: unseen, newest_ts: newest_ts });
+					res.status(200).json({ notifications: rows, total: row.total, unseen: unseen, newest_ts: newest_ts });
 				});
+			}
+			else {
+				res.status(200).json({ notifications: [], total: 0, unseen: 0, newest_ts: null });
 			}
 		});
 	});

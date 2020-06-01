@@ -20,6 +20,7 @@ class LoginForm extends React.Component {
 		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
 		this.openUserOptions = this.openUserOptions.bind(this);
 		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
+		this.openUserDropdown = this.openUserDropdown.bind(this);
 		this.closeUserDropdown = this.closeUserDropdown.bind(this);
 		this.logUserOut = this.logUserOut.bind(this);
 		this.markVisibleSeen = this.markVisibleSeen.bind(this);
@@ -58,6 +59,9 @@ class LoginForm extends React.Component {
 				notifications.unseen--;
 				notification.seen_ts = Date.now();
 			}
+		}
+		if (!ids) {
+			return;
 		}
 		this.setState({ notifications: notifications });
 		var app = this.props.app;
@@ -99,13 +103,20 @@ class LoginForm extends React.Component {
 	toggleUserDropdown() {
 		var isOpen = this.state.userDropdownOpen;
 		if (isOpen) {
-			this.markVisibleSeen();
+			this.closeUserDropdown();
 		}
-		this.setState({ userDropdownOpen: !isOpen });
-		this.props.app.nav.setState({ dropdownOpen: !isOpen });
+		else {
+			this.openUserDropdown();
+		}
+	}
+	openUserDropdown() {
+		this.setState({ userDropdownOpen: true });
+		this.props.app.nav.setState({ dropdownOpen: true });
 	}
 	closeUserDropdown() {
+		this.markVisibleSeen();
 		this.setState({ userDropdownOpen: false });
+		this.props.app.nav.setState({ dropdownOpen: false });
 	}
 	sendLogin(event) {
 		event.preventDefault();

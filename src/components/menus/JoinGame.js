@@ -63,7 +63,7 @@ class JoinGameMenu extends React.Component {
 			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
 		}
 		var JoinGameForm = (
-			<form action={app.state.gameServer+"new_game"} onSubmit={this.handleSubmit}>
+			<form action={app.gameServer+"new_game"} onSubmit={this.handleSubmit}>
 				<h3 className="mb-2">Select a game to join!</h3>
 				<div>
 					<DataBrowser 

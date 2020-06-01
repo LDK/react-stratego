@@ -138,7 +138,7 @@ class NewGameMenu extends React.Component {
 			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
 		}
 		var newGameForm = (
-			<form action={app.state.gameServer+"new_game"} onSubmit={this.handleSubmit}>
+			<form action={app.gameServer+"new_game"} onSubmit={this.handleSubmit}>
 				<h3 className="mb-2">Select an opponent!</h3>
 				<div onClick={() => this.focusModeOption('past')}>
 					<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 

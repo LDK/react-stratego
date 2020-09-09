@@ -63,7 +63,7 @@ class Game extends React.Component {
 		}
 		var game = this;
 		var gameId = app.state.activeGame.props.id;
-		var payload = { game_id: gameId, user_id: uid, userKey: userKey};
+		var payload = { game_id: gameId, user_id: uid, userKey: userKey };
 		var spaces;
 		window.fetch(app.gameServer+'opponent_status', {
 			method: 'POST', 

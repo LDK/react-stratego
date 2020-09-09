@@ -632,6 +632,45 @@ var addNotification = function(notification) {
 	});
 };
 
+var deleteNotification = function(id) {
+	return new Promise((resolve, reject) => {
+		if (!id) {
+			reject("Insufficient data.  deleteNotification requires an id");
+		}
+		else {
+			var ts = Date.now();
+			var deleteSql = "DELETE FROM `notification` WHERE id = " + id + "')";
+			db.run(deleteSql, [], function(error) {
+				if (error) {
+					reject(error);
+				}
+				else {
+					resolve(id);
+				}
+			});
+		}
+	});
+};
+
+var deleteInvite = function(game_id) {
+	return new Promise((resolve, reject) => {
+		if (!id) {
+			reject("Insufficient data.  deleteInvite requires a game_id");
+		}
+		else {
+			var deleteSql = 'DELETE FROM notification WHERE additional LIKE ' + "'" + '"%game_id":' + game_id + '%' + "'" + ' and category = "invite-sent"';
+			db.run(deleteSql, [], function(error) {
+				if (error) {
+					reject(error);
+				}
+				else {
+					resolve(game_id);
+				}
+			});
+		}
+	});
+};
+
 var getOpponentData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
 		if (!uid) { resolve({}); }
@@ -1158,7 +1197,7 @@ restapi.post('/accept_invite', function(req, res) {
 						oppName: result.accepted.opponent_name
 					}
 				}).then(function() {
-					// success!
+					deleteInvite(req.body.game_id);
 				}, function(err) {
 					// what!
 					console.log('add notification error',err);

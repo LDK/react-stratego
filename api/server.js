@@ -208,8 +208,9 @@ var getUserList = function(uid) {
 				reject(err);
 			}
 			var userList = {};
-			for (var id in users) {
-				userList[id] = users[id].username;
+			for (var i in users) {
+				var { id, username } = users[i];
+				userList[id] = username;
 			}
 			resolve(userList);
 		});

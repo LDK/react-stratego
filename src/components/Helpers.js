@@ -97,7 +97,6 @@ export const getVector = function(fromId,toId) {
 
 export const time2TimeAgo = function(ts) {
     var seconds = (Date.now() - ts) / 1000;
-	console.log('seconds',seconds);
     // a day
     if (seconds >= 24*3600) {
 		var days = Math.floor(seconds/(24*3600));

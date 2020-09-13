@@ -1278,12 +1278,12 @@ restapi.post('/notifications', function(req, res) {
 					if (err) {
 						throw err;
 					}
-					var newest_ts = rows.length ? rows[0].added_ts : null;
+					var newest_ts = rows.length ? rows[0].added_ts : Date.now();
 					res.status(200).json({ notifications: rows, total: row.total, unseen: unseen, newest_ts: newest_ts });
 				});
 			}
 			else {
-				res.status(200).json({ notifications: [], total: 0, unseen: 0, newest_ts: null });
+				res.status(200).json({ notifications: [], total: 0, unseen: 0, newest_ts: Date.now() });
 			}
 		});
 	});

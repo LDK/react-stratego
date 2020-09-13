@@ -86,6 +86,8 @@ class App extends React.Component {
 				}
 				var result = JSON.parse(text);
 				if (result.accepted) {
+					app.getInvites();
+					app.LoginForm.getNotifications();
 					app.loadGame(result.accepted.id);
 				}
 			});
@@ -110,14 +112,8 @@ class App extends React.Component {
 				}
 				var result = JSON.parse(text);
 				if (result.declined) {
-					var invites = app.state.invites;
-					for (var i in invites) {
-						var req = invites[i];
-						if (req.id) {
-							invites.splice(i,1)
-						}
-					}
-					app.setState({invites: invites});
+					app.getInvites();
+					app.LoginForm.getNotifications();
 				}
 			});
 		});

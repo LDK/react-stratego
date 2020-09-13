@@ -672,6 +672,25 @@ var deleteInvite = function(game_id) {
 	});
 };
 
+var deleteAcceptNotice = function(uid, game_id) {
+	return new Promise((resolve, reject) => {
+		if (!game_id) {
+			reject("Insufficient data.  deleteAcceptNotice requires a game_id");
+		}
+		else {
+			var deleteSql = 'DELETE FROM notification WHERE user_id = ' + uid + ' AND additional LIKE ' + "'" + '%"game_id":' + game_id + '%' + "'" + ' and category = "invite-accepted"';
+			db.run(deleteSql, [], function(error) {
+				if (error) {
+					reject(error);
+				}
+				else {
+					resolve(game_id);
+				}
+			});
+		}
+	});
+};
+
 var getOpponentData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
 		if (!uid) { resolve({}); }
@@ -1083,6 +1102,7 @@ restapi.post('/opponent_status', function(req, res) {
 		function(uid) {
 			var gameId = req.body.game_id;
 			getOpponentData(gameId,uid).then(function(result){
+				deleteAcceptNotice(uid, req.body.game_id);
 				res.status(200).json(result);
 			},function(err) {
 				res.status(401).json({ error: err });

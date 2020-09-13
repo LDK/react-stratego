@@ -640,7 +640,7 @@ var deleteNotification = function(id) {
 		}
 		else {
 			var ts = Date.now();
-			var deleteSql = "DELETE FROM `notification` WHERE id = " + id + "')";
+			var deleteSql = "DELETE FROM `notification` WHERE id = " + id;
 			db.run(deleteSql, [], function(error) {
 				if (error) {
 					reject(error);
@@ -655,11 +655,11 @@ var deleteNotification = function(id) {
 
 var deleteInvite = function(game_id) {
 	return new Promise((resolve, reject) => {
-		if (!id) {
+		if (!game_id) {
 			reject("Insufficient data.  deleteInvite requires a game_id");
 		}
 		else {
-			var deleteSql = 'DELETE FROM notification WHERE additional LIKE ' + "'" + '"%game_id":' + game_id + '%' + "'" + ' and category = "invite-sent"';
+			var deleteSql = 'DELETE FROM notification WHERE additional LIKE ' + "'" + '%"game_id":' + game_id + '%' + "'" + ' and category = "invite-sent"';
 			db.run(deleteSql, [], function(error) {
 				if (error) {
 					reject(error);
@@ -1156,7 +1156,6 @@ restapi.post('/cancel_request', function(req, res) {
 restapi.post('/decline_invite', function(req, res) {
 	checkCreds(req.body).then(function(uid) {
 		declineInvite(uid,req.body.game_id).then(function(result) {
-			res.status(200).json(result);
 			if (result.declined) {
 				addNotification({
 					text: '[%oppName] has declined your game invite.',
@@ -1167,12 +1166,13 @@ restapi.post('/decline_invite', function(req, res) {
 						oppName: result.declined.opponent_name
 					}
 				}).then(function() {
-					// success!
+					deleteInvite(req.body.game_id);
 				}, function(err) {
 					// what!
 					console.log('add notification error',err);
 				});
 			}
+			res.status(200).json(result);
 		},function(err) {
 			res.status(401).json({ error: err });
 		});
@@ -1186,7 +1186,6 @@ restapi.post('/decline_invite', function(req, res) {
 restapi.post('/accept_invite', function(req, res) {
 	checkCreds(req.body).then(function(uid) {
 		acceptInvite(uid,req.body.game_id).then(function(result) {
-			res.status(200).json(result);
 			if (result.accepted) {
 				addNotification({
 					text: '[%oppName] has accepted your game invite!',
@@ -1204,6 +1203,7 @@ restapi.post('/accept_invite', function(req, res) {
 					console.log('add notification error',err);
 				});
 			}
+			res.status(200).json(result);
 		},function(err) {
 			res.status(401).json({ error: err });
 		});

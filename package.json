@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LDK/startego"
+    "url": "https://github.com/LDK/react-stratego"
   },
   "scripts": {
     "start": "webpack-dev-server --open --mode development",

@@ -492,6 +492,7 @@ class App extends React.Component {
 				if (!text.length) {
 					return;
 				}
+				app.getGames();
 			});
 		});
 	}

@@ -94,3 +94,42 @@ export const getVector = function(fromId,toId) {
 	}
 	return rv;
 }
+
+export const time2TimeAgo = function(ts) {
+    var seconds = (Date.now() - ts) / 1000;
+	console.log('seconds',seconds);
+    // a day
+    if (seconds >= 24*3600) {
+		var days = Math.floor(seconds/(24*3600));
+		if (days > 1) {
+			return days + " days ago";
+		}
+		else {
+			return "yesterday";
+		}
+       return "yesterday";
+    }
+
+    if (seconds >= 3600) {
+		var hrs = Math.floor(seconds/3600);
+		if (hrs > 1) {
+			return hrs + " hours ago";
+		}
+		else {
+			return "an hour ago";
+		}
+       return "a few hours ago";
+    }
+    if (seconds >= 60) {
+		var mins = Math.floor(seconds/60);
+		if (mins > 1) {
+			return mins + " minutes ago";
+		}
+		else {
+			return "a minute ago";
+		}
+    }
+	else {
+		return "less than a minute ago";
+	}
+}

@@ -77,6 +77,7 @@ class DataBrowser extends React.Component {
 				}
 			}
 		}
+		// @SOMEDAY: Make afterLinks, beforeLinks, afterText, beforeText all combinable.
 		var dataItems = null;
 		if (this.props.afterLinks) {
 			dataItems = items.map((opt,i) => 
@@ -89,6 +90,13 @@ class DataBrowser extends React.Component {
 			dataItems = items.map((opt,i) => 
 				<li key={i}>
 					{opt.name} {this.linkList('beforeLinks',opt.id)}
+				</li>
+			);
+		}
+		else if (this.props.beforeText) {
+			dataItems = items.map((opt,i) => 
+				<li key={i}>
+					{this.props.beforeText} {opt.name}
 				</li>
 			);
 		}
@@ -111,11 +119,37 @@ class DataBrowser extends React.Component {
 					);
 				}
 				else {
+					var afterText = '';
+					if (this.props.afterKeys) {
+						var separator = this.props.afterKeysSep || ',';
+						for (var i in items) {
+							var ct = 0;
+							var opt = items[i];
+							for (var key in this.props.afterKeys) {
+								if (opt[key]) {
+									if (ct) {
+										afterText += separator + ' ';
+									}
+									ct++;
+									afterText += this.props.afterKeys[key].replace('%this%',opt[key]) + ' ';
+								}
+								afterText = afterText.trim();
+							}
+							if (afterText.length) {
+								var afterPrefix = '', afterSuffix = '';
+								if (this.props.afterParentheses) {
+									afterPrefix = '(';
+									afterSuffix = ')';
+								}
+								afterText = ' ' + afterPrefix + afterText + afterSuffix;
+							}
+						}
+					}
 					content = (<a onClick={opt.onSelect || cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>);
 				}
 				dataItems.push(
 					<li key={i} className={opt.className}>
-						{content}
+					{content}{afterText}
 					</li>
 				);
 			}

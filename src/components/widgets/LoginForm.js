@@ -181,10 +181,10 @@ class LoginForm extends React.Component {
 		if (type == 'game' && data.game_id) {
 			switch (action) {
 				case 'accept': 
-					this.props.app.acceptInvite(data.game_id);
+					this.props.app.acceptInvite(data.game_id,data.id);
 				break;
 				case 'decline': 
-					this.props.app.declineInvite(data.game_id);
+					this.props.app.declineInvite(data.game_id,data.id);
 				break;
 			}
 		}
@@ -212,6 +212,7 @@ class LoginForm extends React.Component {
 			for (var i in this.state.notifications.notifications) {
 				var notification = this.state.notifications.notifications[i];
 				var additional = JSON.parse(notification.additional);
+				additional.id = notification.id;
 				var text = notification.text;
 				for (var key in additional) {
 					text = text.replace('[%'+key+']',additional[key]);

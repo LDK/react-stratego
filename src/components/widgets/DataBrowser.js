@@ -122,27 +122,24 @@ class DataBrowser extends React.Component {
 					var afterText = '';
 					if (this.props.afterKeys) {
 						var separator = this.props.afterKeysSep || ',';
-						for (var i in items) {
-							var ct = 0;
-							var opt = items[i];
-							for (var key in this.props.afterKeys) {
-								if (opt[key]) {
-									if (ct) {
-										afterText += separator + ' ';
-									}
-									ct++;
-									afterText += this.props.afterKeys[key].replace('%this%',opt[key]) + ' ';
+						var ct = 0;
+						for (var key in this.props.afterKeys) {
+							if (opt[key]) {
+								if (ct) {
+									afterText += separator + ' ';
 								}
-								afterText = afterText.trim();
+								ct++;
+								afterText += this.props.afterKeys[key].replace('%this%',opt[key]) + ' ';
 							}
-							if (afterText.length) {
-								var afterPrefix = '', afterSuffix = '';
-								if (this.props.afterParentheses) {
-									afterPrefix = '(';
-									afterSuffix = ')';
-								}
-								afterText = ' ' + afterPrefix + afterText + afterSuffix;
+							afterText = afterText.trim();
+						}
+						if (afterText.length) {
+							var afterPrefix = '', afterSuffix = '';
+							if (this.props.afterParentheses) {
+								afterPrefix = '(';
+								afterSuffix = ')';
 							}
+							afterText = ' ' + afterPrefix + afterText + afterSuffix;
 						}
 					}
 					content = (<a onClick={opt.onSelect || cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>);

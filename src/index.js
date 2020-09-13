@@ -67,14 +67,14 @@ class App extends React.Component {
 		this.gameSpaces = [];
 		this.gamesPoll = setInterval( this.pollGames, 15000 );
 	}
-	acceptInvite(id){
+	acceptInvite(id,notificationId){
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
 		if (!uid || !userKey) {
 			return [];
 		}
 		var app = this;
-		var payload = { user_id: uid, userKey: userKey, game_id: id };
+		var payload = { user_id: uid, userKey: userKey, game_id: id, notification_id: notificationId };
 		window.fetch(this.gameServer+'accept_invite', {
 			method: 'POST', 
 			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
@@ -86,19 +86,21 @@ class App extends React.Component {
 				}
 				var result = JSON.parse(text);
 				if (result.accepted) {
+					app.getInvites();
+					app.LoginForm.getNotifications();
 					app.loadGame(result.accepted.id);
 				}
 			});
 		});
 	}
-	declineInvite(id) {
+	declineInvite(id,notificationId) {
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
 		if (!uid || !userKey) {
 			return [];
 		}
 		var app = this;
-		var payload = { user_id: uid, userKey: userKey, game_id: id };
+		var payload = { user_id: uid, userKey: userKey, game_id: id, notification_id: notificationId };
 		window.fetch(this.gameServer+'decline_invite', {
 			method: 'POST', 
 			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
@@ -110,14 +112,8 @@ class App extends React.Component {
 				}
 				var result = JSON.parse(text);
 				if (result.declined) {
-					var invites = app.state.invites;
-					for (var i in invites) {
-						var req = invites[i];
-						if (req.id) {
-							invites.splice(i,1)
-						}
-					}
-					app.setState({invites: invites});
+					app.getInvites();
+					app.LoginForm.getNotifications();
 				}
 			});
 		});

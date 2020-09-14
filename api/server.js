@@ -735,7 +735,7 @@ var getOpenGames = function(uid) {
 
 var getRecentGames = function(uid) {
 	return new Promise((resolve, reject) => {
-		var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'done' AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.last_move_ts DESC LIMIT 3";
+		var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner, g.status FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'done' AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.last_move_ts DESC LIMIT 3";
 		db.all(query, [], (err, games) => {
 			if (err) {
 				reject(err);
@@ -783,23 +783,6 @@ var getIncomingInvites = function(uid) {
 					opponent_uid: game.starting_user_id,
 					opponent_name: game.opponent_name
 				};
-			}
-			resolve(gameList);
-		});
-	});
-};
-
-var getGameList = function(uid) {
-	return new Promise((resolve, reject) => {
-		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.started FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status IN ('active','open') AND (starting_user_id = "+uid+" OR opponent_user_id = "+uid+")";
-		db.all(selectSql, [], (err, games) => {
-			if (err) {
-				reject(err);
-			}
-			var gameList = {};
-			for (var gameIndex in games) {
-				var game = games[gameIndex];
-				gameList[game.id] = game;
 			}
 			resolve(gameList);
 		});

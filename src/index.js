@@ -173,6 +173,15 @@ class App extends React.Component {
 								turn_name = game.opponent_name;
 							}
 						}
+						var winner_name = null;
+						if (game.winner) {
+							if (game.winner == game.starter_uid) {
+								winner_name = game.starter_name;
+							}
+							else if (game.winner == game.opponent_uid) {
+								winner_name = game.opponent_name;
+							}
+						}
 						var gameEntry = {
 							id: game.id,
 							name: game.title,
@@ -181,7 +190,8 @@ class App extends React.Component {
 							started: started,
 							turn: turn_name,
 							last_move_ts: game.last_move_ts,
-							last_move: last_move
+							last_move: last_move,
+							winner: winner_name
 						}
 						if (gameEntry && gameEntry.id) {
 							games[listName].push(gameEntry);
@@ -603,7 +613,7 @@ class App extends React.Component {
 		return (
 			<div className="userMenu p-3">
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />

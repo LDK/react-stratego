@@ -11,6 +11,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import DataBrowser from './components/widgets/DataBrowser.js';
 import {PIECES} from './components/Helpers.js';
 import {keyCodes} from './components/Helpers.js';
+import {time2TimeAgo} from './components/Helpers.js';
 
 class App extends React.Component {
 	constructor(props) {
@@ -145,6 +146,10 @@ class App extends React.Component {
 				for (var listName in games) {
 					for (var i in gameData[listName]) {
 						var game = gameData[listName][i];
+						var last_move = game.last_move_ts;
+						if (last_move) {
+							last_move = time2TimeAgo(last_move);
+						}
 						var opponent = '';
 						var opponent_id = null;
 						var started = 0;
@@ -159,12 +164,34 @@ class App extends React.Component {
 						if (parseInt(game.started)) {
 							started = 1;
 						}
+						var turn_name = null;
+						if (game.turn) {
+							if (game.turn == 'blue') {
+								turn_name = game.starter_name;
+							}
+							else if (game.turn == 'red') {
+								turn_name = game.opponent_name;
+							}
+						}
+						var winner_name = null;
+						if (game.winner) {
+							if (game.winner == game.starter_uid) {
+								winner_name = game.starter_name;
+							}
+							else if (game.winner == game.opponent_uid) {
+								winner_name = game.opponent_name;
+							}
+						}
 						var gameEntry = {
 							id: game.id,
 							name: game.title,
 							opponent_name: opponent,
 							opponent_id: opponent_id,
-							started: started
+							started: started,
+							turn: turn_name,
+							last_move_ts: game.last_move_ts,
+							last_move: last_move,
+							winner: winner_name
 						}
 						if (gameEntry && gameEntry.id) {
 							games[listName].push(gameEntry);
@@ -475,6 +502,7 @@ class App extends React.Component {
 				if (!text.length) {
 					return;
 				}
+				app.getGames();
 			});
 		});
 	}
@@ -584,8 +612,8 @@ class App extends React.Component {
 	userMenuBody() {
 		return (
 			<div className="userMenu p-3">
-				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />

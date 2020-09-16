@@ -42,6 +42,7 @@ class Game extends React.Component {
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
+		this.polled = false;
 		if (props.captured) {
 			for (var i in props.captured) {
 				var pieceId = props.captured[i];
@@ -70,6 +71,10 @@ class Game extends React.Component {
 			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
 		}).then(function(data){
+			if (!game.polled) {
+				app.getNotifications();
+			}
+			game.polled = true;
 			data.text().then(function(text) {
 				if (!text.length) {
 					return;

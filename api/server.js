@@ -242,6 +242,18 @@ var getPastOpponents = function(uid) {
 	});
 };
 
+var getNotification = function(id){
+	return new Promise((resolve, reject) => {
+		var selectSql = "SELECT id, category, text, user_id, added_ts, seen_ts, additional FROM notification where id = " + id;
+		db.get(selectSql, [], (err, notification) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(notification);
+		});
+	});
+}
+
 var markSeen = function(uid,notification_ids) {
 	return new Promise((resolve, reject) => {
 		var idList = notification_ids.join(',');
@@ -252,6 +264,16 @@ var markSeen = function(uid,notification_ids) {
 				reject(error);
 			}
 			else {
+				for (var i in notification_ids) {
+					var nid = notification_ids[i];
+					getNotification(nid).then(function(notification){
+						if (notification.category == 'invite-declined') {
+							deleteNotification(notification.id).then(function(){
+								// We deleted the notification
+							});
+						}
+					});
+				}
 				resolve(idList);
 			}
 		});

@@ -242,6 +242,18 @@ var getPastOpponents = function(uid) {
 	});
 };
 
+var getNotification = function(id){
+	return new Promise((resolve, reject) => {
+		var selectSql = "SELECT id, category, text, user_id, added_ts, seen_ts, additional FROM notification where id = " + id;
+		db.get(selectSql, [], (err, notification) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(notification);
+		});
+	});
+}
+
 var markSeen = function(uid,notification_ids) {
 	return new Promise((resolve, reject) => {
 		var idList = notification_ids.join(',');
@@ -252,6 +264,16 @@ var markSeen = function(uid,notification_ids) {
 				reject(error);
 			}
 			else {
+				for (var i in notification_ids) {
+					var nid = notification_ids[i];
+					getNotification(nid).then(function(notification){
+						if (notification.category == 'invite-declined') {
+							deleteNotification(notification.id).then(function(){
+								// We deleted the notification
+							});
+						}
+					});
+				}
 				resolve(idList);
 			}
 		});
@@ -672,6 +694,25 @@ var deleteInvite = function(game_id) {
 	});
 };
 
+var deleteAcceptNotice = function(uid, game_id) {
+	return new Promise((resolve, reject) => {
+		if (!game_id) {
+			reject("Insufficient data.  deleteAcceptNotice requires a game_id");
+		}
+		else {
+			var deleteSql = 'DELETE FROM notification WHERE user_id = ' + uid + ' AND additional LIKE ' + "'" + '%"game_id":' + game_id + '%' + "'" + ' and category = "invite-accepted"';
+			db.run(deleteSql, [], function(error) {
+				if (error) {
+					reject(error);
+				}
+				else {
+					resolve(game_id);
+				}
+			});
+		}
+	});
+};
+
 var getOpponentData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
 		if (!uid) { resolve({}); }
@@ -1066,6 +1107,7 @@ restapi.post('/opponent_status', function(req, res) {
 		function(uid) {
 			var gameId = req.body.game_id;
 			getOpponentData(gameId,uid).then(function(result){
+				deleteAcceptNotice(uid, req.body.game_id);
 				res.status(200).json(result);
 			},function(err) {
 				res.status(401).json({ error: err });

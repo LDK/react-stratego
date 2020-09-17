@@ -670,6 +670,19 @@ class App extends React.Component {
 					this.activeModal.props.onKeyDown(e);
 				}
 			break;
+			case keyCodes['space']:
+				if (this.gameRef) {
+					var game = this.gameRef;
+					if (!game.state.started && game.state.placementMode == 'keyboard') {
+						if (this.gameBoard.state.highlighted) {
+							this.gameBoard.swapByKeyboard(this.gameBoard.state.highlighted);
+						}
+						else {
+							this.gameBoard.highlightByKeyboard();
+						}
+					}
+				}
+			break;
 		}
 	}
 	render() {

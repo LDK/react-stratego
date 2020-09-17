@@ -165,13 +165,17 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 			board.selectSpace(id);
 		}
 	}
+	var selectedClass = '';
 	var highlightClass = '';
 	if (!game.state.started && game.state.placementMode == 'keyboard' && board.state.selectedSpace == id) {
-		highlightClass = ' selectedSpace';
+		selectedClass = ' selectedSpace';
+	}
+	if (!game.state.started && game.state.placementMode == 'keyboard' && board.state.highlighted && board.state.highlighted == id) {
+		highlightClass = ' highlightedSpace';
 	}
 	var passableClass = passable ? ' passable' : ' not-passable';
 	return (
-		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+highlightClass+passableClass} onClick={handleClick}>
+		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+selectedClass+highlightClass+passableClass} onClick={handleClick}>
 			<div className="gameSpace-overlay"></div>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}

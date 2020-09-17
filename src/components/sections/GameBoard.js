@@ -11,6 +11,7 @@ class GameBoard extends React.Component {
 		super(props);
 		this.state = {
 			spaces: {},
+			highlighted: null,
 			selectedSpace: 1,
 			battleContent: (
 				<div className="row">
@@ -27,6 +28,10 @@ class GameBoard extends React.Component {
 		this.placePiece = this.placePiece.bind(this);
 		this.emptySpace = this.emptySpace.bind(this);
 		this.resetSpace = this.resetSpace.bind(this);
+		this.swapPieces = this.swapPieces.bind(this);
+		this.swapByKeyboard = this.swapByKeyboard.bind(this);
+		
+		this.highlightSpace = this.highlightSpace.bind(this);
 		this.placementArrowMove = this.placementArrowMove.bind(this);
 		this.openBattleModal = this.openBattleModal.bind(this);
 		this.closeBattleModal = this.closeBattleModal.bind(this);
@@ -95,6 +100,27 @@ class GameBoard extends React.Component {
 		var playerColor = app.tileRack.playerColor;
 		var targetSpace = app.tileSpaces[rank];
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
+	}
+	highlightSpace(id) {
+		this.setState({ highlighted: id });
+		this.resetSpace(id);
+	}
+	highlightByKeyboard() {
+		var spaceId = parseInt(this.state.selectedSpace);
+		if (!this.state.spaces[spaceId] || !this.state.spaces[spaceId].props.children) {
+			return;
+		}
+		this.highlightSpace(spaceId);
+	}
+	swapByKeyboard(fromId) {
+		var spaceId = parseInt(this.state.selectedSpace);
+		if (fromId == spaceId) {
+			this.setState({ highlighted: false });
+			this.resetSpace(fromId);
+			return;
+		}
+		this.swapPieces(fromId,spaceId);
+		this.highlightSpace(null);
 	}
 	selectSpace(id) {
 		var playerColor = this.props.app.tileRack.playerColor;
@@ -273,6 +299,32 @@ class GameBoard extends React.Component {
 		this.setState({ spaces: spaces });
 		app.tileRack.resetCounts();
 	}
+	swapPieces(fromId,toId) {
+		var app = this.props.app;
+		var spaces = this.state.spaces;
+		var toSpace = spaces[toId];
+
+		if (!toSpace.props.children) {
+			this.setState({ highlighted: false });
+			this.resetSpace(fromId);
+			return;
+		}
+		
+		var toInfo = toSpace.props.children.props;
+		var fromInfo = spaces[fromId].props.children.props;
+		var fromCoords = idToXy(fromId);
+		var toCoords = idToXy(toId);
+		
+		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={toInfo.fromX} fromY={toInfo.fromY} fromId={toId} placed={true} game={this} />);
+		var toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this} />);
+
+		spaces[toId] = this.renderGameSpace(toCoords.y,toCoords.x,toId,fromPiece);
+		spaces[fromId] = this.renderGameSpace(fromCoords.y,fromCoords.x,fromId,toPiece);
+		
+		this.setState({spaces: spaces});
+		app.saveActiveGame();
+		
+	}
 	// 'id' in placePiece refers to the board square id
 	placePiece(pieceInfo,id,loading,moveInfo) {
 		var spaces = this.state.spaces;
@@ -294,13 +346,7 @@ class GameBoard extends React.Component {
 				}
 				else {
 					// Swap the pieces
-					var occupantInfo = spaces[id].props.children.props;
-					var fromPiece =  (<DragPiece color={pieceInfo.color} rank={pieceInfo.rank} fromX={x} fromY={y} fromId={id} placed={true} />);
-					var toPiece =  (<DragPiece color={occupantInfo.color} rank={occupantInfo.rank} fromX={pieceInfo.fromX} fromY={pieceInfo.fromY} fromId={pieceInfo.fromId} placed={true} />);
-					spaces[id] = this.renderGameSpace(y,x,id,fromPiece);
-					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId,toPiece);
-					this.setState({spaces: spaces});
-					app.saveActiveGame();
+					this.swapPieces(pieceInfo.fromId,id);
 					return;
 				}
 			}
@@ -373,14 +419,16 @@ class GameBoard extends React.Component {
 				else if (occupantInfo.color == color) {
 					this.props.app.tileSpaces[occupantInfo.rank].setState({remaining: this.props.app.tileSpaces[occupantInfo.rank].remaining+1});
 					this.props.app.tileSpaces[occupantInfo.rank].remaining++;
+					tileSpace.remaining--;
 				}
 			}
-			if (color == playerColor) 
-			{
-				tileSpace.remaining--;
-				app.tileRack.remaining--;
-				if (!app.tileRack.remaining) {
-					app.tileRack.setState({ allPlaced: true });
+			else {
+				if (color == playerColor) {
+					tileSpace.remaining--;
+					app.tileRack.remaining--;
+					if (!app.tileRack.remaining) {
+						app.tileRack.setState({ allPlaced: true });
+					}
 				}
 			}
 			tileSpace.setState({ remaining: tileSpace.remaining });
@@ -404,6 +452,9 @@ class GameBoard extends React.Component {
 	resetSpace(id) {
 		var spaces = this.state.spaces;
 		var space = spaces[id];
+		if (!space) {
+			return;
+		}
 		spaces[id] = this.renderGameSpace(space.props.y,space.props.x,id,space.props.children);
 		this.setState({ spaces: spaces })
 	}

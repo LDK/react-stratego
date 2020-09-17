@@ -269,6 +269,13 @@ a.button:active {
 .selectedSpace .gameSpace-overlay {
 	background-color: white;
 }
+.highlightedSpace .gameSpace-overlay {
+	background-color: yellow;
+}
+.selectedSpace.highlightedSpace .gameSpace-overlay {
+	background-color: lightyellow;
+	opacity: .5;
+}
 .tileRack {
 	height: 100%;
 	background: var(--dark);

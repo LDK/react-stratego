@@ -103,13 +103,22 @@ class GameBoard extends React.Component {
 	}
 	highlightSpace(id) {
 		this.setState({ highlighted: id });
+		this.resetSpace(id);
 	}
 	highlightByKeyboard() {
 		var spaceId = parseInt(this.state.selectedSpace);
+		if (!this.state.spaces[spaceId] || !this.state.spaces[spaceId].props.children) {
+			return;
+		}
 		this.highlightSpace(spaceId);
 	}
 	swapByKeyboard(fromId) {
 		var spaceId = parseInt(this.state.selectedSpace);
+		if (fromId == spaceId) {
+			this.setState({ highlighted: false });
+			this.resetSpace(fromId);
+			return;
+		}
 		this.swapPieces(fromId,spaceId);
 		this.highlightSpace(null);
 	}
@@ -293,7 +302,15 @@ class GameBoard extends React.Component {
 	swapPieces(fromId,toId) {
 		var app = this.props.app;
 		var spaces = this.state.spaces;
-		var toInfo = spaces[toId].props.children.props;
+		var toSpace = spaces[toId];
+
+		if (!toSpace.props.children) {
+			this.setState({ highlighted: false });
+			this.resetSpace(fromId);
+			return;
+		}
+		
+		var toInfo = toSpace.props.children.props;
 		var fromInfo = spaces[fromId].props.children.props;
 		var fromCoords = idToXy(fromId);
 		var toCoords = idToXy(toId);
@@ -433,6 +450,9 @@ class GameBoard extends React.Component {
 	resetSpace(id) {
 		var spaces = this.state.spaces;
 		var space = spaces[id];
+		if (!space) {
+			return;
+		}
 		spaces[id] = this.renderGameSpace(space.props.y,space.props.x,id,space.props.children);
 		this.setState({ spaces: spaces })
 	}

@@ -346,7 +346,7 @@ class GameBoard extends React.Component {
 				}
 				else {
 					// Swap the pieces
-					this.swapPieces(pieceInfo.fromId,id)
+					this.swapPieces(pieceInfo.fromId,id);
 					return;
 				}
 			}
@@ -419,14 +419,16 @@ class GameBoard extends React.Component {
 				else if (occupantInfo.color == color) {
 					this.props.app.tileSpaces[occupantInfo.rank].setState({remaining: this.props.app.tileSpaces[occupantInfo.rank].remaining+1});
 					this.props.app.tileSpaces[occupantInfo.rank].remaining++;
+					tileSpace.remaining--;
 				}
 			}
-			if (color == playerColor) 
-			{
-				tileSpace.remaining--;
-				app.tileRack.remaining--;
-				if (!app.tileRack.remaining) {
-					app.tileRack.setState({ allPlaced: true });
+			else {
+				if (color == playerColor) {
+					tileSpace.remaining--;
+					app.tileRack.remaining--;
+					if (!app.tileRack.remaining) {
+						app.tileRack.setState({ allPlaced: true });
+					}
 				}
 			}
 			tileSpace.setState({ remaining: tileSpace.remaining });

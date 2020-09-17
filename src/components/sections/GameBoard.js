@@ -102,7 +102,6 @@ class GameBoard extends React.Component {
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
 	}
 	highlightSpace(id) {
-		console.log('highlight',id);
 		this.setState({ highlighted: id });
 	}
 	highlightByKeyboard() {
@@ -299,11 +298,11 @@ class GameBoard extends React.Component {
 		var fromCoords = idToXy(fromId);
 		var toCoords = idToXy(toId);
 		
-		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={toInfo.fromX} fromY={toInfo.fromY} fromId={toId} placed={true} />);
-		var toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} />);
+		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={toInfo.fromX} fromY={toInfo.fromY} fromId={toId} placed={true} game={this} />);
+		var toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this} />);
 
-		spaces[toId] = this.renderGameSpace(fromCoords.y,fromCoords.x,toId,fromPiece);
-		spaces[fromId] = this.renderGameSpace(toCoords.y,toCoords.x,fromId,toPiece);
+		spaces[toId] = this.renderGameSpace(toCoords.y,toCoords.x,toId,fromPiece);
+		spaces[fromId] = this.renderGameSpace(fromCoords.y,fromCoords.x,fromId,toPiece);
 		
 		this.setState({spaces: spaces});
 		app.saveActiveGame();
@@ -330,14 +329,7 @@ class GameBoard extends React.Component {
 				}
 				else {
 					// Swap the pieces
-					var occupantInfo = spaces[id].props.children.props;
-					var fromPiece =  (<DragPiece color={pieceInfo.color} rank={pieceInfo.rank} fromX={x} fromY={y} fromId={id} placed={true} />);
-					var toPiece =  (<DragPiece color={occupantInfo.color} rank={occupantInfo.rank} fromX={pieceInfo.fromX} fromY={pieceInfo.fromY} fromId={pieceInfo.fromId} placed={true} />);
-					spaces[id] = this.renderGameSpace(y,x,id,fromPiece);
-					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId,toPiece);
-					this.setState({spaces: spaces});
-					app.saveActiveGame();
-					//this.swapPieces(pieceInfo.fromId,id)
+					this.swapPieces(pieceInfo.fromId,id)
 					return;
 				}
 			}

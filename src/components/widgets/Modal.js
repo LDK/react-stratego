@@ -34,10 +34,14 @@ class Modal extends React.Component {
 		if (props.closeButton) {
 			closeButton = (<a className="close-button button" onClick={props.closeCallback}>X</a>);
 		}
+		var styles = {};
+		if (props.styles) {
+			styles = props.styles;
+		}
 		return (
 			<section ref={(section) => { this.modalContainer = section; }} className={"modal-container " + (props.open ? ' open' : '')} onKeyDown={this.onKeyDown}>
 				<div className="modal-overlay" />
-				<div className={wrapperClass}>
+				<div className={wrapperClass} style={styles}>
 					{closeButton}
 					{content}
 				</div>

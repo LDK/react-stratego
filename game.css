@@ -979,3 +979,34 @@ ul.item-buttons li a.button {
     text-align: center;
     width: 5rem;
 }
+
+div.no-suggestions, ul.suggestions {
+    position: absolute;
+    background: white;
+    width: calc(100% - 4rem - 2px);
+    border: 1px solid black;
+    margin-top: -1px;	
+	list-style-type: none;
+	padding-left: 0;
+}
+
+ul.suggestions li {
+	padding-left: 1rem;
+}
+
+ul.suggestions li:hover {
+	background: blue;
+	color: white;
+}
+
+ul.suggestions {
+	cursor: pointer;
+}
+.new-game-submit {
+	font-size: 18px; 
+	width:172px;
+	height:44px;
+	background: #72b53b;
+	border: 1px solid white;
+	border-radius: .25rem;
+}

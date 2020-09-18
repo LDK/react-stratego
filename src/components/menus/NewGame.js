@@ -156,7 +156,11 @@ class NewGameMenu extends React.Component {
 		var app = this.props.app;
 		var opponentIndicator = null;
 		if (this.state.opponentFound) {
-			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
+			opponentIndicator = (
+				<span className="pt-2 mt-3 d-block text-white text-center" style={{fontSize:"18px", width:"172px", height:"44px", background: "#e65f00", border: "1px solid black"}}>
+					<p className="opponentFound">Opponent Found!</p>
+				</span>
+			);
 		}
 		var helpText = this.getModeHelpText();
 		var newGameForm = (
@@ -240,9 +244,7 @@ class NewGameMenu extends React.Component {
 						</div>
 					</div>
 					<div className="row">
-						<div className="col-6 text-left">
-							<span className="pt-2 mt-3 d-block text-white text-center" style={{fontSize:"18px", width:"172px", height:"44px", background: "#e65f00", border: "1px solid black"}}>{opponentIndicator}</span>
-						</div>
+						<div className="col-6 text-left">{opponentIndicator}</div>
 						<div className="col-6 text-right" style={{textAlign: 'right'}}>
 							<input className="mt-3 d-inline-block text-white text-center new-game-submit" type="submit" value="START GAME" style={{}} />
 						</div>

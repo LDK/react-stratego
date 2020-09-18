@@ -15,6 +15,7 @@ class NewGameMenu extends React.Component {
 			opponentFound: false
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.getModeHelpText = this.getModeHelpText.bind(this);
 		this.focusModeOption = this.focusModeOption.bind(this);
 		this.updateUserSearch = this.updateUserSearch.bind(this);
 		this.updatePastOpp = this.updatePastOpp.bind(this);
@@ -128,6 +129,26 @@ class NewGameMenu extends React.Component {
 			break;
 		}
 	}
+	getModeHelpText() {
+		switch (this.state.opponentSelectMode) {
+			case 'past':
+				return "Choose from a list of your past opponents.  Avenge a past loss or reassert your dominance!";
+			break;
+			case 'join':
+				return "Join a random open game someone else has started.";
+			break;
+			case 'open':
+				return "Start a game anyone can join.  You can arrange your tiles while you wait for an opponent.";
+			break;
+			case 'name':
+				return "Search a list of available players to find your next opponent!";
+			break;
+			case 'random':
+				return "Feeling lucky?  Challenge a random opponent!";
+			break;
+		}
+		return '';
+	}
 	render() {
 		if (!this.state.formOpen) {
 			return null;
@@ -137,6 +158,7 @@ class NewGameMenu extends React.Component {
 		if (this.state.opponentFound) {
 			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
 		}
+		var helpText = this.getModeHelpText();
 		var newGameForm = (
 			<form action={app.gameServer+"new_game"} onSubmit={this.handleSubmit}>
 				<div className="container-fluid p-0" style={{ backgroundColor: '#3880be', height: '100%' }} id="new-game-menu">
@@ -213,7 +235,7 @@ class NewGameMenu extends React.Component {
 						</div>
 						<div className="col-5 pr-3">
 							<div className="w-100 game-mode-help-text px-3 py-2" style={{backgroundColor:'#c2ab3a', height:'124px', border: '1px solid black'}}>
-								<p>Here is some helpful text about the selected options or opponent if found!</p>
+								<p>{helpText}</p>
 							</div>
 						</div>
 					</div>

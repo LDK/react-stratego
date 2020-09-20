@@ -1010,3 +1010,9 @@ ul.suggestions {
 	border: 1px solid white;
 	border-radius: .25rem;
 }
+.new-game-submit:disabled {
+    background: #727272;
+	cursor: not-allowed;
+	color: #333333 !important;
+	border: 1px solid #111;
+}

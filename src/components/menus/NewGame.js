@@ -165,13 +165,13 @@ class NewGameMenu extends React.Component {
 		var helpText = this.getModeHelpText();
 		var newGameForm = (
 			<form action={app.gameServer+"new_game"} onSubmit={this.handleSubmit}>
-				<div className="container-fluid p-0" style={{ backgroundColor: '#3880be', height: '100%' }} id="new-game-menu">
+				<div className="container-fluid p-0" id="new-game-menu">
 					<div className="row">
 						<div className="col-12 pl-3">
 							<h3 className="text-white mt-0">NEW GAME</h3>
 							<p className="text-white">Find an opponent:</p>
 						</div>
-						<div className="col-7 px-3">
+						<div className="col-12 col-sm-7 px-3">
 							<div className="w-100 game-mode-options bg-white p-3" style={{minHeight: '240px', border:'1px solid black'}}>
 								<div onClick={() => this.focusModeOption('past')} className="mb-3">
 									<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
@@ -237,16 +237,23 @@ class NewGameMenu extends React.Component {
 								</div>
 							</div>
 						</div>
-						<div className="col-5 pr-3">
-							<div className="w-100 game-mode-help-text px-3 py-2" style={{backgroundColor:'#c2ab3a', height:'124px', border: '1px solid black'}}>
+						<div className="col-12 col-sm-5 pr-3">
+							<div className="w-100 game-mode-help-text px-3 py-2" style={{backgroundColor:'#c2ab3a', minHeight:'148px', border: '1px solid black'}}>
 								<p>{helpText}</p>
 							</div>
 						</div>
 					</div>
 					<div className="row">
-						<div className="col-6 text-left">{opponentIndicator}</div>
-						<div className="col-6 text-right" style={{textAlign: 'right'}}>
-							<input className="mt-3 d-inline-block text-white text-center new-game-submit" type="submit" value="START GAME" style={{}} />
+						<div className="col-12 col-sm-6 text-left">{opponentIndicator}</div>
+						<div className="col-12 col-sm-6 text-right" style={{textAlign: 'right'}}>
+							<input className="mt-3 d-inline-block text-white text-center new-game-submit" type="submit" value="START GAME" style={{}} 
+								disabled={
+									!this.state.opponentId &&
+									this.state.opponentSelectMode != 'open' &&
+									this.state.opponentSelectMode != 'join' &&
+									this.state.opponentSelectMode != 'random'
+								}
+							/>
 						</div>
 					</div>
 				</div>

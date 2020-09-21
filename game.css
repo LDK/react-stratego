@@ -280,7 +280,8 @@ a.button:active {
 	height: 100%;
 	background: var(--dark);
 }
-.tileRack-col > .row {
+.tileRack-col > .row,
+.gameStatus-col {
 	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
@@ -413,7 +414,7 @@ div.captured-tiles label {
 	left: 0rem;
 }
 
-.tileRack-col {
+.tileRack-col, .gameStatus-col {
 	height: 10rem;
 }
 
@@ -449,7 +450,7 @@ div.captured-tiles label {
 	.sm-down {
 		display: none !important;
 	}
-	.tileRack-col {
+	.tileRack-col, .gameStatus-col {
 		height: 27rem;
 	}
 	#placementMode {

@@ -1,0 +1,44 @@
+<div class="container-fluid p-0" style="background-color:#3880be;height:100%" id="new-game-menu">
+		<div class="row">
+			<div class="col-12 pl-3">
+				<h3 class="text-white mt-0">NEW GAME</h3>
+				<p class="text-white">Find an opponent:</p>
+			</div>
+			<div class="col-7 px-3">
+				<div class="w-100 game-mode-options bg-white p-3" style="min-height: 240px;border:1px solid black;">
+				<form action="http://localhost:3000/new_game" class="mb-0">
+					<div>
+						<input type="radio" name="selectMode" class="float-left mr-2 mt-1" value="past" checked="">
+						<div class="dataBrowser">
+							<label>Select from Past Opponents:</label>
+							<select id="userOpponentList" class="d-block ml-4 mb-3">
+								<option value="(none)">- Select Username -</option>
+								<option value="2">Dumbo</option>
+							</select>
+						</div>
+					</div>
+					<div class="mr-2"><input type="radio" name="selectMode" class="float-left mr-2 mt-1" value="name"><label>User Search:</label><input type="text" autocomplete="off" name="nameSearch" placeholder="Username" value="" class="d-block ml-4 mb-3"></div>
+					<div class="mr-2"><label>Create an Open Game</label><input type="radio" name="selectMode" class="float-left mr-2 mt-1" value="open"></div>
+					<div class="mr-2"><label>Join an Open Game</label><input type="radio" name="selectMode" class="float-left mr-2 mt-1" value="join"></div>
+					<div class="mr-2"><label>Random Opponent</label><input type="radio" name="selectMode" class="float-left mr-2 mt-1" value="random"></div>
+					
+				</form>
+				</div>
+			</div>
+			<div class="col-5 pr-3">
+				<div class="w-100 game-mode-help-text px-3 py-2" style="background-color:#c2ab3a;height:124px;border:1px solid black">
+					<p>Here's some helpful text about the selected options or opponent if found!</p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 text-left">
+				<span class="pt-2 mt-3 d-block text-white text-center" style="font-size:18px;width:172px;height:44px;background: #e65f00;border: 1px solid black;">Opponent Found!</span>
+			</div>
+			<div class="col-6 text-right" style="
+				text-align: right;
+				">
+				<input class="mt-3 d-inline-block text-white text-center" style="font-size:18px;width:172px;height:44px;background: #72b53b;border: 1px solid white;border-radius: .25rem;" href="javascript:;" type="button" value="START GAME">
+			</div>
+		</div>
+	</div>

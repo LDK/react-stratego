@@ -47,18 +47,22 @@ class Navigation extends React.Component {
 			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games.active} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
 		}
 		return (
-			<div>
-				<div className="navigation row py-3 px-3">
-					<div className="d-inline-block px-3 pt-1">
-						<a className="anchor no-underline" onClick={this.goHome}>
-							<Icon icon="home" fill="white" width="1rem" height="1rem" />
-						</a>
+			<div id="top-row">
+				<div className="navigation py-3">
+					<div className="container mx-auto">
+						<div className="row">
+							<div className="d-inline-block pr-3 pt-1">
+								<a className="anchor no-underline" onClick={this.goHome}>
+									<Icon icon="home" fill="white" width="1rem" height="1rem" />
+								</a>
+							</div>
+							<div className="col-3 col-md-4 col-lg-3">
+								{gameBrowser}
+							</div>
+							<LoginForm wrapperClass="col px-0 text-right" loginCallback={app.setCurrentUser} app={app} />
+							<RegistrationMenu app={app} />
+						</div>
 					</div>
-					<div className="col-3 col-md-4 col-lg-3">
-						{gameBrowser}
-					</div>
-					<LoginForm wrapperClass="px-0 col-8 col-md-7 col-lg-8 text-right" loginCallback={app.setCurrentUser} app={app} />
-					<RegistrationMenu app={app} />
 				</div>
 				{dropdown}
 			</div>

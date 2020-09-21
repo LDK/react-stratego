@@ -38,7 +38,7 @@ body {
 	--grass: #7cc43f;
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
-	--square-size-tablet: 50px;
+	--square-size-tablet: 45px;
 }
 h3 {
 	font-size: 1.5rem;
@@ -159,7 +159,7 @@ a.button:active {
 .text-white {
 	color: white !important;
 }
-.navigation.row {
+.navigation {
 	background: var(--darker);
 	color: white;
 	z-index: 2;
@@ -280,7 +280,11 @@ a.button:active {
 	height: 100%;
 	background: var(--dark);
 }
-
+.tileRack-col > .row {
+	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+}
 /* Game piece and tile faces */
 .gamePiece,
 .tileFace {
@@ -421,8 +425,18 @@ div.captured-tiles label {
 	border: 1px dashed var(--space-border);
 }
 
-.gameBoard {
+.gameBoard, .game-bg {
 	background-color: var(--water);
+}
+
+.game-bg {
+	height: 100%
+}
+
+@media (max-width:991px) {
+	.game-bg {
+		background-color: var(--grass);
+	}
 }
 
 @media (min-width: 576px) {
@@ -978,4 +992,41 @@ ul.item-buttons li a.button {
     display: block;
     text-align: center;
     width: 5rem;
+}
+
+div.no-suggestions, ul.suggestions {
+    position: absolute;
+    background: white;
+    width: calc(100% - 4rem - 2px);
+    border: 1px solid black;
+    margin-top: -1px;	
+	list-style-type: none;
+	padding-left: 0;
+}
+
+ul.suggestions li {
+	padding-left: 1rem;
+}
+
+ul.suggestions li:hover {
+	background: blue;
+	color: white;
+}
+
+ul.suggestions {
+	cursor: pointer;
+}
+.new-game-submit {
+	font-size: 18px; 
+	width:172px;
+	height:44px;
+	background: #72b53b;
+	border: 1px solid white;
+	border-radius: .25rem;
+}
+.new-game-submit:disabled {
+    background: #727272;
+	cursor: not-allowed;
+	color: #333333 !important;
+	border: 1px solid #111;
 }

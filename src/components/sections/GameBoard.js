@@ -471,7 +471,7 @@ class GameBoard extends React.Component {
 			);
 		}
 		return (
-			<div className="gameSpaceRow borderSpaceRow text-center" id={id} key={id}>
+			<div className="gameSpaceRow borderSpaceRow text-left lg-up" id={id} key={id}>
 				{borderSpaces}
 			</div>
 		);
@@ -501,7 +501,7 @@ class GameBoard extends React.Component {
 				</div>
 		);
 		return (
-			<div className="gameSpaceRow text-center" key={row}>
+			<div className="gameSpaceRow text-left" key={row}>
 				{gameSpaces}
 			</div>
 		);

@@ -508,7 +508,7 @@ class App extends React.Component {
 	}
 	preLoginBody() {
 		return (
-			<div className="preLogin p-3">
+			<div className="preLogin py-3">
 				<h2>Welcome to Stratego!  Please register or login above.</h2>
 			</div>
 		);
@@ -611,7 +611,7 @@ class App extends React.Component {
 	}
 	userMenuBody() {
 		return (
-			<div className="userMenu p-3">
+			<div className="userMenu py-3">
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
@@ -621,15 +621,24 @@ class App extends React.Component {
 		);
 	}
 	getBody() {
+		var body = '', bodyClass = 'container mx-auto';
 		if (this.state.activeGame) {
-			return this.state.activeGame;
+			body = this.state.activeGame;
+			bodyClass = 'container-fluid game-bg px-0 pt-4 pt-lg-0';
 		}
 		else if (this.state.currentUser) {
-			return this.userMenuBody();
+			body = this.userMenuBody();
 		}
 		else {
-			return this.preLoginBody();
+			body = this.preLoginBody();
 		}
+		return (
+			<div className={bodyClass} id="app-body">
+				<div className="row">
+					{body}
+				</div>
+			</div>
+		);
 	}
 	onKeyDown (e) {
 		if (!e.keyCode) { return; }

@@ -264,7 +264,7 @@ class LoginForm extends React.Component {
 				<div className={userClass} id="nav-user-menu">
 					<span className="username mr-2">{username} is playing.</span>
 					<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown} id="user-anchor">
-						<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" additionalClasses="mr-3" id="user-icon" />
+						<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" id="user-icon" />
 						{notificationCounter}
 					</a>
 					<div id="user-dropdown-wrapper" className={this.state.userDropdownOpen ? '' : 'd-none'}>

@@ -15,6 +15,9 @@ class JoinGameMenu extends React.Component {
 		this.updateChosen = this.updateChosen.bind(this);
 		props.app.JoinGameMenu = this;
 	}
+	componentDidMount() {
+		this.state.parentMenu.getOpenGames();
+	}
 	handleSubmit(event) {
 		event.preventDefault();
 		var app = this.props.app;

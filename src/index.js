@@ -43,8 +43,6 @@ class App extends React.Component {
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
 		this.getUsernames = this.getUsernames.bind(this);
-		this.getOpenGames = this.getOpenGames.bind(this);
-		this.getPastOpponents = this.getPastOpponents.bind(this);
 		this.pollGames = this.pollGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
@@ -62,7 +60,6 @@ class App extends React.Component {
 		this.getGames();
 		this.getInvites();
 		this.getRequests();
-		this.getPastOpponents();
 		this.getUsernames();
 		this.gameStates = {};
 		this.gameSpaces = [];
@@ -291,7 +288,6 @@ class App extends React.Component {
 	newGame(event){
 	}
 	openNewGameMenu(){
-		this.getOpenGames();
 		this.newGameMenu.setState({ formOpen: true });
 		return;
 	}
@@ -512,75 +508,6 @@ class App extends React.Component {
 				<h2>Welcome to Stratego!  Please register or login above.</h2>
 			</div>
 		);
-	}
-	getPastOpponents() {
-		if (!this.state.currentUser) {
-			return false;
-		}
-		var app = this;
-		var uid = this.state.currentUser.user_id;
-		var userKey = this.state.currentUser.userKey;
-		var payload = { user_id: uid, userKey: userKey };
-		window.fetch(this.gameServer+'past_opponents', {
-			method: 'POST', 
-			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
-			body: JSON.stringify(payload)
-		}).then(function(data){
-			data.text().then(function(text) {
-				if (!text.length) {
-					return;
-				}
-				var opps = JSON.parse(text);
-				var opponents = [];
-				for (var oppId in opps) {
-					var oppName = opps[oppId];
-					var oppEntry = {
-						id: oppId,
-						name: oppName
-					}
-					if (oppEntry && oppEntry.id) {
-						opponents.push(oppEntry);
-					}
-				}
-				// app.setState({ pastOpponents: opponents });
-				app.pastOpponents = opponents;
-			});
-		});
-	}
-	getOpenGames() {
-		if (!this.state.currentUser) {
-			return false;
-		}
-		var app = this;
-		var uid = this.state.currentUser.user_id;
-		var userKey = this.state.currentUser.userKey;
-		var payload = { user_id: uid, userKey: userKey };
-		window.fetch(this.gameServer+'open_games', {
-			method: 'POST', 
-			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
-			body: JSON.stringify(payload)
-		}).then(function(data){
-			data.text().then(function(text) {
-				if (!text.length) {
-					return;
-				}
-				var gms = JSON.parse(text);
-				var games = [];
-				for (var gameId in gms) {
-					var title = gms[gameId].title;
-					var oppName = gms[gameId].starter_name;
-					var gameEntry = {
-						id: gameId,
-						name: title,
-						opponent: oppName
-					}
-					if (gameEntry && gameEntry.id) {
-						games.push(gameEntry);
-					}
-				}
-				app.openGames = games;
-			});
-		});
 	}
 	getUsernames() {
 		if (!this.state.currentUser) {

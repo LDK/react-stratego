@@ -19,10 +19,87 @@ class NewGameMenu extends React.Component {
 		this.focusModeOption = this.focusModeOption.bind(this);
 		this.updateUserSearch = this.updateUserSearch.bind(this);
 		this.updatePastOpp = this.updatePastOpp.bind(this);
+		this.getOpenGames = this.getOpenGames.bind(this);
+		this.getPastOpponents = this.getPastOpponents.bind(this);
 		this.changeOpponentSelectMode = this.changeOpponentSelectMode.bind(this);
 		this.closeForm = this.closeForm.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		props.app.newGameMenu = this;
+		this.getPastOpponents();
+		this.getOpenGames();
+	}
+	componentDidMount() {
+		this.getPastOpponents();
+		this.getOpenGames();
+	}
+	getOpenGames() {
+		var app = this.props.app;
+		if (!app.state.currentUser) {
+			return false;
+		}
+		var uid = app.state.currentUser.user_id;
+		var userKey = app.state.currentUser.userKey;
+		var payload = { user_id: uid, userKey: userKey };
+		window.fetch(app.gameServer+'open_games', {
+			method: 'POST', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var gms = JSON.parse(text);
+				var games = [];
+				for (var gameId in gms) {
+					var title = gms[gameId].title;
+					var oppName = gms[gameId].starter_name;
+					var gameEntry = {
+						id: gameId,
+						name: title,
+						opponent: oppName
+					}
+					if (gameEntry && gameEntry.id) {
+						games.push(gameEntry);
+					}
+				}
+				app.openGames = games;
+			});
+		});
+	}
+	getPastOpponents() {
+		var app = this.props.app;
+		if (!app.state.currentUser) {
+			return false;
+		}
+		var uid = app.state.currentUser.user_id;
+		var userKey = app.state.currentUser.userKey;
+		var payload = { user_id: uid, userKey: userKey };
+		window.fetch(app.gameServer+'past_opponents', {
+			method: 'POST', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var opps = JSON.parse(text);
+				var opponents = [];
+				for (var oppId in opps) {
+					var oppName = opps[oppId];
+					var oppEntry = {
+						id: oppId,
+						name: oppName
+					}
+					if (oppEntry && oppEntry.id) {
+						opponents.push(oppEntry);
+					}
+				}
+				// app.setState({ pastOpponents: opponents });
+				app.pastOpponents = opponents;
+			});
+		});
 	}
 	closeForm() {
 		this.setState({ formOpen: false });

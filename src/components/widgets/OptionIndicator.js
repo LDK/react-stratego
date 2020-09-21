@@ -47,7 +47,7 @@ class OptionIndicator extends React.Component {
 		}
 		return (
 			<div className={wrapperClass} id={props.id} onKeyDown={this.onKeyDown}>
-				<label>{this.state.label}</label>
+				<label className={props.listLabelClass}>{this.state.label}</label>
 				<ul className={listClass}>
 					{radios}
 				</ul>

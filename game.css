@@ -38,7 +38,7 @@ body {
 	--grass: #7cc43f;
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
-	--square-size-tablet: 50px;
+	--square-size-tablet: 45px;
 }
 h3 {
 	font-size: 1.5rem;
@@ -159,7 +159,7 @@ a.button:active {
 .text-white {
 	color: white !important;
 }
-.navigation.row {
+.navigation {
 	background: var(--darker);
 	color: white;
 	z-index: 2;
@@ -280,7 +280,11 @@ a.button:active {
 	height: 100%;
 	background: var(--dark);
 }
-
+.tileRack-col > .row {
+	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+}
 /* Game piece and tile faces */
 .gamePiece,
 .tileFace {
@@ -421,8 +425,18 @@ div.captured-tiles label {
 	border: 1px dashed var(--space-border);
 }
 
-.gameBoard {
+.gameBoard, .game-bg {
 	background-color: var(--water);
+}
+
+.game-bg {
+	height: 100%
+}
+
+@media (max-width:991px) {
+	.game-bg {
+		background-color: var(--grass);
+	}
 }
 
 @media (min-width: 576px) {

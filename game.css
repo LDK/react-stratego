@@ -284,6 +284,7 @@ a.button:active {
 	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+	border: 1px solid #333;
 }
 /* Game piece and tile faces */
 .gamePiece,

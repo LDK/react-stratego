@@ -236,8 +236,8 @@ class Game extends React.Component {
 		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col order-1 order-md-2 bg-white mt-lg-3 pt-3 mr-xl-auto">
-					<div className="row no-gutters">
+				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col order-1 order-md-2 bg-white mt-lg-3 mr-xl-auto">
+					<div className="row no-gutters pt-3">
 						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 sm-up mb-3" layout="horizontal" 
 							value={this.state.placementMode}
 							disableArrows={true}

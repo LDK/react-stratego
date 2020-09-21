@@ -133,7 +133,7 @@ function DragPiece(props) {
 	if (props.rank) {
 		piece = PIECES[props.rank]
 	}
-	if (piece && !piece.move && props.game.state.started) {
+	if (piece && !piece.move && props.game && props.game.state.started) {
 		styles['cursor'] = 'not-allowed';
 	}
 	var wrapperClass = '';

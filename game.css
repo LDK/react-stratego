@@ -819,6 +819,9 @@ div.captured-tiles label {
 		border-radius: 1rem;
 		border: 1px solid #333;
 	}
+	.modal-wrapper.height-auto {
+		height: auto;
+	}
 	.modal-wrapper.height-xlarge {
 		height: 100%;
 		top: 0;

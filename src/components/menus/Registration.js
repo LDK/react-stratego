@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import Modal from '../widgets/Modal.js';
-import {keyCodes} from '../Helpers.js';
+import MenuModal from '../widgets/MenuModal.js';
 
 class RegistrationMenu extends React.Component {
 	constructor(props) {
@@ -12,13 +11,12 @@ class RegistrationMenu extends React.Component {
 			pass2Input: '',
 			emailInput: ''
 		};
+		this.id = 'registration-modal';
 		this.sendRegistration = this.sendRegistration.bind(this);
 		this.updateUserInput = this.updateUserInput.bind(this);
 		this.updatePassInput = this.updatePassInput.bind(this);
 		this.updatePass2Input = this.updatePass2Input.bind(this);
 		this.updateEmailInput = this.updateEmailInput.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.closeForm = this.closeForm.bind(this);
 		props.app.RegistrationMenu = this;
 	}
 	updateUserInput(event) {
@@ -32,17 +30,6 @@ class RegistrationMenu extends React.Component {
 	}
 	updatePass2Input(event) {
 		this.setState({pass2Input: event.target.value});
-	}
-	closeForm() {
-		this.setState({ formOpen: false });
-	}
-	onKeyDown (e) {
-		if (!e.keyCode) { return; }
-		switch (e.keyCode) {
-			case keyCodes['esc']:
-				this.closeForm();
-			break;
-		}
 	}
 	sendRegistration(event) {
 		event.preventDefault();
@@ -110,19 +97,12 @@ class RegistrationMenu extends React.Component {
 		);
 		
 		return (
-		<Modal 
-			id="registration-modal"
-			app={app}
-			content={RegForm}
-			height="medium"
-			width="medium"
-			open={this.state.formOpen}
-			closeButton={true}
-			closeCallback={this.closeForm}
-			onKeyDown={this.onKeyDown} 
-			styles={{ backgroundColor: 'var(--dark)' }}
-			additionalClasses={"p-5 text-white"}
-		/>
+			<MenuModal 
+				parentMenu={this}
+				content={RegForm}
+				styles={{ backgroundColor: 'var(--dark)' }}
+				additionalClasses={"text-white"}
+			/>
 		);
 	}
 }

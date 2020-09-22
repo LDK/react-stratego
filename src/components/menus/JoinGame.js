@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Modal from '../widgets/Modal.js';
+import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 
 class JoinGameMenu extends React.Component {
@@ -10,6 +10,7 @@ class JoinGameMenu extends React.Component {
 			gameId: null,
 			gameFound: false
 		};
+		this.id = "JoinGame-modal"
 		this.parentMenu = props.app.newGameMenu;
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.updateChosen = this.updateChosen.bind(this);
@@ -92,18 +93,14 @@ class JoinGameMenu extends React.Component {
 			</form>
 		);
 		return (
-		<Modal 
-			id="JoinGame-modal"
-			app={app}
-			closeButton={true}
-			content={JoinGameForm}
-			closeCallback={this.closeForm}
-			open={true}
-			height="auto"
-			styles={{ backgroundColor: 'rgb(56, 128, 190)' }}
-			width="small"
-			additionalClasses={"p-5 text-black"}
-		/>
+			<MenuModal 
+				parentMenu={this}
+				height="auto"
+				width="small"
+				content={JoinGameForm}
+				styles={{ backgroundColor: 'var(--water)' }}
+				additionalClasses={"text-black"}
+			/>
 		);
 	}
 }

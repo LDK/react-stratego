@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import Modal from '../widgets/Modal.js';
+import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Autosuggest from '../widgets/Autosuggest.js';
-import {keyCodes} from '../Helpers.js';
 
 class NewGameMenu extends React.Component {
 	constructor(props) {
@@ -14,6 +13,7 @@ class NewGameMenu extends React.Component {
 			opponentId: null,
 			opponentFound: false
 		};
+		this.id = "newGame-modal";
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.getModeHelpText = this.getModeHelpText.bind(this);
 		this.focusModeOption = this.focusModeOption.bind(this);
@@ -22,8 +22,6 @@ class NewGameMenu extends React.Component {
 		this.getOpenGames = this.getOpenGames.bind(this);
 		this.getPastOpponents = this.getPastOpponents.bind(this);
 		this.changeOpponentSelectMode = this.changeOpponentSelectMode.bind(this);
-		this.closeForm = this.closeForm.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		props.app.newGameMenu = this;
 		this.getPastOpponents();
 		this.getOpenGames();
@@ -100,9 +98,6 @@ class NewGameMenu extends React.Component {
 				app.pastOpponents = opponents;
 			});
 		});
-	}
-	closeForm() {
-		this.setState({ formOpen: false });
 	}
 	focusModeOption(mode) {
 		if (mode == this.state.opponentSelectMode || !this.state.formOpen) {
@@ -197,14 +192,6 @@ class NewGameMenu extends React.Component {
 				}
 			});
 		});
-	}
-	onKeyDown (e) {
-		if (!e.keyCode) { return; }
-		switch (e.keyCode) {
-			case keyCodes['esc']:
-				this.closeForm();
-			break;
-		}
 	}
 	getModeHelpText() {
 		switch (this.state.opponentSelectMode) {
@@ -337,17 +324,12 @@ class NewGameMenu extends React.Component {
 			</form>
 		);
 		return (
-		<Modal 
-			id="newGame-modal"
-			app={app}
-			content={newGameForm}
-			open={true}
-			onKeyDown={this.onKeyDown} 
-			closeButton={true}
-			closeCallback={this.closeForm}
-			styles={{ backgroundColor: 'var(--water)' }}
-			additionalClasses={"p-5 text-black"}
-		/>
+			<MenuModal 
+				parentMenu={this}
+				content={newGameForm}
+				styles={{ backgroundColor: 'var(--water)' }}
+				additionalClasses={"text-black"}
+			/>
 		);
 	}
 }

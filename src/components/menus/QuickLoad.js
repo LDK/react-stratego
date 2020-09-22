@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Modal from '../widgets/Modal.js';
+import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import {layouts} from '../Helpers.js';
 import { DndProvider } from 'react-dnd';
@@ -15,10 +15,10 @@ class QuickLoadMenu extends React.Component {
 		};
 		this.selectPreset = this.selectPreset.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.closeMenu = this.closeMenu.bind(this);
 		props.app.gameBoard.QuickLoadMenu = this;
 		this.layoutLookup = {};
 		this.previousMode = 'drag';
+		this.id="quickLoad-modal";
 		for (var i in layouts) {
 			this.layoutLookup[layouts[i].id] = i;
 		}
@@ -40,9 +40,6 @@ class QuickLoadMenu extends React.Component {
 		game.setState({placementMode: this.previousMode});
 		this.closeMenu();
 		app.saveActiveGame();
-	}
-	closeMenu() {
-		this.setState({ formOpen: false });
 	}
 	selectPreset(value){
 		this.setState({selected: value});
@@ -119,17 +116,12 @@ class QuickLoadMenu extends React.Component {
 			return null;
 		}
 		return (
-			<Modal 
-				id="quickLoad-modal"
-				app={app}
+			<MenuModal 
+				parentMenu={this}
 				height="auto"
-				width="medium"
 				content={presetSelector}
-				closeButton={true}
-				closeCallback={this.closeMenu}
 				styles={{ backgroundColor: 'var(--sand)' }}
-				open={true}
-				additionalClasses={"p-5 text-black"}
+				additionalClasses={"text-black"}
 			/>
 		);
 	}

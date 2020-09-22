@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Modal from '../widgets/Modal.js';
+import {keyCodes} from '../Helpers.js';
 
 class RegistrationMenu extends React.Component {
 	constructor(props) {
@@ -16,6 +17,8 @@ class RegistrationMenu extends React.Component {
 		this.updatePassInput = this.updatePassInput.bind(this);
 		this.updatePass2Input = this.updatePass2Input.bind(this);
 		this.updateEmailInput = this.updateEmailInput.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.closeForm = this.closeForm.bind(this);
 		props.app.RegistrationMenu = this;
 	}
 	updateUserInput(event) {
@@ -29,6 +32,17 @@ class RegistrationMenu extends React.Component {
 	}
 	updatePass2Input(event) {
 		this.setState({pass2Input: event.target.value});
+	}
+	closeForm() {
+		this.setState({ formOpen: false });
+	}
+	onKeyDown (e) {
+		if (!e.keyCode) { return; }
+		switch (e.keyCode) {
+			case keyCodes['esc']:
+				this.closeForm();
+			break;
+		}
 	}
 	sendRegistration(event) {
 		event.preventDefault();
@@ -75,13 +89,14 @@ class RegistrationMenu extends React.Component {
 		var state = this.state;
 		var app = this.props.app;
 		const RegForm = (
-			<form onSubmit={this.sendRegistration}>
-				<h3 className="mb-2">That username was not found in the database.<br />Maybe you should register!</h3>
+			<form onSubmit={this.sendRegistration} className="h-100">
+				<h3 className="mt-0">USER REGISTRATION</h3>
+				<p className="">Register for Stratego here!</p>
 				<input type="text" value={state.userInput} onChange={this.updateUserInput} size="22" className="mr-2" name="username" placeholder="Username" /><br />
 				<input type="text" value={state.emailInput} onChange={this.updateEmailInput} size="22" className="mr-2" name="email" placeholder="E-mail Address" /><br />
 				<input type="password" value={state.passInput} onChange={this.updatePassInput} name="password" size="22" className="mr-2" placeholder="Password" /><br />
 				<input type="password" value={state.pass2Input} onChange={this.updatePass2Input} name="password2" size="22" className="mr-2" placeholder="Enter Password Again" /><br />
-				<input type="submit" value="Go" size="3" onClick={this.sendRegistration} 
+				<input type="submit" value="SIGN UP!" size="3" className="go-button text-white float-right" onClick={this.sendRegistration} 
 					disabled={
 						!state.userInput ||
 						!state.passInput ||
@@ -90,6 +105,7 @@ class RegistrationMenu extends React.Component {
 						state.pass2Input != state.passInput
 					}
 				/>
+					
 			</form>
 		);
 		
@@ -98,8 +114,14 @@ class RegistrationMenu extends React.Component {
 			id="registration-modal"
 			app={app}
 			content={RegForm}
+			height="medium"
+			width="medium"
 			open={this.state.formOpen}
-			additionalClasses={"p-5 text-black"}
+			closeButton={true}
+			closeCallback={this.closeForm}
+			onKeyDown={this.onKeyDown} 
+			styles={{ backgroundColor: 'var(--dark)' }}
+			additionalClasses={"p-5 text-white"}
 		/>
 		);
 	}

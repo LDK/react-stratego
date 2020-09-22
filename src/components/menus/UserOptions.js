@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import Modal from '../widgets/Modal.js';
+import MenuModal from '../widgets/MenuModal.js';
 import cloneDeep from 'lodash/cloneDeep';
-import {keyCodes} from '../Helpers.js';
-import Hotkeys from 'react-hot-keys';
 
 class UserOptionsMenu extends React.Component {
 	constructor(props) {
@@ -18,6 +16,7 @@ class UserOptionsMenu extends React.Component {
 			invitesAvailable: currentUser.invite_available != 'false',
 			randomAvailable: currentUser.random_available != 'false'
 		};
+		this.id = 'user-options-modal';
 		this.saveOptions = this.saveOptions.bind(this);
 		this.updateUsernameInput = this.updateUsernameInput.bind(this);
 		this.updatePassInput = this.updatePassInput.bind(this);
@@ -26,8 +25,6 @@ class UserOptionsMenu extends React.Component {
 		this.updateEmailInput = this.updateEmailInput.bind(this);
 		this.toggleInvitesAvailable = this.toggleInvitesAvailable.bind(this);
 		this.toggleRandomAvailable = this.toggleRandomAvailable.bind(this);
-		this.closeForm = this.closeForm.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		props.app.UserOptions = this;
 	}
 	updateUsernameInput(event) {
@@ -50,9 +47,6 @@ class UserOptionsMenu extends React.Component {
 	}
 	toggleRandomAvailable(event) {
 		this.setState({randomAvailable: !this.state.randomAvailable});
-	}
-	closeForm() {
-		this.setState({ formOpen: false });
 	}
 	saveOptions(event) {
 		event.preventDefault();
@@ -132,14 +126,6 @@ class UserOptionsMenu extends React.Component {
 			console.log('Request failed', error);
 		});
 	}
-	onKeyDown (e) {
-		if (!e.keyCode) { return; }
-		switch (e.keyCode) {
-			case keyCodes['esc']:
-				this.closeForm();
-			break;
-		}
-	}
 	render() {
 		if (!this.state.formOpen) {
 			return null;
@@ -147,7 +133,9 @@ class UserOptionsMenu extends React.Component {
 		var state = this.state;
 		const OptionsForm = (
 			<form onSubmit={this.saveOptions}>
-				<h3 className="mb-3">User Options</h3>
+				<h3 className="mt-0">USER OPTIONS</h3>
+				<p className="">Edit your user profile:</p>
+				<hr />
 				<div className="container-fluid px-0">
 					<div className="row no-gutters">
 						<div className="col-12 col-md-4">
@@ -180,7 +168,7 @@ class UserOptionsMenu extends React.Component {
 							<label className="small ml-2">Available to Be Selected As Random Opponent</label>
 						</div>
 						<div className="col-12 mt-4">
-							<input type="submit" value="Go" size="3" onClick={this.saveOptions} 
+							<input type="submit" value="Save Options" size="3" className="go-button text-white float-right" onClick={this.saveOptions} 
 								disabled={
 									!state.usernameInput ||
 									!state.emailInput ||
@@ -192,19 +180,15 @@ class UserOptionsMenu extends React.Component {
 				</div>
 			</form>
 		);
-		
 		return (
-		<Modal 
-			id="user-options-modal"
-			content={OptionsForm}
-			app={this.props.app}
-			open={this.state.formOpen}
-			width="small"
-			onKeyDown={this.onKeyDown} 
-			closeButton={true}
-			closeCallback={this.closeForm}
-			additionalClasses={"py-4 px-5 text-black"}
-		/>
+			<MenuModal 
+				parentMenu={this}
+				height="auto"
+				width="small"
+				content={OptionsForm}
+				styles={{ backgroundColor: 'var(--blue-light)' }}
+				additionalClasses={"text-black"}
+			/>
 		);
 	}
 }

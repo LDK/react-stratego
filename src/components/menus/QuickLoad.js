@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Modal from '../widgets/Modal.js';
+import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import {layouts} from '../Helpers.js';
 import { DndProvider } from 'react-dnd';
@@ -15,10 +15,10 @@ class QuickLoadMenu extends React.Component {
 		};
 		this.selectPreset = this.selectPreset.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.closeMenu = this.closeMenu.bind(this);
 		props.app.gameBoard.QuickLoadMenu = this;
 		this.layoutLookup = {};
 		this.previousMode = 'drag';
+		this.id="quickLoad-modal";
 		for (var i in layouts) {
 			this.layoutLookup[layouts[i].id] = i;
 		}
@@ -40,9 +40,6 @@ class QuickLoadMenu extends React.Component {
 		game.setState({placementMode: this.previousMode});
 		this.closeMenu();
 		app.saveActiveGame();
-	}
-	closeMenu() {
-		this.setState({ formOpen: false });
 	}
 	selectPreset(value){
 		this.setState({selected: value});
@@ -93,14 +90,15 @@ class QuickLoadMenu extends React.Component {
 			else {
 				grid = barrierSquares.concat(squares);
 			}
-			layoutPreview = (<div className="row">{grid}</div>);
+			layoutPreview = (<div className="row no-gutters my-4">{grid}</div>);
 		}
-		var displayClass = null;
+		var displayClass = ' d-inline-block';
 		if (!this.state.selected) {
 			displayClass = ' d-none';
 		}
 		var presetSelector = (
 			<div id="presetSelector">
+				<h3 className="mt-0">QUICK LOAD</h3>
 				<DataBrowser 
 					label="Select from Preset Layouts:" 
 					// items={app.tilePresets}
@@ -108,23 +106,22 @@ class QuickLoadMenu extends React.Component {
 					view="select" 
 					id="presetList" 
 					callback={this.selectPreset} 
+					labelClass="d-block mb-2"
 				/>
 				{layoutPreview}
-				<a className={"button mx-auto my-3"+displayClass} tabIndex="-1" onClick={() => this.handleSubmit(layoutTiles)}>Load Preset</a>
+				<a className={"text-white text-center go-button blue float-right"+displayClass} tabIndex="-1" onClick={() => this.handleSubmit(layoutTiles)}>Load Preset</a>
 			</div>
 		);
 		if (!this.state.formOpen) {
 			return null;
 		}
 		return (
-			<Modal 
-				id="quickLoad-modal"
-				app={app}
+			<MenuModal 
+				parentMenu={this}
+				height="auto"
 				content={presetSelector}
-				closeButton={true}
-				closeCallback={this.closeMenu}
-				open={true}
-				additionalClasses={"p-5 text-black w-75"}
+				styles={{ backgroundColor: 'var(--sand)' }}
+				additionalClasses={"text-black"}
 			/>
 		);
 	}

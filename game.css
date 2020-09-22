@@ -36,6 +36,7 @@ body {
 	--darker: #1b6666;
 	--water: #3880be;
 	--grass: #7cc43f;
+	--sand: #d1c05b;
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
@@ -423,7 +424,7 @@ div.captured-tiles label {
 	display: inline-block;
 	background: forestgreen;
 	height: 3.5rem;
-	background: var(--midtone1);
+	background: var(--grass);
 	border: 1px dashed var(--space-border);
 }
 
@@ -819,6 +820,9 @@ div.captured-tiles label {
 		border-radius: 1rem;
 		border: 1px solid #333;
 	}
+	.modal-wrapper.height-auto {
+		height: auto;
+	}
 	.modal-wrapper.height-xlarge {
 		height: 100%;
 		top: 0;
@@ -1018,16 +1022,25 @@ ul.suggestions li:hover {
 ul.suggestions {
 	cursor: pointer;
 }
-.new-game-submit {
+.go-button {
+	text-decoration: none;
 	font-size: 18px; 
 	width:172px;
 	height:44px;
+	line-height: 44px;
 	background: #72b53b;
 	border: 1px solid white;
 	border-radius: .25rem;
+	cursor: pointer;
 }
-.new-game-submit:disabled {
-    background: #727272;
+.go-button:hover {
+	text-decoration: none;
+}
+.go-button.blue {
+	background: var(--water);
+}
+.go-button:disabled {
+	background: #727272;
 	cursor: not-allowed;
 	color: #333333 !important;
 	border: 1px solid #111;

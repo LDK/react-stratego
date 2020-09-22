@@ -93,14 +93,15 @@ class QuickLoadMenu extends React.Component {
 			else {
 				grid = barrierSquares.concat(squares);
 			}
-			layoutPreview = (<div className="row">{grid}</div>);
+			layoutPreview = (<div className="row no-gutters my-4">{grid}</div>);
 		}
-		var displayClass = null;
+		var displayClass = ' d-inline-block';
 		if (!this.state.selected) {
 			displayClass = ' d-none';
 		}
 		var presetSelector = (
 			<div id="presetSelector">
+				<h3 className="mt-0">QUICK LOAD</h3>
 				<DataBrowser 
 					label="Select from Preset Layouts:" 
 					// items={app.tilePresets}
@@ -108,9 +109,10 @@ class QuickLoadMenu extends React.Component {
 					view="select" 
 					id="presetList" 
 					callback={this.selectPreset} 
+					labelClass="d-block mb-2"
 				/>
 				{layoutPreview}
-				<a className={"button mx-auto my-3"+displayClass} tabIndex="-1" onClick={() => this.handleSubmit(layoutTiles)}>Load Preset</a>
+				<a className={"text-white text-center go-button blue float-right"+displayClass} tabIndex="-1" onClick={() => this.handleSubmit(layoutTiles)}>Load Preset</a>
 			</div>
 		);
 		if (!this.state.formOpen) {
@@ -120,11 +122,14 @@ class QuickLoadMenu extends React.Component {
 			<Modal 
 				id="quickLoad-modal"
 				app={app}
+				height="auto"
+				width="medium"
 				content={presetSelector}
 				closeButton={true}
 				closeCallback={this.closeMenu}
+				styles={{ backgroundColor: 'var(--sand)' }}
 				open={true}
-				additionalClasses={"p-5 text-black w-75"}
+				additionalClasses={"p-5 text-black"}
 			/>
 		);
 	}

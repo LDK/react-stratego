@@ -323,7 +323,7 @@ class NewGameMenu extends React.Component {
 					<div className="row">
 						<div className="col-12 col-sm-6 text-left">{opponentIndicator}</div>
 						<div className="col-12 col-sm-6 text-right" style={{textAlign: 'right'}}>
-							<input className="mt-3 d-inline-block text-white text-center new-game-submit" type="submit" value="START GAME" style={{}} 
+							<input className="mt-3 d-inline-block text-white text-center go-button" type="submit" value="START GAME" style={{}} 
 								disabled={
 									!this.state.opponentId &&
 									this.state.opponentSelectMode != 'open' &&

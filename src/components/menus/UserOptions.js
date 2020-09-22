@@ -147,7 +147,9 @@ class UserOptionsMenu extends React.Component {
 		var state = this.state;
 		const OptionsForm = (
 			<form onSubmit={this.saveOptions}>
-				<h3 className="mb-3">User Options</h3>
+				<h3 className="mt-0">USER OPTIONS</h3>
+				<p className="">Edit your user profile:</p>
+				<hr />
 				<div className="container-fluid px-0">
 					<div className="row no-gutters">
 						<div className="col-12 col-md-4">
@@ -180,7 +182,7 @@ class UserOptionsMenu extends React.Component {
 							<label className="small ml-2">Available to Be Selected As Random Opponent</label>
 						</div>
 						<div className="col-12 mt-4">
-							<input type="submit" value="Go" size="3" onClick={this.saveOptions} 
+							<input type="submit" value="Save Options" size="3" className="go-button text-white float-right" onClick={this.saveOptions} 
 								disabled={
 									!state.usernameInput ||
 									!state.emailInput ||
@@ -200,10 +202,12 @@ class UserOptionsMenu extends React.Component {
 			app={this.props.app}
 			open={this.state.formOpen}
 			width="small"
+			height="auto"
 			onKeyDown={this.onKeyDown} 
 			closeButton={true}
 			closeCallback={this.closeForm}
-			additionalClasses={"py-4 px-5 text-black"}
+			styles={{ backgroundColor: 'var(--blue-light)' }}
+			additionalClasses={"p-5 text-black"}
 		/>
 		);
 	}

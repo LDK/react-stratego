@@ -345,7 +345,7 @@ class NewGameMenu extends React.Component {
 			onKeyDown={this.onKeyDown} 
 			closeButton={true}
 			closeCallback={this.closeForm}
-			styles={{ backgroundColor: 'rgb(56, 128, 190)' }}
+			styles={{ backgroundColor: 'var(--water)' }}
 			additionalClasses={"p-5 text-black"}
 		/>
 		);

@@ -219,6 +219,10 @@ class NewGameMenu extends React.Component {
 		}
 		var app = this.props.app;
 		var opponentIndicator = null;
+		var startText = 'START GAME';
+		if (this.state.opponentSelectMode == 'join' || this.state.opponentSelectMode == 'random') {
+			startText = 'FIND GAME';
+		}
 		if (this.state.opponentFound) {
 			opponentIndicator = (
 				<span className="pt-2 mt-3 d-block text-white text-center" style={{fontSize:"18px", width:"172px", height:"44px", background: "#e65f00", border: "1px solid black"}}>
@@ -310,7 +314,7 @@ class NewGameMenu extends React.Component {
 					<div className="row">
 						<div className="col-12 col-sm-6 text-left">{opponentIndicator}</div>
 						<div className="col-12 col-sm-6 text-right" style={{textAlign: 'right'}}>
-							<input className="mt-3 d-inline-block text-white text-center go-button" type="submit" value="START GAME" style={{}} 
+							<input className="mt-3 d-inline-block text-white text-center go-button" type="submit" value={startText} style={{}} 
 								disabled={
 									!this.state.opponentId &&
 									this.state.opponentSelectMode != 'open' &&

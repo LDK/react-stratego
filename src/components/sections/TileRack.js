@@ -67,29 +67,29 @@ class TileRack extends React.Component {
 		if (!game.state.started) {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (
-						<div className="col-12">
-					<a className="button mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(true)}>Ready to Start</a>
-						</div>
+					<div className="col-12">
+						<a className="go-button d-block blue text-white text-center mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(true)}>I'm Ready!</a>
+					</div>
 				);
 			}
 			else if (!this.remaining && this.state.allPlaced) {
 				readyButton = (
-						<div className="col-12">
-					<a className="button mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(false)}>Not Ready</a>
-						</div>
+					<div className="col-12">
+						<a className="go-button d-block red text-white text-center mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(false)}>I'm Not Ready!</a>
+					</div>
 				);
 			}
 			if (game.state.players.blue.ready && game.state.players.red.ready) {
 				startButton = (
-						<div className="col-12">
-					<a className="button mx-auto my-3" tabIndex="-1" onClick={game.startGame}>Start Game</a>
-						</div>
+					<div className="col-12">
+						<a className="go-button d-block text-white text-center mx-auto my-3" tabIndex="-1" onClick={game.startGame}>START GAME</a>
+					</div>
 				);
 			}
 		}
 		return (
 			<div className="container-fluid px-0">
-				<div className="tileRack row no-gutters pl-5 pr-3 pl-md-3 pr-md-0">
+				<div className="tileRack row no-gutters px-3 px-md-0">
 					{startButton}
 					{readyButton}
 					{this.tileSpaces()}

@@ -1032,12 +1032,16 @@ ul.suggestions {
 	border: 1px solid white;
 	border-radius: .25rem;
 	cursor: pointer;
+	text-align: center;
 }
 .go-button:hover {
 	text-decoration: none;
 }
 .go-button.blue {
 	background: var(--water);
+}
+.go-button.red {
+	background: var(--red-button);
 }
 .go-button:disabled {
 	background: #727272;

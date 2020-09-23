@@ -267,7 +267,7 @@ class GameBoard extends React.Component {
 				</div>
 			</div>
 		);
-		this.setState({ battleContent: content });
+		this.setState({ battleContent: content, defeated: defeated });
 	}
 	renderGameSpace(row,col,key,piece) {
 		var occupied = (piece !== undefined);
@@ -518,6 +518,28 @@ class GameBoard extends React.Component {
 	render() {
 		var game = this.props.game;
 		var app = this.props.app;
+		var uid = app.state.currentUser.user_id;
+		var playerColor;
+		var backgroundColor = 'white';
+		if (game.props.starter == uid) {
+			playerColor = 'blue';
+		}
+		else {
+			playerColor = 'red';
+		}
+		if (this.state.defeated) {
+			switch (this.state.defeated) {
+				case 'both':
+					backgroundColor = 'var(--battle-draw-bg)';
+				break;
+				case playerColor:
+					backgroundColor = 'var(--battle-defeat-bg)';
+				break;
+				default:
+					backgroundColor = 'var(--battle-victory-bg)';
+				break;
+			}
+		}
 		return (
 			<div className="gameBoard">
 				<QuickLoadMenu app={app} game={game} />
@@ -526,9 +548,12 @@ class GameBoard extends React.Component {
 					closeCallback={this.closeBattleModal}
 					id="battle-modal"
 					app={app}
+					height="small"
+					width="small"
 					content={this.state.battleContent}
 					open={this.state.battleModalOpen}
-					additionalClasses={"p-5 text-black"}
+					additionalClasses={"p-5 text-white text-center"}
+					styles={{ backgroundColor: backgroundColor }}
 				/>
 				{this.gameSpaceRows(1,10,10)}
 			</div>

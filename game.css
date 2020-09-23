@@ -17,6 +17,11 @@ body {
 	--green-dark: #174717;
 	--green-darker: #063606;
 	--white: #f7f7f7;
+	--battle-defeat-bg: rgba(199,0,0,.9);
+	--battle-victory-bg: rgba(0,199,0,.9);
+	--battle-draw-bg: rgba(0,199,199,.9);
+	--battle-game-loss-bg: rgba(199,55,55,1);
+	--battle-game-win-bg: rgba(55,199,55,1);
 	--red-button: rgb(199,55,55);
 	--red-button-glow: rgba(255,111,111,.5);
 	--red-shadow: #672727;

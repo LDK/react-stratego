@@ -168,7 +168,7 @@ class UserOptionsMenu extends React.Component {
 							<label className="small ml-2">Available to Be Selected As Random Opponent</label>
 						</div>
 						<div className="col-12 mt-4">
-							<input type="submit" value="Save Options" size="3" className="go-button text-white float-right" onClick={this.saveOptions} 
+							<input type="submit" value="Save Options" size="3" className="go-button blue text-white float-right" onClick={this.saveOptions} 
 								disabled={
 									!state.usernameInput ||
 									!state.emailInput ||

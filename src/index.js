@@ -17,8 +17,8 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		// this.gameServer = 'http://stratego-api.electric-bungalow.com/';
-		this.gameServer = 'http://localhost:3000/';
+		this.gameServer = 'http://stratego-api.electric-bungalow.com/';
+		// this.gameServer = 'http://localhost:3000/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;

@@ -37,8 +37,8 @@ class QuickLoadMenu extends React.Component {
 			var targetSpace = app.tileSpaces[rank];
 			app.gameBoard.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, idOffset, true);
 		}
-		game.setState({placementMode: this.previousMode});
-		this.closeMenu();
+		game.setState({ placementMode: this.previousMode });
+		this.setState({ formOpen: false });
 		app.saveActiveGame();
 	}
 	selectPreset(value){

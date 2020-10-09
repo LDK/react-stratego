@@ -40,6 +40,8 @@ body {
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
+	--square-size-landscape: 48px;
+	--square-size-portrait: 32px;
 }
 h3 {
 	font-size: 1.5rem;
@@ -506,14 +508,6 @@ div.captured-tiles label {
 	.gameBoard {
 		background-color: var(--grass);
 	}
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
-		height: var(--square-size-tablet);
-		width: var(--square-size-tablet);
-	}
-	.gameSpace {
-		height: var(--square-size-tablet);
-		width: var(--square-size-tablet);
-	}
 }
 @media (max-width: 1199px) {
 	.xl-up {
@@ -528,20 +522,20 @@ div.captured-tiles label {
 
 @media (max-width: 320px) {
 	.gameSpace-wrapper, .gameSpace {
-		height: 2rem;
+		height: 1.5rem;
 	}
 	.gamePiece,
 	.tileFace {
-		width: 2rem;
-		height: 2rem;
+		width: 1.5rem;
+		height: 1.5rem;
 	}
 	.gameBoard .gamePiece {
-		left: -.67rem;
+		left: .25rem;
 	}
 }
 
 @media (max-width: 480px) {
-	.gameSpace-wrapper, .gameSpace {
+/*	.gameSpace-wrapper, .gameSpace {
 		height: 2.5rem;
 	}
 	.gamePiece,
@@ -552,7 +546,42 @@ div.captured-tiles label {
 	.gameBoard .gamePiece {
 		left: -.33rem;
 	}
+*/
 }
+
+@media (max-width: 575px) {
+	.gameSpace-wrapper.col, .gameSpace-wrapper {
+		height: var(--square-size-portrait);
+		width: var(--square-size-portrait);
+	}
+	.gameSpace {
+		height: var(--square-size-portrait);
+		width: var(--square-size-portrait);
+	}
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+	.gameSpace-wrapper.col, .gameSpace-wrapper {
+		height: var(--square-size-landscape);
+		width: var(--square-size-landscape);
+	}
+	.gameSpace {
+		height: var(--square-size-landscape);
+		width: var(--square-size-landscape);
+	}
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+	.gameSpace-wrapper.col, .gameSpace-wrapper {
+		height: var(--square-size-tablet);
+		width: var(--square-size-tablet);
+	}
+	.gameSpace {
+		height: var(--square-size-tablet);
+		width: var(--square-size-tablet);
+	}
+}
+
 
 /* The optionIndicator */
 .optionIndicator ul li {

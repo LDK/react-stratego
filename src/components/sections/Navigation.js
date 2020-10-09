@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DataBrowser from '../widgets/DataBrowser.js';
 import RegistrationMenu from '../menus/Registration.js';
-import LoginForm from '../widgets/LoginForm.js';
+import UserStatus from '../widgets/UserStatus.js';
 import Icon from '../widgets/Icon.js';
 
 class Navigation extends React.Component {
@@ -44,22 +44,24 @@ class Navigation extends React.Component {
 		var dropdown = (<div className={"dropdown-overlay" + (this.state.dropdownOpen ? ' open' : '')} onMouseEnter={this.closeAll} />);
 		var games = app.state.games;
 		if (games.active && games.active.length) {
-			gameBrowser = <DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games.active} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
+			gameBrowser = (
+				<div className="col-3 col-md-4 col-lg-3">
+					<DataBrowser parentObj={this} refName='gameBrowser' label="Game:" labelClass="mr-2" emptyOption='- Select a Game -' items={games.active} view="select" callback={this.gameChange} id="gameList" value={this.state.activeGame ? this.state.activeGame.props.id : null} />
+				</div>
+			);
 		}
 		return (
 			<div id="top-row">
 				<div className="navigation py-3">
 					<div className="container mx-auto">
-						<div className="row">
+						<div className="row no-gutters">
 							<div className="d-inline-block pr-3 pt-1">
 								<a className="anchor no-underline" onClick={this.goHome}>
 									<Icon icon="home" fill="white" width="1rem" height="1rem" />
 								</a>
 							</div>
-							<div className="col-3 col-md-4 col-lg-3">
-								{gameBrowser}
-							</div>
-							<LoginForm wrapperClass="col px-0 text-right" loginCallback={app.setCurrentUser} app={app} />
+							{gameBrowser}
+							<UserStatus wrapperClass="col px-0 text-right" loginCallback={app.setCurrentUser} app={app} />
 							<RegistrationMenu app={app} />
 						</div>
 					</div>

@@ -85,7 +85,7 @@ class App extends React.Component {
 				var result = JSON.parse(text);
 				if (result.accepted) {
 					app.getInvites();
-					app.LoginForm.getNotifications();
+					app.UserStatus.getNotifications();
 					app.loadGame(result.accepted.id);
 				}
 			});
@@ -111,7 +111,7 @@ class App extends React.Component {
 				var result = JSON.parse(text);
 				if (result.declined) {
 					app.getInvites();
-					app.LoginForm.getNotifications();
+					app.UserStatus.getNotifications();
 				}
 			});
 		});
@@ -561,7 +561,7 @@ class App extends React.Component {
 		}
 		return (
 			<div className={bodyClass} id="app-body">
-				<div className="row">
+				<div className="row no-gutters">
 					{body}
 				</div>
 			</div>

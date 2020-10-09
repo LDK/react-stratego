@@ -72,7 +72,7 @@ class Game extends React.Component {
 			body: JSON.stringify(payload)
 		}).then(function(data){
 			if (!game.polled) {
-				app.LoginForm.getNotifications();
+				app.UserStatus.getNotifications();
 			}
 			game.polled = true;
 			data.text().then(function(text) {

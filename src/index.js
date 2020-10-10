@@ -85,7 +85,7 @@ class App extends React.Component {
 				var result = JSON.parse(text);
 				if (result.accepted) {
 					app.getInvites();
-					app.LoginForm.getNotifications();
+					app.UserStatus.getNotifications();
 					app.loadGame(result.accepted.id);
 				}
 			});
@@ -111,7 +111,7 @@ class App extends React.Component {
 				var result = JSON.parse(text);
 				if (result.declined) {
 					app.getInvites();
-					app.LoginForm.getNotifications();
+					app.UserStatus.getNotifications();
 				}
 			});
 		});
@@ -549,9 +549,11 @@ class App extends React.Component {
 	}
 	getBody() {
 		var body = '', bodyClass = 'container mx-auto';
+		var rowClass = "row no-gutters";
 		if (this.state.activeGame) {
 			body = this.state.activeGame;
 			bodyClass = 'container-fluid game-bg px-0 pt-4 pt-lg-0';
+			rowClass = "row";
 		}
 		else if (this.state.currentUser) {
 			body = this.userMenuBody();
@@ -561,7 +563,7 @@ class App extends React.Component {
 		}
 		return (
 			<div className={bodyClass} id="app-body">
-				<div className="row">
+				<div className={rowClass}>
 					{body}
 				</div>
 			</div>

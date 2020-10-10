@@ -227,6 +227,9 @@ a.button:active {
 	margin: 0;
 	position: relative;
 }
+.gameSpaceRow {
+	margin: auto;
+}
 .gameSpaceRow:nth-child(12) .gameSpace {
 	border-bottom: 1px dashed var(--space-border);
 }
@@ -558,6 +561,9 @@ div.captured-tiles label {
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
 	}
+	.gameSpaceRow {
+		width: calc((var(--square-size-portrait) * 10));
+	}
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
@@ -569,6 +575,9 @@ div.captured-tiles label {
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
+	.gameSpaceRow {
+		width: calc((var(--square-size-landscape) * 10));
+	}
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
@@ -579,6 +588,9 @@ div.captured-tiles label {
 	.gameSpace {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
+	}
+	.gameSpaceRow {
+		width: calc((var(--square-size-tablet) * 10));
 	}
 }
 

@@ -11,6 +11,7 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import { useDrag } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
+import { isBrowser, isMobile } from "react-device-detect";
 
 class Game extends React.Component {
 	constructor(props) {
@@ -35,6 +36,9 @@ class Game extends React.Component {
 			last_move_ts: props.last_move_ts || false,
 			last_attack: props.last_attack || {}
 		};
+		if (isMobile) {
+			this.state.placementMode = 'click';
+		}
 		this.selectedRank =  null;
 		this.startGame = this.startGame.bind(this);
 		this.modeChange = this.modeChange.bind(this);

@@ -306,7 +306,7 @@ class NewGameMenu extends React.Component {
 							</div>
 						</div>
 						<div className="col-12 col-sm-5 pr-3">
-							<div className="w-100 game-mode-help-text px-3 py-2" style={{backgroundColor:'#c2ab3a', minHeight:'148px', border: '1px solid black'}}>
+							<div className="w-100 game-mode-help-text md-up px-3 py-2" style={{backgroundColor:'#c2ab3a', minHeight:'148px', border: '1px solid black'}}>
 								<p>{helpText}</p>
 							</div>
 						</div>

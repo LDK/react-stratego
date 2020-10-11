@@ -11,7 +11,7 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import { useDrag } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
-import { isBrowser, isMobile } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 
 class Game extends React.Component {
 	constructor(props) {
@@ -240,9 +240,9 @@ class Game extends React.Component {
 		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col order-1 order-md-2 bg-white mt-lg-3 mr-xl-auto">
+				<div className="col-12 col-sm-6 col-md-4 col-lg-3 px-0 tileRack-col order-3 order-md-2 bg-white mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters pt-3">
-						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 sm-up mb-3" layout="horizontal" 
+						<OptionIndicator id="placementMode" className="col-12 px-0 sm-up mb-3" layout="horizontal" 
 							value={this.state.placementMode}
 							disableArrows={true}
 							ulClass="text-center px-0 mt-3 mt-sm-0 mb-0"
@@ -251,7 +251,7 @@ class Game extends React.Component {
 							labelClass="px-2 px-md-3"
 							listLabelClass="pb-2"
 							options={[
-								{key: 'Drag & Drop', value: 'drag', tooltip: 'Drag & drop tiles from the rack to the board'},
+								{key: 'Drag & Drop', value: 'drag', className: 'lg-up', tooltip: 'Drag & drop tiles from the rack to the board'},
 								{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: this.openQuickLoadModal},
 								{key: 'Tap & Place', value: 'click', className: 'md-down', tooltip: 'Tap the tile on the rack you want to place, then tap the space(s) where you want to place it'},
 								{key: 'Click & Place', value: 'click', className: 'lg-up', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
@@ -260,7 +260,7 @@ class Game extends React.Component {
 							name="placementMode" label="Placement Mode"
 							callback={this.modeChange} 
 						/>
-						<div className="col-12 col-sm-8 col-md-12 mx-auto tileRack-col">
+						<div className="col-12 mx-auto tileRack-col">
 							<TileRack game={this} app={app} />
 						</div>
 					</div>
@@ -327,7 +327,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 			<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
-						<div className="col-12 col-md-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-md-1">
+						<div className="col-12 col-sm-6 col-md-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-md-1">
 							{gameBoard}
 						</div>
 						{rightPanel}

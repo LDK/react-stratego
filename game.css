@@ -40,7 +40,7 @@ body {
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
-	--square-size-landscape: 48px;
+	--square-size-landscape: 29px;
 	--square-size-portrait: 32px;
 }
 h3 {
@@ -553,7 +553,7 @@ div.captured-tiles label {
 }
 
 @media (max-width: 575px) {
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
+	.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square {
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
 	}
@@ -561,13 +561,13 @@ div.captured-tiles label {
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
 	}
-	.gameSpaceRow {
+	.gameSpaceRow, #presetSelector {
 		width: calc((var(--square-size-portrait) * 10));
 	}
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
+	.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square {
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
@@ -575,13 +575,13 @@ div.captured-tiles label {
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
-	.gameSpaceRow {
+	.gameSpaceRow, #presetSelector {
 		width: calc((var(--square-size-landscape) * 10));
 	}
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
+	.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
@@ -589,11 +589,15 @@ div.captured-tiles label {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
-	.gameSpaceRow {
+	.gameSpaceRow, #presetSelector {
 		width: calc((var(--square-size-tablet) * 10));
 	}
 }
-
+@media (max-width: 991px) {
+	#presetSelector {
+		margin: auto;
+	}
+}
 
 /* The optionIndicator */
 .optionIndicator ul li {

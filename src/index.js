@@ -48,6 +48,9 @@ class App extends React.Component {
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
 
+		// FOR DEBUG ONLY
+		// this.reportRenders = true;
+
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.keyCodeLookup = {};
 		for (var key in keyCodes) {
@@ -625,6 +628,7 @@ class App extends React.Component {
 	}
 	render() {
 		const body = this.getBody();
+		if (this.reportRenders) { console.log('app rendering'); }
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />

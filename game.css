@@ -1139,7 +1139,7 @@ ul.suggestions {
 	margin-right: auto;
 	text-align: center;
 }
-@media (max-width:575px) {
+@media (max-width:991px) {
 	.tileRack-col {
 		position: absolute;
 		height: 60px;
@@ -1157,16 +1157,28 @@ ul.suggestions {
 		background-repeat: no-repeat;
 	}
 	.gameBoard.zoom {
-		transform: scale(1.75);
-		top: 50%;
+		transform: scale(1.6);
+		top: 100px;
 		transition: all .35s;
 	}
 	.gameBoard {
-		top: 0%;
+		top: 0px;
 		position: relative;
 		transition: all .35s;
 	}
 }
+@media (max-width:767px) {
+	.gameBoard.zoom {
+		transform: scale(1.45);
+	}
+}
+@media (max-width:479px) {
+	.gameBoard.zoom {
+		transform: unset;
+		top: 0px;
+	}
+}
 .scroll {
-	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }

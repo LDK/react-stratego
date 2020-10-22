@@ -116,12 +116,14 @@ class Game extends React.Component {
 					gameChanges.turn = turn;
 				}
 				var remaining = game.state.players[opponentColor].soldiers;
-				if (!remaining || remaining != gameData['soldiers_remaining']) {
+				if (remaining === undefined || remaining != gameData['soldiers_remaining']) {
 					var players = game.state.players;
 					players[opponentColor].soldiers = gameData['soldiers_remaining'];
 					gameChanges.players = players;
 				}
-				game.setState(gameChanges);
+				if (Object.keys(gameChanges).length) {
+					game.setState(gameChanges);
+				}
 				var last_attack = null;
 				if (attacks != game.state.attacks) {
 					// Trigger battle modal and populate with last_attack data 
@@ -241,12 +243,12 @@ class Game extends React.Component {
 		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
-				<div className="col-12 col-sm-6 col-md-4 col-lg-3 px-0 tileRack-col order-3 order-md-2 bg-white mt-lg-3 mr-xl-auto">
+				<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-white mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters pt-3">
-						<OptionIndicator id="placementMode" className="col-12 px-0 sm-up mb-3" layout="horizontal" 
+						<OptionIndicator id="placementMode" className="col-12 px-0 lg-up mb-3" layout="horizontal" 
 							value={this.state.placementMode}
 							disableArrows={true}
-							ulClass="text-center px-0 mt-3 mt-sm-0 mb-0"
+							ulClass="text-center px-0 mt-3"
 							liClass="col-4 col-md-6 px-0 mx-2 pt-3 mx-auto"
 							disabled={this.state.players[playerColor].ready}
 							labelClass="px-2 px-md-3"
@@ -295,7 +297,7 @@ class Game extends React.Component {
 			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col bg-white text-center order-1 order-md-2 mt-lg-3 mr-xl-auto">
+				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col bg-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters">
 						{winLabel}
 						<h4 className="mx-auto d-block my-3 col-12">Captured</h4>
@@ -328,7 +330,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 			<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
-						<div className="col-12 col-sm-6 col-md-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-md-1 scroll">
+						<div className="col-12 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
 							{gameBoard}
 						</div>
 						{rightPanel}

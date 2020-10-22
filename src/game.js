@@ -224,6 +224,7 @@ class Game extends React.Component {
 	}
 	render() {
 		var app = this.props.app;
+		if (app.reportRenders) { console.log('Game rendering'); }
 		if (this.props.id) {
 			app.gameStates[this.props.id] = this.state;
 		}
@@ -260,7 +261,7 @@ class Game extends React.Component {
 							name="placementMode" label="Placement Mode"
 							callback={this.modeChange} 
 						/>
-						<div className="col-12 mx-auto tileRack-col">
+						<div className="col-12 mx-auto">
 							<TileRack game={this} app={app} />
 						</div>
 					</div>
@@ -327,7 +328,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 			<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
-						<div className="col-12 col-sm-6 col-md-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-md-1">
+						<div className="col-12 col-sm-6 col-md-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-md-1 scroll">
 							{gameBoard}
 						</div>
 						{rightPanel}

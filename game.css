@@ -1161,6 +1161,9 @@ ul.suggestions {
 		top: 100px;
 		transition: all .35s;
 	}
+	.player-blue .gameBoard.zoom {
+		top: -75px;
+	}
 	.gameBoard {
 		top: 0px;
 		position: relative;
@@ -1171,14 +1174,14 @@ ul.suggestions {
 	.gameBoard.zoom {
 		transform: scale(1.45);
 	}
+	.scroll {
+		overflow-y: hidden;
+		overflow-x: hidden;
+	}
 }
 @media (max-width:479px) {
 	.gameBoard.zoom {
 		transform: unset;
 		top: 0px;
 	}
-}
-.scroll {
-	overflow-y: scroll;
-	overflow-x: hidden;
 }

@@ -40,7 +40,7 @@ body {
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
-	--square-size-landscape: 48px;
+	--square-size-landscape: 29px;
 	--square-size-portrait: 32px;
 }
 h3 {
@@ -300,7 +300,7 @@ a.button:active {
 	height: 45px;
 	display: block;
 	top: 0;
-	left: 0;
+	left: 2px;
 	background-repeat: no-repeat;
 }
 .tileFace {
@@ -312,6 +312,8 @@ a.button:active {
 .gamePiece {
 	background-image: url('/img/stratego-piece-red.svg');
 	background-size: contain;
+}
+.gameBoard .gamePiece {
 	left: -2px;
 	top: 5px;
 }
@@ -553,7 +555,7 @@ div.captured-tiles label {
 }
 
 @media (max-width: 575px) {
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
+	.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square {
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
 	}
@@ -561,13 +563,24 @@ div.captured-tiles label {
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
 	}
-	.gameSpaceRow {
+	.gameBoard .gamePiece, .gameBoard .tileFace {
+		height: var(--square-size-portrait);
+		width: var(--square-size-portrait);
+		top: 0;
+	}
+	.gameBoard .gamePiece {
+		left: 4px;
+	}
+	.gameBoard .tileFace {
+		left: 1px;
+	}
+	.gameSpaceRow, #presetSelector {
 		width: calc((var(--square-size-portrait) * 10));
 	}
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
+	.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square {
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
@@ -575,13 +588,24 @@ div.captured-tiles label {
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
-	.gameSpaceRow {
+	.gameBoard .gamePiece, .gameBoard .tileFace {
+		height: var(--square-size-landscape);
+		width: var(--square-size-landscape);
+		top: 0;
+	}
+	.gameBoard .gamePiece {
+		left: 4px;
+	}
+	.gameBoard .tileFace {
+		left: 1px;
+	}
+	.gameSpaceRow, #presetSelector {
 		width: calc((var(--square-size-landscape) * 10));
 	}
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-	.gameSpace-wrapper.col, .gameSpace-wrapper {
+	.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
@@ -589,11 +613,23 @@ div.captured-tiles label {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
-	.gameSpaceRow {
+	.gameBoard .gamePiece, .gameBoard .tileFace {
+		height: var(--square-size-tablet);
+		width: var(--square-size-tablet);
+		top: 0;
+	}
+	.gameBoard .tileFace {
+		left: 1px;
+	}
+	.gameSpaceRow, #presetSelector {
 		width: calc((var(--square-size-tablet) * 10));
 	}
 }
-
+@media (max-width: 991px) {
+	#presetSelector {
+		margin: auto;
+	}
+}
 
 /* The optionIndicator */
 .optionIndicator ul li {
@@ -1089,4 +1125,63 @@ ul.suggestions {
 	cursor: not-allowed;
 	color: #333333 !important;
 	border: 1px solid #111;
+}
+.selected-rank .gamePiece-wrapper {
+	box-shadow: 0 0 50px #fff;
+}
+.selected-rank .tileFace {
+	box-shadow: 0 0 50px rgba(167,197,12,.9);
+}
+.tileRack label {
+	display: block;
+	margin-bottom: .5rem;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+@media (max-width:991px) {
+	.tileRack-col {
+		position: absolute;
+		height: 60px;
+		top: 39px;
+		left: 0px;
+		overflow: hidden;
+	}
+	.gamePiece,
+	.tileFace {
+		width: 29px;
+		height: 36px;
+		display: block;
+		top: 3px;
+		left: 2px;
+		background-repeat: no-repeat;
+	}
+	.gameBoard.zoom {
+		transform: scale(1.6);
+		top: 100px;
+		transition: all .35s;
+	}
+	.player-blue .gameBoard.zoom {
+		top: -75px;
+	}
+	.gameBoard {
+		top: 0px;
+		position: relative;
+		transition: all .35s;
+	}
+}
+@media (max-width:767px) {
+	.gameBoard.zoom {
+		transform: scale(1.45);
+	}
+	.scroll {
+		overflow-y: hidden;
+		overflow-x: hidden;
+	}
+}
+@media (max-width:479px) {
+	.gameBoard.zoom {
+		transform: unset;
+		top: 0px;
+	}
 }

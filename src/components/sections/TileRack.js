@@ -64,6 +64,7 @@ class TileRack extends React.Component {
 		var readyButton = '';
 		var startButton = '';
 		var game = this.props.game;
+		if (this.app.reportRenders) { console.log('TileRack rendering'); }
 		if (!game.state.started) {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (

@@ -26,6 +26,7 @@ class GamePiece extends React.Component {
 		}
 		else if (this.props.game && this.props.game.state.placementMode == 'click'){
 			this.props.game.selectedRank = this.props.rank;
+			this.props.game.props.app.tileRack.setState({});
 		}
 	}
 	render() {

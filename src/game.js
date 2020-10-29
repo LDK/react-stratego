@@ -11,7 +11,7 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import { useDrag } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
-import { isBrowser, isMobile } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 
 class Game extends React.Component {
 	constructor(props) {
@@ -116,12 +116,14 @@ class Game extends React.Component {
 					gameChanges.turn = turn;
 				}
 				var remaining = game.state.players[opponentColor].soldiers;
-				if (!remaining || remaining != gameData['soldiers_remaining']) {
+				if (remaining === undefined || remaining != gameData['soldiers_remaining']) {
 					var players = game.state.players;
 					players[opponentColor].soldiers = gameData['soldiers_remaining'];
 					gameChanges.players = players;
 				}
-				game.setState(gameChanges);
+				if (Object.keys(gameChanges).length) {
+					game.setState(gameChanges);
+				}
 				var last_attack = null;
 				if (attacks != game.state.attacks) {
 					// Trigger battle modal and populate with last_attack data 
@@ -224,6 +226,7 @@ class Game extends React.Component {
 	}
 	render() {
 		var app = this.props.app;
+		if (app.reportRenders) { console.log('Game rendering'); }
 		if (this.props.id) {
 			app.gameStates[this.props.id] = this.state;
 		}
@@ -240,18 +243,18 @@ class Game extends React.Component {
 		gameClass += playerColorClass;
 		if (!this.state.started) {
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 tileRack-col order-1 order-md-2 bg-white mt-lg-3 mr-xl-auto">
+				<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-white mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters pt-3">
-						<OptionIndicator id="placementMode" className="col-4 col-md-12 px-0 sm-up mb-3" layout="horizontal" 
+						<OptionIndicator id="placementMode" className="col-12 px-0 lg-up mb-3" layout="horizontal" 
 							value={this.state.placementMode}
 							disableArrows={true}
-							ulClass="text-center px-0 mt-3 mt-sm-0 mb-0"
+							ulClass="text-center px-0 mt-3"
 							liClass="col-4 col-md-6 px-0 mx-2 pt-3 mx-auto"
 							disabled={this.state.players[playerColor].ready}
 							labelClass="px-2 px-md-3"
 							listLabelClass="pb-2"
 							options={[
-								{key: 'Drag & Drop', value: 'drag', tooltip: 'Drag & drop tiles from the rack to the board'},
+								{key: 'Drag & Drop', value: 'drag', className: 'lg-up', tooltip: 'Drag & drop tiles from the rack to the board'},
 								{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: this.openQuickLoadModal},
 								{key: 'Tap & Place', value: 'click', className: 'md-down', tooltip: 'Tap the tile on the rack you want to place, then tap the space(s) where you want to place it'},
 								{key: 'Click & Place', value: 'click', className: 'lg-up', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
@@ -260,7 +263,7 @@ class Game extends React.Component {
 							name="placementMode" label="Placement Mode"
 							callback={this.modeChange} 
 						/>
-						<div className="col-12 col-sm-8 col-md-12 mx-auto tileRack-col">
+						<div className="col-12 mx-auto">
 							<TileRack game={this} app={app} />
 						</div>
 					</div>
@@ -294,7 +297,7 @@ class Game extends React.Component {
 			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col bg-white text-center order-1 order-md-2 mt-lg-3 mr-xl-auto">
+				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col bg-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters">
 						{winLabel}
 						<h4 className="mx-auto d-block my-3 col-12">Captured</h4>
@@ -327,7 +330,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 			<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
-						<div className="col-12 col-md-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-md-1">
+						<div className="col-12 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
 							{gameBoard}
 						</div>
 						{rightPanel}

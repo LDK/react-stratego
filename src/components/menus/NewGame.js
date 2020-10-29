@@ -239,7 +239,7 @@ class NewGameMenu extends React.Component {
 							<h3 className="text-white mt-0">NEW GAME</h3>
 							<p className="text-white">Find an opponent:</p>
 						</div>
-						<div className="col-12 col-sm-7 px-3">
+						<div className="col-12 col-md-7 px-3">
 							<div className="w-100 game-mode-options bg-white p-3" style={{minHeight: '240px', border:'1px solid black'}}>
 								<div onClick={() => this.focusModeOption('past')} className="mb-3">
 									<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
@@ -306,7 +306,7 @@ class NewGameMenu extends React.Component {
 							</div>
 						</div>
 						<div className="col-12 col-sm-5 pr-3">
-							<div className="w-100 game-mode-help-text px-3 py-2" style={{backgroundColor:'#c2ab3a', minHeight:'148px', border: '1px solid black'}}>
+							<div className="w-100 game-mode-help-text md-up px-3 py-2" style={{backgroundColor:'#c2ab3a', minHeight:'148px', border: '1px solid black'}}>
 								<p>{helpText}</p>
 							</div>
 						</div>

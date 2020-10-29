@@ -518,8 +518,12 @@ class GameBoard extends React.Component {
 	render() {
 		var game = this.props.game;
 		var app = this.props.app;
+		var classes = 'gameBoard';
+		if (!game.state.started) {
+			classes += ' placement zoom';
+		}
 		return (
-			<div className="gameBoard">
+			<div className={classes}>
 				<QuickLoadMenu app={app} game={game} />
 				<Modal
 					closeButton={true}

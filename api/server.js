@@ -850,7 +850,7 @@ var joinGame = function(mode, uid, gameId) {
 						// Set game to active
 						// Update game title
 						var joinSql = "UPDATE game SET opponent_user_id = {"+uid+"}, title = '"+title+"', status = 'active' where id = "+gameId;
-						db.run(updateSql, [], function(error){
+						db.run(joinSql, [], function(error){
 							if (error) {
 								reject(error);
 							}

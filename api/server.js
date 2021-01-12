@@ -109,7 +109,7 @@ var getUserData = function(uid) {
 var checkCreds = function(body) {
 	var {user_id, userKey} = body;
 	return new Promise((resolve, reject) => {
-		var credSql = "SELECT id FROM `user` WHERE `id` = '"+user_id+"' AND `userKey` = '"+userKey+"'";
+		var credSql = "SELECT id, last_active FROM `user` WHERE `id` = '"+user_id+"' AND `userKey` = '"+userKey+"'";
 		var queries = [];
 		db.get(credSql, [], function(error, row) {
 			if (error) {
@@ -118,9 +118,31 @@ var checkCreds = function(body) {
 				reject('Invalid user ID/user key combo ('+user_id+', '+userKey+')');
 			}
 			else {
-				resolve(row.id);
+				setLastActive(user_id, row.last_active).then(function(result) {
+					resolve(row.id);
+				});
 			}
 		});
+	});
+};
+
+var setLastActive = function(user_id, previous_ts) {
+	return new Promise((resolve, reject) => {
+		var now_ts = Date.now() / 1000;
+		if (now_ts - previous_ts > 15) {
+			var updateSql = "UPDATE `user` SET last_active='"+ parseInt(now_ts) +"' WHERE `id` = '" + user_id + "'";
+			db.run(updateSql, [], function(error){
+				if (error) {
+					reject(error);
+				}
+				else {
+					resolve(now_ts);
+				}
+			});
+		}
+		else {
+			resolve(previous_ts);
+		}
 	});
 };
 

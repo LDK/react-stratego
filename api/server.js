@@ -1033,8 +1033,9 @@ restapi.post('/register', function(req, res) {
 				}
 				else {
 					var uKey = randomString(32)
-					var insertSql = "INSERT INTO `user` (username,email,password,userKey) VALUES ";
-					insertSql += "('"+uName+"','"+uEmail+"','"+uPass+"','"+uKey+"')";
+					var now_ts = Date.now() / 1000;
+					var insertSql = "INSERT INTO `user` (username,email,password,userKey,join_date,last_active) VALUES ";
+					insertSql += "('"+uName+"','"+uEmail+"','"+uPass+"','"+uKey+"','"+parseInt(now_ts)+"','"+parseInt(now_ts)+"')";
 				}
 				db.run(insertSql, [], function(error) {
 					if (error) {

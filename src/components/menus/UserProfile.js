@@ -40,6 +40,7 @@ class UserProfile extends React.Component {
 				<p><label>Joined: </label> <span>{joinDate}</span></p>
 				<p><label>Last Active: </label> <span>{lastActive}</span></p>
 				<p>{this.state.wins} wins, {this.state.losses} losses with {this.state.forfeits} forfeits</p>
+				<DataBrowser label="Recently Finished Games:" items={app.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileRecentGameList" deleteEmpty={true} hideIfEmpty={true} />
 			</div>
 		);
 		return (

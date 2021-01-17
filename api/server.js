@@ -264,6 +264,19 @@ var getPastOpponents = function(uid) {
 	});
 };
 
+var getUserProfile = function(uid) {
+	return new Promise((resolve, reject) => {
+		selectSql = "select username, email, wins, losses, forfeits, last_active, join_date from user where user.id = " + uid;
+		var result = {};
+		db.get(selectSql, [], (err, info) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(info);
+		});
+	});
+};
+
 var getNotification = function(id){
 	return new Promise((resolve, reject) => {
 		var selectSql = "SELECT id, category, text, user_id, added_ts, seen_ts, additional FROM notification where id = " + id;
@@ -1266,6 +1279,19 @@ restapi.post('/past_opponents', function(req, res) {
 	checkCreds(req.body).then(
 		function(uid) {
 			getPastOpponents(uid).then(function(result){
+				res.status(200).json(result);
+			});
+		},
+		function(err) {
+			res.status(401).json({ error: err });
+		}
+	);
+});
+
+restapi.post('/user_profile', function(req, res) {
+	checkCreds(req.body).then(
+		function(uid) {
+			getUserProfile(uid, req.body.user_id).then(function(result){
 				res.status(200).json(result);
 			});
 		},

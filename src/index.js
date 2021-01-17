@@ -296,9 +296,27 @@ class App extends React.Component {
 		this.newGameMenu.setState({ formOpen: true });
 		return;
 	}
-	openUserProfile(uid){
-		console.log('Opening user profile ',uid);
-		this.userProfile.setState({ formOpen: true });
+	openUserProfile(profile_uid){
+		var userProfile = this.userProfile;
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		var payload = { user_id: uid, userKey: userKey, profile_uid: profile_uid };
+		window.fetch(this.gameServer+'user_profile', {
+			method: 'POST', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var info = JSON.parse(text);
+				if (info.username) {
+					info.formOpen = true;
+					userProfile.setState(info);
+				}
+			});
+		});
 		return;
 	}
 	loadGame(id){

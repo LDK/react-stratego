@@ -272,7 +272,12 @@ var getUserProfile = function(uid) {
 			if (err) {
 				reject(err);
 			}
-			resolve(info);
+			getRecentGames(info.user_id).then(function(recentGames){
+				if (recentGames) {
+					info.recentGames = recentGames;
+				}
+				resolve(info);
+			});
 		});
 	});
 };

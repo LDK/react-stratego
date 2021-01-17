@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
 import JoinGameMenu from './components/menus/JoinGame.js';
 import UserOptionsMenu from './components/menus/UserOptions.js';
+import UserProfile from './components/menus/UserProfile.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
@@ -17,8 +18,8 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.gameServer = 'http://stratego-api.electric-bungalow.com/';
-		// this.gameServer = 'http://localhost:3000/';
+		// this.gameServer = 'http://stratego-api.electric-bungalow.com/';
+		this.gameServer = 'http://localhost:3000/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;
@@ -47,6 +48,7 @@ class App extends React.Component {
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
+		this.openUserProfile = this.openUserProfile.bind(this);
 
 		// FOR DEBUG ONLY
 		// this.reportRenders = true;
@@ -292,6 +294,11 @@ class App extends React.Component {
 	}
 	openNewGameMenu(){
 		this.newGameMenu.setState({ formOpen: true });
+		return;
+	}
+	openUserProfile(uid){
+		console.log('Opening user profile ',uid);
+		this.userProfile.setState({ formOpen: true });
 		return;
 	}
 	loadGame(id){
@@ -634,6 +641,7 @@ class App extends React.Component {
 					<Navigation app={this} />
 					{body}
 					<NewGameMenu app={this} />
+					<UserProfile app={this} />
 					<JoinGameMenu app={this} />
 					<UserOptionsMenu app={this} />
 				</div>

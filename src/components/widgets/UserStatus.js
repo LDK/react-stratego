@@ -231,7 +231,7 @@ class UserStatus extends React.Component {
 		var loginModal = <LoginMenu app={app} loginCallback={props.loginCallback} />;
 		var userMenu = (
 			<div className={userClass} id="nav-user-menu">
-				<span className="username mr-2">{username} is playing.</span>
+				<span className="username mr-2"><a className="anchor" onClick={() => app.openUserProfile(app.state.currentUser.user_id)}>{username}</a> is playing.</span>
 				<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown} id="user-anchor">
 					<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" id="user-icon" />
 					{notificationCounter}

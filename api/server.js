@@ -272,7 +272,7 @@ var getUserProfile = function(uid) {
 			if (err) {
 				reject(err);
 			}
-			getRecentGames(info.user_id).then(function(recentGames){
+			getRecentGames(uid).then(function(recentGames){
 				if (recentGames) {
 					info.recentGames = recentGames;
 				}
@@ -817,6 +817,7 @@ var getOpenGames = function(uid) {
 var getRecentGames = function(uid) {
 	return new Promise((resolve, reject) => {
 		var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner, g.status FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'done' AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.last_move_ts DESC LIMIT 3";
+
 		db.all(query, [], (err, games) => {
 			if (err) {
 				reject(err);

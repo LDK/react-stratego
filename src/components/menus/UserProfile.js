@@ -6,13 +6,15 @@ class UserProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			username: props.username || '',
+			username: '',
+			uid: null,
 			formOpen: false,
 			wins: 0,
 			losses: 0,
 			forfeits: 0,
 			join_date: null,
-			last_active: null
+			last_active: null,
+			headtohead: null
 		};
 		this.id = "userProfile-modal";
 		props.app.userProfile = this;
@@ -21,6 +23,7 @@ class UserProfile extends React.Component {
 
 	}
 	render() {
+		console.log('open',this.state.formOpen);
 		if (!this.state.formOpen) {
 			return null;
 		}
@@ -34,6 +37,12 @@ class UserProfile extends React.Component {
 			lastActive = new Date(this.state.last_active * 1000).toString();
 		}
 
+		var headToHead = '';
+		
+		if (this.state.uid && this.state.uid != app.state.currentUser.user_id && this.state.headtohead) {
+			headToHead = <DataBrowser label="Head-to-Head History:" items={this.state.headtohead} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileHTHGameList" deleteEmpty={true} hideIfEmpty={true} />;
+		}
+		
 		var userProfile = (
 			<div id="user-profile">
 				<h2>Profile: {this.state.username}</h2>
@@ -41,6 +50,7 @@ class UserProfile extends React.Component {
 				<p><label>Last Active: </label> <span>{lastActive}</span></p>
 				<p>{this.state.wins} wins, {this.state.losses} losses with {this.state.forfeits} forfeits</p>
 				<DataBrowser label="Recently Finished Games:" items={app.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileRecentGameList" deleteEmpty={true} hideIfEmpty={true} />
+				{headToHead}
 			</div>
 		);
 		return (

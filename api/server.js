@@ -171,7 +171,7 @@ var updateLastMove = function(gameId, moveData) {
 
 var getGameData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
-		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move, g.last_move_ts, g.finished_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
+		selectSql = "SELECT g.title, g.id, g.started_ts, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move, g.last_move_ts, g.finished_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
 		db.get(selectSql, [], function(error,row){
 			if (!row) {
 				reject('No game data found.');
@@ -200,6 +200,7 @@ var getGameData = function(gameId, uid) {
 			}
 			rv.title = row.title;
 			rv.id = row.id;
+			rv.started_ts = row.started_ts;
 			rv.starter_uid = row.starting_user_id;
 			rv.starter_name = row.starter_name;
 			rv.opponent_uid = row.opponent_user_id;
@@ -278,6 +279,23 @@ var getUserProfile = function(uid) {
 				}
 				resolve(info);
 			});
+		});
+	});
+};
+
+var getHeadToHead = function(uid,opponent_uid) {
+	return new Promise((resolve, reject) => {
+		selectSql = "select id, title, starting_ts, winner, loser, result, finished_ts from game where status='done' and ((starting_user_id = " + uid + " and opponent_user_id= " + opponent_uid + ") or (starting_user_id = " + opponent_uid + " and opponent_user_id= " + uid + "));";
+		var result = {};
+		db.all(selectSql, [], (err, games) => {
+			if (err) {
+				reject(err);
+			}
+			for (var gameIndex in games) {
+				var game = games[gameIndex];
+				gameList[game.id] = game;
+			}
+			resolve(gameList);
 		});
 	});
 };
@@ -1297,7 +1315,20 @@ restapi.post('/past_opponents', function(req, res) {
 restapi.post('/user_profile', function(req, res) {
 	checkCreds(req.body).then(
 		function(uid) {
-			getUserProfile(uid, req.body.user_id).then(function(result){
+			getUserProfile(req.body.profile_uid).then(function(result){
+				res.status(200).json(result);
+			});
+		},
+		function(err) {
+			res.status(401).json({ error: err });
+		}
+	);
+});
+
+restapi.post('/headtohead', function(req, res) {
+	checkCreds(req.body).then(
+		function(uid) {
+			getHeadToHead(uid, req.body.opponent_uid).then(function(result){
 				res.status(200).json(result);
 			});
 		},

@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import GameBoard from './components/sections/GameBoard.js';
 import TileRack from './components/sections/TileRack.js';
 import GamePiece from './components/widgets/GamePiece.js';
+import UserLink from './components/widgets/UserLink.js';
 import OptionIndicator from './components/widgets/OptionIndicator.js';
 import ReactTooltip from 'react-tooltip';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -287,7 +288,9 @@ class Game extends React.Component {
 					winnerName = this.props.opponentName;
 					winnerClass = 'text-red';
 				}
-				winLabel = (<h5 className="text-center mx-auto mt-4"><span className={winnerClass}>{winnerName}</span> is the winner!</h5>);
+				var winnerInfo = { name: winnerName, id: this.state.winner_uid};
+				var winnerLink = (<UserLink app={app} user={winnerInfo} className={"anchor "+winnerClass} />);
+				winLabel = (<h5 className="text-center mx-auto mt-4">{winnerLink} is the winner!</h5>);
 			}
 			var captured = { red: [], blue: [] };
 			for (var color in this.state.captured) {
@@ -303,7 +306,7 @@ class Game extends React.Component {
 						<h4 className="mx-auto d-block my-3 col-12">Captured</h4>
 						<div className="col-12 col-md-6 px-3">
 							<span className="text-red">
-								{this.state.players.red.name}
+								<UserLink app={app} user={this.state.players.red} className="anchor" />
 							</span>
 							<div className="captured-tiles player-red mt-3">
 								{captured.red.length ? captured.red : 'None'}
@@ -311,7 +314,7 @@ class Game extends React.Component {
 						</div>
 						<div className="col-12 col-md-6 px-3">
 							<span className="text-blue">
-								{this.state.players.blue.name}
+								<UserLink app={app} user={this.state.players.blue} className="anchor" />
 							</span>
 							<div className="captured-tiles player-blue mt-3">
 								{captured.blue.length ? captured.blue : 'None'}
@@ -325,6 +328,7 @@ class Game extends React.Component {
 				</div>
 			);
 		}
+		console.log('players',this.state.players);
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
 			<div className={gameClass}>

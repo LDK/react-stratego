@@ -193,7 +193,8 @@ class App extends React.Component {
 							turn: turn_name,
 							last_move_ts: game.last_move_ts,
 							last_move: last_move,
-							winner: winner_name
+							winner: winner_name,
+							winner_uid: game.winner
 						}
 						if (gameEntry && gameEntry.id) {
 							games[listName].push(gameEntry);
@@ -297,6 +298,7 @@ class App extends React.Component {
 		return;
 	}
 	openUserProfile(profile_uid){
+		console.log('open profile',profile_uid);
 		var userProfile = this.userProfile;
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
@@ -313,6 +315,7 @@ class App extends React.Component {
 				var info = JSON.parse(text);
 				if (info.username) {
 					info.formOpen = true;
+					console.log('set state',info);
 					userProfile.setState(info);
 				}
 			});
@@ -568,7 +571,7 @@ class App extends React.Component {
 		return (
 			<div className="userMenu py-3">
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
 				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />

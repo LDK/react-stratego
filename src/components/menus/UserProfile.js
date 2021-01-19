@@ -14,7 +14,8 @@ class UserProfile extends React.Component {
 			forfeits: 0,
 			join_date: null,
 			last_active: null,
-			headtohead: null
+			headtohead: null,
+			recentGames: null
 		};
 		this.id = "userProfile-modal";
 		props.app.userProfile = this;
@@ -23,7 +24,6 @@ class UserProfile extends React.Component {
 
 	}
 	render() {
-		console.log('open',this.state.formOpen);
 		if (!this.state.formOpen) {
 			return null;
 		}
@@ -36,21 +36,14 @@ class UserProfile extends React.Component {
 		if (this.state.last_active) {
 			lastActive = new Date(this.state.last_active * 1000).toString();
 		}
-
-		var headToHead = '';
-		
-		if (this.state.uid && this.state.uid != app.state.currentUser.user_id && this.state.headtohead) {
-			headToHead = <DataBrowser label="Head-to-Head History:" items={this.state.headtohead} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileHTHGameList" deleteEmpty={true} hideIfEmpty={true} />;
-		}
-		
 		var userProfile = (
 			<div id="user-profile">
 				<h2>Profile: {this.state.username}</h2>
 				<p><label>Joined: </label> <span>{joinDate}</span></p>
 				<p><label>Last Active: </label> <span>{lastActive}</span></p>
 				<p>{this.state.wins} wins, {this.state.losses} losses with {this.state.forfeits} forfeits</p>
-				<DataBrowser label="Recently Finished Games:" items={app.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileRecentGameList" deleteEmpty={true} hideIfEmpty={true} />
-				{headToHead}
+				<DataBrowser label="Recently Finished Games:" items={this.state.recentGames} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileRecentGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Head-to-Head History:" items={this.state.headtohead} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileHTHGameList" deleteEmpty={true} hideIfEmpty={true} />
 			</div>
 		);
 		return (

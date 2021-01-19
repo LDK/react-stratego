@@ -265,9 +265,9 @@ var getPastOpponents = function(uid) {
 	});
 };
 
-var getUserProfile = function(uid) {
+var getUserProfile = function(uid,requestingUid) {
 	return new Promise((resolve, reject) => {
-		selectSql = "select username, email, wins, losses, forfeits, last_active, join_date from user where user.id = " + uid;
+		selectSql = "select id as uid, username, email, wins, losses, forfeits, last_active, join_date from user where user.id = " + uid;
 		var result = {};
 		db.get(selectSql, [], (err, info) => {
 			if (err) {
@@ -275,27 +275,18 @@ var getUserProfile = function(uid) {
 			}
 			getRecentGames(uid).then(function(recentGames){
 				if (recentGames) {
+					for (var i in recentGames) {
+						recentGames[i].name = recentGames[i].title;
+					}
 					info.recentGames = recentGames;
 				}
-				resolve(info);
+				getHeadToHead(uid,requestingUid).then(function(headToHead){
+					if (headToHead) {
+						info.headtohead = headToHead;
+					}
+					resolve(info);
+				});
 			});
-		});
-	});
-};
-
-var getHeadToHead = function(uid,opponent_uid) {
-	return new Promise((resolve, reject) => {
-		selectSql = "select id, title, starting_ts, winner, loser, result, finished_ts from game where status='done' and ((starting_user_id = " + uid + " and opponent_user_id= " + opponent_uid + ") or (starting_user_id = " + opponent_uid + " and opponent_user_id= " + uid + "));";
-		var result = {};
-		db.all(selectSql, [], (err, games) => {
-			if (err) {
-				reject(err);
-			}
-			for (var gameIndex in games) {
-				var game = games[gameIndex];
-				gameList[game.id] = game;
-			}
-			resolve(gameList);
 		});
 	});
 };
@@ -832,6 +823,19 @@ var getOpenGames = function(uid) {
 	});
 };
 
+var getHeadToHead = function(uid,opponent_uid)  {
+	return new Promise((resolve, reject) => {
+		selectSql = "SELECT g.id, g.title as name, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner, g.status FROM game g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status='done' and ((g.starting_user_id = " + uid + " and g.opponent_user_id= " + opponent_uid + ") or (g.starting_user_id = " + opponent_uid + " and g.opponent_user_id= " + uid + "));";
+		var result = {};
+		db.all(selectSql, [], (err, games) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(games);
+		});
+	});
+};
+
 var getRecentGames = function(uid) {
 	return new Promise((resolve, reject) => {
 		var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner, g.status FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'done' AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.last_move_ts DESC LIMIT 3";
@@ -1315,7 +1319,7 @@ restapi.post('/past_opponents', function(req, res) {
 restapi.post('/user_profile', function(req, res) {
 	checkCreds(req.body).then(
 		function(uid) {
-			getUserProfile(req.body.profile_uid).then(function(result){
+			getUserProfile(req.body.profile_uid,uid).then(function(result){
 				res.status(200).json(result);
 			});
 		},

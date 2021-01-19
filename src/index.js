@@ -298,7 +298,6 @@ class App extends React.Component {
 		return;
 	}
 	openUserProfile(profile_uid){
-		console.log('open profile',profile_uid);
 		var userProfile = this.userProfile;
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
@@ -315,7 +314,20 @@ class App extends React.Component {
 				var info = JSON.parse(text);
 				if (info.username) {
 					info.formOpen = true;
-					console.log('set state',info);
+					var gameLists = ['recentGames','headtohead'];
+					for (var listIndex in gameLists) {
+						var listName = gameLists[listIndex];
+						for (var gameIndex in info[listName]) {
+							var game = info[listName][gameIndex];
+							if (game.winner == game.starter_uid) {
+								var winner_name = game.starter_name;
+							}
+							else if (game.winner == game.opponent_uid) {
+								var winner_name = game.opponent_name;
+							}
+							info[listName][gameIndex].winner = winner_name;
+						}
+					}
 					userProfile.setState(info);
 				}
 			});

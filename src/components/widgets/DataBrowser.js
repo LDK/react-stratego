@@ -68,11 +68,11 @@ class DataBrowser extends React.Component {
 			</div>
 		)
 	}
-	linkList(property, refVal) {
+	linkList(property, refVal, items, itemIndex) {
 		var links = [];
 		const linkItems = this.props[property].map((link,i) => 
 			<li key={i} className={link.className}>
-				<a className="anchor underline" onClick={() => link.action(refVal)}>{link.label}</a>
+				<a className="anchor underline" onClick={() => link.action(link.argKey ? items[itemIndex][link.argKey] : refVal)}>{link.label}</a>
 			</li>
 		);
 		return (
@@ -96,7 +96,7 @@ class DataBrowser extends React.Component {
 		if (this.props.afterLinks) {
 			dataItems = items.map((opt,i) => 
 				<li key={i}>
-					{opt.name} {this.linkList('afterLinks',opt.id)}
+					{opt.name} {this.linkList('afterLinks',opt.id,items,i)}
 				</li>
 			);
 		}

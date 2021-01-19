@@ -230,7 +230,7 @@ class App extends React.Component {
 						id: game.game_id,
 						name: game.title,
 						opponent_name: game.opponent_name,
-						opponent_id: game.opponent_id
+						opponent_uid: game.opponent_uid
 					}
 					if (gameEntry && gameEntry.id) {
 						requests.push(gameEntry);
@@ -265,7 +265,7 @@ class App extends React.Component {
 						id: game.game_id,
 						name: game.title,
 						opponent_name: game.opponent_name,
-						opponent_id: game.opponent_id
+						opponent_uid: game.opponent_uid
 					}
 					if (gameEntry && gameEntry.id) {
 						invites.push(gameEntry);
@@ -584,8 +584,8 @@ class App extends React.Component {
 			<div className="userMenu py-3">
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
-				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
+				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
+				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);

@@ -328,7 +328,6 @@ class Game extends React.Component {
 				</div>
 			);
 		}
-		console.log('players',this.state.players);
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
 			<div className={gameClass}>

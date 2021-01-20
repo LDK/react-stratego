@@ -213,12 +213,18 @@ class UserStatus extends React.Component {
 				if (notification.category == 'invite-sent' && additional.game_id) {
 					browserItem.buttons = [
 						{ action: () => this.notificationButton('accept','game',additional), label: 'Accept' },
-						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' }
+						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' },
+						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
 					];
 				}
-				if (notification.category == 'open-joined') {
+				else if (notification.category == 'open-joined' || notification.category == 'invite-accepted') {
 					browserItem.buttons = [
 						{ action: () => this.notificationButton('view','game',additional), label: 'Open Game' },
+						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+					];
+				}
+				else if (notification.category == 'invite-declined') {
+					browserItem.buttons = [
 						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
 					];
 				} 

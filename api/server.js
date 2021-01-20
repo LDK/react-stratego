@@ -1145,14 +1145,14 @@ restapi.post('/new_game', function(req, res) {
 					res.status(200).json(result);
 					if (result.created) {
 						addNotification({
-							text: '[%starterName] has invited you to a game!',
+							text: '[%username] has invited you to a game!',
 							user_id: result.created.opponent_uid,
 							category: 'invite-sent',
 							additional: {
 								game_id: result.created.id,
 								link_type: 'game',
-								starterName: result.created.starter_name,
-								starterUid: result.created.starter_uid
+								username: result.created.starter_name,
+								user_id: result.created.starter_uid
 							}
 						}).then(function() {
 							// success!
@@ -1257,8 +1257,9 @@ restapi.post('/decline_invite', function(req, res) {
 					category: 'invite-declined',
 					additional: {
 						game_id: result.declined.id,
+						link_type: 'game',
 						username: result.declined.opponent_name,
-						user_id: result.declined.starter_uid
+						user_id: result.declined.opponent_uid
 					}
 				}).then(function() {
 					deleteInvite(req.body.game_id);
@@ -1290,7 +1291,7 @@ restapi.post('/accept_invite', function(req, res) {
 						game_id: result.accepted.id,
 						link_type: 'game',
 						username: result.accepted.opponent_name,
-						user_id: result.accepted.starter_uid
+						user_id: result.accepted.opponent_uid
 					}
 				}).then(function() {
 					deleteInvite(req.body.game_id);

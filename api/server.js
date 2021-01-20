@@ -175,9 +175,11 @@ var getGameData = function(gameId, uid) {
 		db.get(selectSql, [], function(error,row){
 			if (!row) {
 				reject('No game data found.');
+				return;
 			}
 			if (error) {
 				reject(error);
+				return;
 			}
 			rv = {};
 			if (!uid) {
@@ -1121,13 +1123,14 @@ restapi.post('/new_game', function(req, res) {
 					res.status(200).json(result);
 					if (result.joined) {
 						addNotification({
-							text: '[%oppName] has joined your open game!',
+							text: '[%username] has joined your open game!',
 							user_id: result.joined.starter_uid,
 							category: 'open-joined',
 							additional: {
 								game_id: result.joined.id,
 								link_type: 'game',
-								oppName: result.joined.opponent_name
+								username: result.joined.opponent_name,
+								user_id: result.joined.opponent_uid
 							}
 						}).then(function() {
 							// success!
@@ -1148,7 +1151,8 @@ restapi.post('/new_game', function(req, res) {
 							additional: {
 								game_id: result.created.id,
 								link_type: 'game',
-								starterName: result.created.starter_name
+								starterName: result.created.starter_name,
+								starterUid: result.created.starter_uid
 							}
 						}).then(function() {
 							// success!
@@ -1205,13 +1209,14 @@ restapi.post('/join_game', function(req, res) {
 				res.status(200).json(result);
 				if (result.joined) {
 					addNotification({
-						text: '[%oppName] has joined your open game!',
+						text: '[%username] has joined your open game!',
 						user_id: result.joined.starter_uid,
 						category: 'open-joined',
 						additional: {
 							game_id: result.joined.id,
 							link_type: 'game',
-							oppName: result.joined.opponent_name
+							username: result.joined.opponent_name,
+							user_id: result.joined.opponent_uid
 						}
 					}).then(function() {
 						// success!
@@ -1247,12 +1252,13 @@ restapi.post('/decline_invite', function(req, res) {
 		declineInvite(uid,req.body.game_id).then(function(result) {
 			if (result.declined) {
 				addNotification({
-					text: '[%oppName] has declined your game invite.',
+					text: '[%username] has declined your game invite.',
 					user_id: result.declined.starter_uid,
 					category: 'invite-declined',
 					additional: {
 						game_id: result.declined.id,
-						oppName: result.declined.opponent_name
+						username: result.declined.opponent_name,
+						user_id: result.declined.starter_uid
 					}
 				}).then(function() {
 					deleteInvite(req.body.game_id);
@@ -1277,13 +1283,14 @@ restapi.post('/accept_invite', function(req, res) {
 		acceptInvite(uid,req.body.game_id).then(function(result) {
 			if (result.accepted) {
 				addNotification({
-					text: '[%oppName] has accepted your game invite!',
+					text: '[%username] has accepted your game invite!',
 					user_id: result.accepted.starter_uid,
 					category: 'invite-accepted',
 					additional: {
 						game_id: result.accepted.id,
 						link_type: 'game',
-						oppName: result.accepted.opponent_name
+						username: result.accepted.opponent_name,
+						user_id: result.accepted.starter_uid
 					}
 				}).then(function() {
 					deleteInvite(req.body.game_id);

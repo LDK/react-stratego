@@ -154,6 +154,16 @@ class UserStatus extends React.Component {
 				case 'decline': 
 					this.props.app.declineInvite(data.game_id,data.id);
 				break;
+				case 'view': 
+					this.props.app.loadGame(data.game_id);
+				break;
+			}
+		}
+		else if (type == 'user' && data.user_id) {
+			switch (action) {
+				case 'view': 
+					this.props.app.openUserProfile(data.user_id);
+				break;
 			}
 		}
 		this.close();
@@ -165,6 +175,13 @@ class UserStatus extends React.Component {
 		}
 		switch(data.link_type) {
 			case 'game':
+				if (!data.game_id) {
+					this.close();
+					return;
+				}
+				this.props.app.loadGame(data.game_id);
+			break;
+			case 'user':
 				if (!data.game_id) {
 					this.close();
 					return;
@@ -199,6 +216,12 @@ class UserStatus extends React.Component {
 						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' }
 					];
 				}
+				if (notification.category == 'open-joined') {
+					browserItem.buttons = [
+						{ action: () => this.notificationButton('view','game',additional), label: 'Open Game' },
+						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+					];
+				} 
 				notificationRows.push(browserItem);
 			}
 		}

@@ -328,6 +328,9 @@ class App extends React.Component {
 							info[listName][gameIndex].winner = winner_name;
 						}
 					}
+					if (!info.headtohead || !info.headtohead.length) {
+						info.headtohead = null;
+					}
 					userProfile.setState(info);
 				}
 			});

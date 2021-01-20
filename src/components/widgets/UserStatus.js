@@ -4,6 +4,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Cookies from 'universal-cookie';
 import LoginMenu from '../menus/Login.js';
+import {time2TimeAgo} from '../Helpers.js';
+import {time2Date} from '../Helpers.js';
 
 class UserStatus extends React.Component {
 	constructor(props) {

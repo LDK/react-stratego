@@ -95,6 +95,10 @@ export const getVector = function(fromId,toId) {
 	return rv;
 }
 
+const monthNames = ["","January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 export const time2TimeAgo = function(ts) {
     var seconds = (Date.now() - ts) / 1000;
     // a day
@@ -131,4 +135,11 @@ export const time2TimeAgo = function(ts) {
 	else {
 		return "less than a minute ago";
 	}
+}
+export const time2Date = function(ts) {
+	var d = new Date(ts * 1000);
+	var month = monthNames[d.getMonth() + 1];
+	var day = ("00" + d.getDate()).slice(-2);
+	var year = d.getFullYear();
+	return (month+' '+day+', '+year);
 }

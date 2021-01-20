@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
+import {time2TimeAgo} from '../Helpers.js';
+import {time2Date} from '../Helpers.js';
 
 class UserProfile extends React.Component {
 	constructor(props) {
@@ -31,10 +33,10 @@ class UserProfile extends React.Component {
 		var joinDate = '';
 		var lastActive = '';
 		if (this.state.join_date) {
-			joinDate = new Date(this.state.join_date * 1000).toString('M-d-Y');
+			joinDate = time2Date(this.state.join_date);
 		}
 		if (this.state.last_active) {
-			lastActive = new Date(this.state.last_active * 1000).toString();
+			lastActive = time2TimeAgo(this.state.last_active * 1000);
 		}
 		var userProfile = (
 			<div id="user-profile">

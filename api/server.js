@@ -171,13 +171,15 @@ var updateLastMove = function(gameId, moveData) {
 
 var getGameData = function(gameId, uid) {
 	return new Promise((resolve, reject) => {
-		selectSql = "SELECT g.title, g.id, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move, g.last_move_ts, g.finished_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
+		selectSql = "SELECT g.title, g.id, g.started_ts, g.starting_user_id, su.username as starter_name, g.opponent_user_id, ou.username as opponent_name, g.spaces, g.starter_ready, g.opponent_ready, g.status, g.started, g.turn, g.captured, g.attacks, g.last_attack, g.last_move, g.last_move_ts, g.finished_ts, g.result, g.winner FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.id = '" + gameId + "'";
 		db.get(selectSql, [], function(error,row){
 			if (!row) {
 				reject('No game data found.');
+				return;
 			}
 			if (error) {
 				reject(error);
+				return;
 			}
 			rv = {};
 			if (!uid) {
@@ -200,6 +202,7 @@ var getGameData = function(gameId, uid) {
 			}
 			rv.title = row.title;
 			rv.id = row.id;
+			rv.started_ts = row.started_ts;
 			rv.starter_uid = row.starting_user_id;
 			rv.starter_name = row.starter_name;
 			rv.opponent_uid = row.opponent_user_id;
@@ -260,6 +263,51 @@ var getPastOpponents = function(uid) {
 				result[opponentId] = opponentName;
 			}
 			resolve(result);
+		});
+	});
+};
+
+var getUserProfile = function(uid,requestingUid) {
+	return new Promise((resolve, reject) => {
+		selectSql = "select id as uid, username, email, wins, losses, forfeits, last_active, join_date from user where user.id = " + uid;
+		var result = {};
+		db.get(selectSql, [], (err, info) => {
+			if (err) {
+				reject(err);
+			}
+			getRecentGames(uid).then(function(recentGames){
+				if (recentGames) {
+					for (var i in recentGames) {
+						recentGames[i].name = recentGames[i].title;
+					}
+					info.recentGames = recentGames;
+				}
+				getHeadToHead(uid,requestingUid).then(function(headToHead){
+					if (headToHead) {
+						info.headtohead = headToHead;
+						var score = {};
+						score[requestingUid] = 0;
+						score[uid] = 0;
+						var leader = null;
+						for (var i in headToHead) {
+							var game = headToHead[i];
+							score[game.winner]++;
+						}
+						if (score[uid] > score[requestingUid]) {
+							leader = info.username;
+						}
+						else if (score[uid] < score[requestingUid]) {
+							leader = '[%you]';
+						}
+						else {
+							leader = 'Tied';
+						}
+						var scoreString = Math.max(score[uid],score[requestingUid]) + '-' + Math.min(score[uid],score[requestingUid]);
+						info.advantage = leader + ', ' + scoreString;
+					}
+					resolve(info);
+				});
+			});
 		});
 	});
 };
@@ -796,9 +844,23 @@ var getOpenGames = function(uid) {
 	});
 };
 
+var getHeadToHead = function(uid,opponent_uid)  {
+	return new Promise((resolve, reject) => {
+		selectSql = "SELECT g.id, g.title as name, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner, g.status FROM game g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status='done' and ((g.starting_user_id = " + uid + " and g.opponent_user_id= " + opponent_uid + ") or (g.starting_user_id = " + opponent_uid + " and g.opponent_user_id= " + uid + "));";
+		var result = {};
+		db.all(selectSql, [], (err, games) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(games);
+		});
+	});
+};
+
 var getRecentGames = function(uid) {
 	return new Promise((resolve, reject) => {
 		var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.result, g.winner, g.status FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status = 'done' AND (starting_user_id = '" + uid+ "' OR opponent_user_id = '" + uid+ "') ORDER BY g.last_move_ts DESC LIMIT 3";
+
 		db.all(query, [], (err, games) => {
 			if (err) {
 				reject(err);
@@ -1080,13 +1142,14 @@ restapi.post('/new_game', function(req, res) {
 					res.status(200).json(result);
 					if (result.joined) {
 						addNotification({
-							text: '[%oppName] has joined your open game!',
+							text: '[%username] has joined your open game!',
 							user_id: result.joined.starter_uid,
 							category: 'open-joined',
 							additional: {
 								game_id: result.joined.id,
 								link_type: 'game',
-								oppName: result.joined.opponent_name
+								username: result.joined.opponent_name,
+								user_id: result.joined.opponent_uid
 							}
 						}).then(function() {
 							// success!
@@ -1101,13 +1164,14 @@ restapi.post('/new_game', function(req, res) {
 					res.status(200).json(result);
 					if (result.created) {
 						addNotification({
-							text: '[%starterName] has invited you to a game!',
+							text: '[%username] has invited you to a game!',
 							user_id: result.created.opponent_uid,
 							category: 'invite-sent',
 							additional: {
 								game_id: result.created.id,
 								link_type: 'game',
-								starterName: result.created.starter_name
+								username: result.created.starter_name,
+								user_id: result.created.starter_uid
 							}
 						}).then(function() {
 							// success!
@@ -1164,13 +1228,14 @@ restapi.post('/join_game', function(req, res) {
 				res.status(200).json(result);
 				if (result.joined) {
 					addNotification({
-						text: '[%oppName] has joined your open game!',
+						text: '[%username] has joined your open game!',
 						user_id: result.joined.starter_uid,
 						category: 'open-joined',
 						additional: {
 							game_id: result.joined.id,
 							link_type: 'game',
-							oppName: result.joined.opponent_name
+							username: result.joined.opponent_name,
+							user_id: result.joined.opponent_uid
 						}
 					}).then(function() {
 						// success!
@@ -1206,12 +1271,14 @@ restapi.post('/decline_invite', function(req, res) {
 		declineInvite(uid,req.body.game_id).then(function(result) {
 			if (result.declined) {
 				addNotification({
-					text: '[%oppName] has declined your game invite.',
+					text: '[%username] has declined your game invite.',
 					user_id: result.declined.starter_uid,
 					category: 'invite-declined',
 					additional: {
 						game_id: result.declined.id,
-						oppName: result.declined.opponent_name
+						link_type: 'game',
+						username: result.declined.opponent_name,
+						user_id: result.declined.opponent_uid
 					}
 				}).then(function() {
 					deleteInvite(req.body.game_id);
@@ -1236,13 +1303,14 @@ restapi.post('/accept_invite', function(req, res) {
 		acceptInvite(uid,req.body.game_id).then(function(result) {
 			if (result.accepted) {
 				addNotification({
-					text: '[%oppName] has accepted your game invite!',
+					text: '[%username] has accepted your game invite!',
 					user_id: result.accepted.starter_uid,
 					category: 'invite-accepted',
 					additional: {
 						game_id: result.accepted.id,
 						link_type: 'game',
-						oppName: result.accepted.opponent_name
+						username: result.accepted.opponent_name,
+						user_id: result.accepted.opponent_uid
 					}
 				}).then(function() {
 					deleteInvite(req.body.game_id);
@@ -1266,6 +1334,32 @@ restapi.post('/past_opponents', function(req, res) {
 	checkCreds(req.body).then(
 		function(uid) {
 			getPastOpponents(uid).then(function(result){
+				res.status(200).json(result);
+			});
+		},
+		function(err) {
+			res.status(401).json({ error: err });
+		}
+	);
+});
+
+restapi.post('/user_profile', function(req, res) {
+	checkCreds(req.body).then(
+		function(uid) {
+			getUserProfile(req.body.profile_uid,uid).then(function(result){
+				res.status(200).json(result);
+			});
+		},
+		function(err) {
+			res.status(401).json({ error: err });
+		}
+	);
+});
+
+restapi.post('/headtohead', function(req, res) {
+	checkCreds(req.body).then(
+		function(uid) {
+			getHeadToHead(uid, req.body.opponent_uid).then(function(result){
 				res.status(200).json(result);
 			});
 		},

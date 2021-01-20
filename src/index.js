@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
 import JoinGameMenu from './components/menus/JoinGame.js';
 import UserOptionsMenu from './components/menus/UserOptions.js';
+import UserProfile from './components/menus/UserProfile.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
@@ -17,8 +18,8 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.gameServer = 'http://stratego-api.electric-bungalow.com/';
-		// this.gameServer = 'http://localhost:3000/';
+		// this.gameServer = 'http://stratego-api.electric-bungalow.com/';
+		this.gameServer = 'http://localhost:3000/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;
@@ -47,6 +48,7 @@ class App extends React.Component {
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
+		this.openUserProfile = this.openUserProfile.bind(this);
 
 		// FOR DEBUG ONLY
 		// this.reportRenders = true;
@@ -191,7 +193,8 @@ class App extends React.Component {
 							turn: turn_name,
 							last_move_ts: game.last_move_ts,
 							last_move: last_move,
-							winner: winner_name
+							winner: winner_name,
+							winner_uid: game.winner
 						}
 						if (gameEntry && gameEntry.id) {
 							games[listName].push(gameEntry);
@@ -227,7 +230,7 @@ class App extends React.Component {
 						id: game.game_id,
 						name: game.title,
 						opponent_name: game.opponent_name,
-						opponent_id: game.opponent_id
+						opponent_uid: game.opponent_uid
 					}
 					if (gameEntry && gameEntry.id) {
 						requests.push(gameEntry);
@@ -262,7 +265,7 @@ class App extends React.Component {
 						id: game.game_id,
 						name: game.title,
 						opponent_name: game.opponent_name,
-						opponent_id: game.opponent_id
+						opponent_uid: game.opponent_uid
 					}
 					if (gameEntry && gameEntry.id) {
 						invites.push(gameEntry);
@@ -292,6 +295,43 @@ class App extends React.Component {
 	}
 	openNewGameMenu(){
 		this.newGameMenu.setState({ formOpen: true });
+		return;
+	}
+	openUserProfile(profile_uid){
+		var userProfile = this.userProfile;
+		var uid = this.state.currentUser.user_id;
+		var userKey = this.state.currentUser.userKey;
+		var payload = { user_id: uid, userKey: userKey, profile_uid: profile_uid };
+		window.fetch(this.gameServer+'user_profile', {
+			method: 'POST', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var info = JSON.parse(text);
+				if (info.username) {
+					info.formOpen = true;
+					var gameLists = ['recentGames','headtohead'];
+					for (var listIndex in gameLists) {
+						var listName = gameLists[listIndex];
+						for (var gameIndex in info[listName]) {
+							var game = info[listName][gameIndex];
+							if (game.winner == game.starter_uid) {
+								var winner_name = game.starter_name;
+							}
+							else if (game.winner == game.opponent_uid) {
+								var winner_name = game.opponent_name;
+							}
+							info[listName][gameIndex].winner = winner_name;
+						}
+					}
+					userProfile.setState(info);
+				}
+			});
+		});
 		return;
 	}
 	loadGame(id){
@@ -543,9 +583,9 @@ class App extends React.Component {
 		return (
 			<div className="userMenu py-3">
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} id="recentGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite}]} />
-				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest}]} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
+				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
 				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />
 			</div>
 		);
@@ -634,6 +674,7 @@ class App extends React.Component {
 					<Navigation app={this} />
 					{body}
 					<NewGameMenu app={this} />
+					<UserProfile app={this} />
 					<JoinGameMenu app={this} />
 					<UserOptionsMenu app={this} />
 				</div>

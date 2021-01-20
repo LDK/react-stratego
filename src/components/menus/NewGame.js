@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Autosuggest from '../widgets/Autosuggest.js';
+import UserLink from '../widgets/UserLink.js';
 
 class NewGameMenu extends React.Component {
 	constructor(props) {
@@ -223,11 +224,15 @@ class NewGameMenu extends React.Component {
 		if (this.state.opponentSelectMode == 'join' || this.state.opponentSelectMode == 'random') {
 			startText = 'FIND GAME';
 		}
+		var viewProfile = null;
 		if (this.state.opponentFound) {
 			opponentIndicator = (
 				<span className="pt-2 mt-3 d-block text-white text-center" style={{fontSize:"18px", width:"172px", height:"44px", background: "#e65f00", border: "1px solid black"}}>
 					<p className="opponentFound">Opponent Found!</p>
 				</span>
+			);
+			viewProfile = (
+				<UserLink app={app} className="anchor underline text-white d-block" user={{ id: this.state.opponentId, name: 'View Profile' }} />
 			);
 		}
 		var helpText = this.getModeHelpText();
@@ -312,7 +317,7 @@ class NewGameMenu extends React.Component {
 						</div>
 					</div>
 					<div className="row">
-						<div className="col-12 col-sm-6 text-left">{opponentIndicator}</div>
+						<div className="col-12 col-sm-6 text-left">{opponentIndicator}{viewProfile}</div>
 						<div className="col-12 col-sm-6 text-right" style={{textAlign: 'right'}}>
 							<input className="mt-3 d-inline-block text-white text-center go-button" type="submit" value={startText} style={{}} 
 								disabled={

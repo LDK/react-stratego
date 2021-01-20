@@ -385,10 +385,10 @@ a.button:active {
 }
 
 .text-red {
-	color: red;
+	color: red !important;
 }
 .text-blue {
-	color: blue;
+	color: blue !important;
 }
 .player-red .piece-blue, .player-blue .piece-red {
 	cursor: not-allowed !important;
@@ -426,6 +426,12 @@ div.captured-tiles label {
 	height: 10rem;
 }
 
+.gameStatus-col {
+	background-image: url(img/parchment.jpg);
+	background-size: cover;
+	background-blend-mode: color-dodge;
+	background-color: rgba(125,125,0,.25) !important;
+}
 .preview-square {
 	width: 10%;
 	display: inline-block;

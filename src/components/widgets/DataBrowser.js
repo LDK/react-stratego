@@ -5,6 +5,7 @@ class DataBrowser extends React.Component {
 	constructor(props) {
 		super(props);
 		this.callback = this.callback.bind(this);
+		this.afterCallback = this.afterCallback.bind(this);
 		this.renderSelect = this.renderSelect.bind(this);
 		this.renderList = this.renderList.bind(this);
 		this.linkList = this.linkList.bind(this);
@@ -33,6 +34,19 @@ class DataBrowser extends React.Component {
 		}
 		this.render();
 	}
+	afterCallback(event) {
+		// if (event.target.hasAttribute('data-key')) {
+		// 	var val = event.target.getAttribute('data-key');
+		// }
+		// else {
+		// 	var val = event.target.value;
+		// }
+		// this.setState({value: val});
+		// if (this.props.callback) {
+		// 	this.props.callback(val);
+		// }
+		// this.render();
+	}
 	renderSelect(elId,wrapperClass) {
 		var cb = this.callback;
 		var items = this.props.items;
@@ -54,11 +68,11 @@ class DataBrowser extends React.Component {
 			</div>
 		)
 	}
-	linkList(property, refVal) {
+	linkList(property, refVal, items, itemIndex) {
 		var links = [];
 		const linkItems = this.props[property].map((link,i) => 
 			<li key={i} className={link.className}>
-				<a className="anchor underline" onClick={() => link.action(refVal)}>{link.label}</a>
+				<a className="anchor underline" onClick={() => link.action(link.argKey ? items[itemIndex][link.argKey] : refVal)}>{link.label}</a>
 			</li>
 		);
 		return (
@@ -82,7 +96,7 @@ class DataBrowser extends React.Component {
 		if (this.props.afterLinks) {
 			dataItems = items.map((opt,i) => 
 				<li key={i}>
-					{opt.name} {this.linkList('afterLinks',opt.id)}
+					{opt.name} {this.linkList('afterLinks',opt.id,items,i)}
 				</li>
 			);
 		}
@@ -143,6 +157,11 @@ class DataBrowser extends React.Component {
 						}
 					}
 					content = (<a onClick={opt.onSelect || cb} className="anchor underline" data-key={opt.id}>{opt.name}</a>);
+					if (this.props.afterCallback) {
+						afterText = (
+							<a className="anchor" onClick={() => this.props.afterCallback(opt[this.props.afterArgKey || key])}>{afterText}</a>
+						);
+					}
 				}
 				dataItems.push(
 					<li key={i} className={opt.className}>

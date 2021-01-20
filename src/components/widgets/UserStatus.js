@@ -4,6 +4,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Cookies from 'universal-cookie';
 import LoginMenu from '../menus/Login.js';
+import {time2TimeAgo} from '../Helpers.js';
+import {time2Date} from '../Helpers.js';
 
 class UserStatus extends React.Component {
 	constructor(props) {
@@ -154,6 +156,16 @@ class UserStatus extends React.Component {
 				case 'decline': 
 					this.props.app.declineInvite(data.game_id,data.id);
 				break;
+				case 'view': 
+					this.props.app.loadGame(data.game_id);
+				break;
+			}
+		}
+		else if (type == 'user' && data.user_id) {
+			switch (action) {
+				case 'view': 
+					this.props.app.openUserProfile(data.user_id);
+				break;
 			}
 		}
 		this.close();
@@ -165,6 +177,13 @@ class UserStatus extends React.Component {
 		}
 		switch(data.link_type) {
 			case 'game':
+				if (!data.game_id) {
+					this.close();
+					return;
+				}
+				this.props.app.loadGame(data.game_id);
+			break;
+			case 'user':
 				if (!data.game_id) {
 					this.close();
 					return;
@@ -196,9 +215,21 @@ class UserStatus extends React.Component {
 				if (notification.category == 'invite-sent' && additional.game_id) {
 					browserItem.buttons = [
 						{ action: () => this.notificationButton('accept','game',additional), label: 'Accept' },
-						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' }
+						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' },
+						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
 					];
 				}
+				else if (notification.category == 'open-joined' || notification.category == 'invite-accepted') {
+					browserItem.buttons = [
+						{ action: () => this.notificationButton('view','game',additional), label: 'Open Game' },
+						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+					];
+				}
+				else if (notification.category == 'invite-declined') {
+					browserItem.buttons = [
+						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+					];
+				} 
 				notificationRows.push(browserItem);
 			}
 		}
@@ -231,7 +262,7 @@ class UserStatus extends React.Component {
 		var loginModal = <LoginMenu app={app} loginCallback={props.loginCallback} />;
 		var userMenu = (
 			<div className={userClass} id="nav-user-menu">
-				<span className="username mr-2">{username} is playing.</span>
+				<span className="username mr-2"><a className="anchor" onClick={() => app.openUserProfile(app.state.currentUser.user_id)}>{username}</a> is playing.</span>
 				<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown} id="user-anchor">
 					<Icon icon="user" fill="white" stroke="white" height="1rem" width="1rem" id="user-icon" />
 					{notificationCounter}

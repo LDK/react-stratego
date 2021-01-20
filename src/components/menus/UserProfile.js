@@ -44,8 +44,15 @@ class UserProfile extends React.Component {
 				<p><label>Joined: </label> <span>{joinDate}</span></p>
 				<p><label>Last Active: </label> <span>{lastActive}</span></p>
 				<p>{this.state.wins} wins, {this.state.losses} losses with {this.state.forfeits} forfeits</p>
-				<DataBrowser label="Recently Finished Games:" items={this.state.recentGames} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileRecentGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Head-to-Head History:" items={this.state.headtohead} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileHTHGameList" deleteEmpty={true} hideIfEmpty={true} />
+				<div className="mb-4">
+					<h5>Recently Finished Games</h5>
+					<DataBrowser items={this.state.recentGames} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileRecentGameList" deleteEmpty={true} hideIfEmpty={true} />
+				</div>
+				<div className="mb-3">
+					<h5>Head-to-Head History</h5>
+					<h6>Advantage: {this.state.advantage.replace('[%you]',app.state.currentUser.username)}</h6>
+					<DataBrowser sublabel={"Advantage: "+this.state.advantage} items={this.state.headtohead} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={app.loadGame} id="profileHTHGameList" deleteEmpty={true} hideIfEmpty={true} />
+				</div>
 			</div>
 		);
 		return (

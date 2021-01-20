@@ -285,6 +285,25 @@ var getUserProfile = function(uid,requestingUid) {
 				getHeadToHead(uid,requestingUid).then(function(headToHead){
 					if (headToHead) {
 						info.headtohead = headToHead;
+						var score = {};
+						score[requestingUid] = 0;
+						score[uid] = 0;
+						var leader = null;
+						for (var i in headToHead) {
+							var game = headToHead[i];
+							score[game.winner]++;
+						}
+						if (score[uid] > score[requestingUid]) {
+							leader = info.username;
+						}
+						else if (score[uid] < score[requestingUid]) {
+							leader = '[%you]';
+						}
+						else {
+							leader = 'Tied';
+						}
+						var scoreString = Math.max(score[uid],score[requestingUid]) + '-' + Math.min(score[uid],score[requestingUid]);
+						info.advantage = leader + ', ' + scoreString;
 					}
 					resolve(info);
 				});

@@ -895,7 +895,7 @@ div.captured-tiles label {
 	background: var(--white);
 }
 @media (min-width: 576px) {
-	.modal-wrapper {
+/*	.modal-wrapper {
 		height: 88%;
 		top: 6%;
 		width: 84%;
@@ -903,7 +903,7 @@ div.captured-tiles label {
 		border-radius: 1rem;
 		border: 1px solid #333;
 	}
-	.modal-wrapper.height-auto {
+*/	.modal-wrapper.height-auto {
 		height: auto;
 	}
 	.modal-wrapper.height-xlarge {

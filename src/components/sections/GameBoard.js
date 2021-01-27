@@ -432,6 +432,11 @@ class GameBoard extends React.Component {
 				}
 			}
 			tileSpace.setState({ remaining: tileSpace.remaining });
+			if (!tileSpace.remaining) {
+				game.selectedRank = null;
+				var ts = Date.now() / 1000;
+				app.tileRack.setState({ rendered: ts });
+			}
 		}
 		if (pieceInfo.fromId) {
 			var moveVector = getVector(pieceInfo.fromId,id);

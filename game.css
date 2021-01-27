@@ -1177,24 +1177,6 @@ ul.suggestions {
 		transition: all .35s;
 	}
 }
-@media (min-width:576px) and (max-width:767px) {
-/*	.tileRack-col {
-		position: absolute;
-		height: 60px;
-		top: 39px;
-		left: 0px;
-		overflow: hidden;
-	}
-*/
-	.tileRack-col {
-		height: 130px;
-		position: fixed;
-		bottom: 56px;
-		background: var(--dark);
-		width: 100%;
-	}
-	
-}
 @media (max-width:767px) {
 	.gameBoard.zoom {
 		transform: scale(1.45);
@@ -1207,17 +1189,59 @@ ul.suggestions {
 		top: -135px;
 	}
 }
+@media (min-width:576px) and (max-width:767px) {
+/*	.tileRack-col {
+		position: absolute;
+		height: 60px;
+		top: 39px;
+		left: 0px;
+		overflow: hidden;
+	}
+*/
+	.tileRack-col {
+		height: 65px;
+		position: fixed;
+		background: var(--dark);
+		width: 100%;
+	}
+	.player-blue .gameBoard.zoom.placement {
+		top: -155px;
+	}
+	.player-red .gameBoard.zoom.placement {
+		top: 148px;
+	}
+	.player-blue .tileRack-col {
+		bottom: 56px;
+	}
+	.player-red .tileRack-col {
+		top: 32px;
+	}
+}
 @media (max-width:575px) {
 	.tileRack-col {
 		position: fixed;
 		height: 130px;
-		bottom: 56px;
-		top: unset;
 		left: 0px;
 		overflow: hidden;
+		background: var(--dark);
+	}
+	.player-blue .tileRack-col {
+		bottom: 56px;
+		top: unset;
+	}
+	.player-red .tileRack-col {
+		top: 56px;
+		bottom: unset;
+	}
+	.player-red .scroll {
+		position: absolute;
+		top: 135px;
 	}
 	.player-blue .gameBoard.zoom.placement {
 		top: -200px;
+	}
+	.player-red .gameBoard.zoom.placement {
+		top: 148px;
 	}
 	.player-blue .gameBoard.zoom:not(.placement) {
 		top: -135px;

@@ -33,13 +33,13 @@ class TileSpace extends React.Component {
 		var selectedClass = (this.props.game.selectedRank && this.props.game.selectedRank == this.props.rank) ? ' selected-rank' : '';
 		if (unavailable) {
 			return (
-				<div id={'tileSpace-'+this.props.rank} className={"tileSpace col-1 col-sm-2 col-md-4 col-lg-4 " + this.props.rank + orderClass + (this.state.highlight ? ' highlight' : '') }>
+				<div id={'tileSpace-'+this.props.rank} className={"tileSpace col-2 col-md-4 col-lg-4 " + this.props.rank + orderClass + (this.state.highlight ? ' highlight' : '') }>
 
 				</div>
 			);
 		}
 		return (
-			<div id={'tileSpace-'+this.props.rank} className={"tileSpace col-1 col-sm-2 col-md-4 col-lg-4 " + this.props.rank + orderClass + selectedClass + (this.state.highlight ? ' highlight' : '') } onClick={this.onClick}>
+			<div id={'tileSpace-'+this.props.rank} className={"tileSpace col-2 col-md-4 col-lg-4 " + this.props.rank + orderClass + selectedClass + (this.state.highlight ? ' highlight' : '') } onClick={this.onClick}>
 				<DragPiece color={this.rack.playerColor} rank={this.props.rank} placed={false} game={this.props.game} tileSpace={this} />
 				<label>x{this.state.remaining}</label>
 			</div>

@@ -282,17 +282,6 @@ a.button:active {
 	background-color: lightyellow;
 	opacity: .5;
 }
-.tileRack {
-	height: 100%;
-	background: var(--dark);
-}
-.tileRack-col > .row,
-.gameStatus-col {
-	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
-	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
-	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
-	border: 1px solid #333;
-}
 /* Game piece and tile faces */
 .gamePiece,
 .tileFace {
@@ -421,6 +410,10 @@ div.captured-tiles label {
 	top: -1rem;
 	left: 0rem;
 }
+.tileRack {
+	height: 100%;
+	background: var(--dark);
+}
 
 .tileRack-col, .gameStatus-col {
 	height: 10rem;
@@ -461,6 +454,13 @@ div.captured-tiles label {
 	}
 }
 @media (min-width: 768px) {
+	.tileRack-col > .row,
+	.gameStatus-col {
+		-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+		-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+		box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+		border: 1px solid #333;
+	}
 	.sm-down {
 		display: none !important;
 	}
@@ -1149,8 +1149,9 @@ ul.suggestions {
 	.tileRack-col {
 		position: absolute;
 		height: 60px;
-		top: 39px;
+		top: unset;
 		left: 0px;
+		bottom: 0px;
 		overflow: hidden;
 	}
 	.gamePiece,
@@ -1176,6 +1177,24 @@ ul.suggestions {
 		transition: all .35s;
 	}
 }
+@media (min-width:576px) and (max-width:767px) {
+/*	.tileRack-col {
+		position: absolute;
+		height: 60px;
+		top: 39px;
+		left: 0px;
+		overflow: hidden;
+	}
+*/
+	.tileRack-col {
+		height: 130px;
+		position: fixed;
+		bottom: 56px;
+		background: var(--dark);
+		width: 100%;
+	}
+	
+}
 @media (max-width:767px) {
 	.gameBoard.zoom {
 		transform: scale(1.45);
@@ -1184,10 +1203,36 @@ ul.suggestions {
 		overflow-y: hidden;
 		overflow-x: hidden;
 	}
+	.player-blue .gameBoard.zoom.placement {
+		top: -135px;
+	}
 }
-@media (max-width:479px) {
+@media (max-width:575px) {
+	.tileRack-col {
+		position: fixed;
+		height: 130px;
+		bottom: 56px;
+		top: unset;
+		left: 0px;
+		overflow: hidden;
+	}
+	.player-blue .gameBoard.zoom.placement {
+		top: -200px;
+	}
+	.player-blue .gameBoard.zoom:not(.placement) {
+		top: -135px;
+		transform: unset;
+	}
+}
+/*@media (max-width:479px) {
 	.gameBoard.zoom {
 		transform: unset;
 		top: 0px;
+	}
+}
+*/
+@media (min-width:768px) {
+	.bg-md-white {
+		background-color: white !important;
 	}
 }

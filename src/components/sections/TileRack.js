@@ -96,14 +96,14 @@ class TileRack extends React.Component {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (
 					<div className="col-12">
-						<a className="go-button d-block blue text-white text-center mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
+						<a className="go-button d-block blue text-white text-center mx-auto my-md-3" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
 					</div>
 				);
 			}
 			else if (!this.remaining && this.state.allPlaced) {
 				readyButton = (
 					<div className="col-12">
-						<a className="go-button d-block red text-white text-center mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(false)}>I&apos;m Not Ready!</a>
+						<a className="go-button d-block red text-white text-center mx-auto my-md-3" tabIndex="-1" onClick={() => this.setReady(false)}>I&apos;m Not Ready!</a>
 					</div>
 				);
 			}

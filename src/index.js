@@ -18,8 +18,8 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		// this.gameServer = 'http://stratego-api.electric-bungalow.com/';
-		this.gameServer = 'http://localhost:3000/';
+		this.gameServer = 'http://stratego-api.electric-bungalow.com/';
+		// this.gameServer = 'http://localhost:3000/';
 		const cookies = new Cookies();
 		var userCookie = cookies.get('stratego-user');
 		var currentUser = false;
@@ -598,7 +598,7 @@ class App extends React.Component {
 		var rowClass = "row no-gutters";
 		if (this.state.activeGame) {
 			body = this.state.activeGame;
-			bodyClass = 'container-fluid game-bg px-0 pt-4 pt-lg-0';
+			bodyClass = 'container-fluid game-bg px-0 pt-0';
 			rowClass = "row";
 		}
 		else if (this.state.currentUser) {

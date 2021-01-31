@@ -45,6 +45,7 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		if (game.state.status == 'done') {
 			return;
 		}
+		dropped.gameSpaceId = id;
 		board.placePiece(dropped,id);
 	}
 	const handleHover = function(x,y,territory,item) {
@@ -158,7 +159,7 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 			var uid = parseInt(game.props.app.state.currentUser.user_id);
 			var starterUid = parseInt(game.props.starter);
 			var playerColor = (uid == starterUid) ? 'blue' : 'red';
-			var piece = { rank: rank, color: playerColor, tileSpace: tileSpace };
+			var piece = { rank: rank, color: playerColor, tileSpace: tileSpace, gameSpaceId: id };
 			board.placePiece(piece, id, false);
 		}
 		else if (game.state.placementMode == 'keyboard') {
@@ -167,10 +168,10 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	}
 	var selectedClass = '';
 	var highlightClass = '';
-	if (!game.state.started && game.state.placementMode == 'keyboard' && board.state.selectedSpace == id) {
+	if (!game.state.started && (game.state.placementMode == 'keyboard' || game.state.placementMode == 'click') && board.state.selectedSpace == id) {
 		selectedClass = ' selectedSpace';
 	}
-	if (!game.state.started && game.state.placementMode == 'keyboard' && board.state.highlighted && board.state.highlighted == id) {
+	if (!game.state.started && (game.state.placementMode == 'keyboard' || game.state.placementMode == 'click') && board.state.highlighted && board.state.highlighted == id) {
 		highlightClass = ' highlightedSpace';
 	}
 	var passableClass = passable ? ' passable' : ' not-passable';

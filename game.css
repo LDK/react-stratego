@@ -1211,7 +1211,7 @@ ul.suggestions {
 		top: 148px;
 	}
 	.player-blue .tileRack-col {
-		bottom: 56px;
+		bottom: 72px;
 	}
 	.player-red .tileRack-col {
 		top: 32px;
@@ -1224,6 +1224,9 @@ ul.suggestions {
 		left: 0px;
 		overflow: hidden;
 		background: var(--dark);
+	}
+	.gameBoard.zoom {
+		transform: scale(1.15);
 	}
 	.player-blue .tileRack-col {
 		bottom: 56px;
@@ -1238,7 +1241,7 @@ ul.suggestions {
 		top: 135px;
 	}
 	.player-blue .gameBoard.zoom.placement {
-		top: -200px;
+		top: -96px;
 	}
 	.player-red .gameBoard.zoom.placement {
 		top: 148px;

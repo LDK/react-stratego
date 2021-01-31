@@ -21,12 +21,23 @@ class GamePiece extends React.Component {
 		this.pieceClicked = this.pieceClicked.bind(this);
 	}
 	pieceClicked() {
-		if (this.props.placed) {
-			return;
+		var game = this.props.game;
+		var app = game.props.app;
+		var gb = app.gameBoard;
+		if (this.props.placed && this.props.gameSpaceId && game.state.placementMode == 'click' && !game.selectedRank) {
+			if (!gb.state.selectedSpace) {
+				gb.selectSpace(this.props.gameSpaceId);
+				gb.highlightSpace(this.props.gameSpaceId);
+			}
+			else {
+				gb.swapPieces(this.props.gameSpaceId,gb.state.selectedSpace);
+				gb.highlightSpace(null);
+				gb.selectSpace(null);
+			}
 		}
-		else if (this.props.game && this.props.game.state.placementMode == 'click'){
-			this.props.game.selectedRank = this.props.rank;
-			this.props.game.props.app.tileRack.setState({});
+		else if (!this.props.placed && game && game.state.placementMode == 'click'){
+			game.selectedRank = (game.selectedRank != this.props.rank) ? this.props.rank : null;
+			app.tileRack.setState({});
 		}
 	}
 	render() {
@@ -151,7 +162,7 @@ function DragPiece(props) {
 			style={styles}
 			className={wrapperClass}
 		>
-			<GamePiece color={props.color} rank={props.rank} moveInfo={props.moveInfo || null} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} />
+			<GamePiece color={props.color} rank={props.rank} moveInfo={props.moveInfo || null} gameSpaceId={props.fromId || null} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} />
 			{countLabel}
 		</div>
   );

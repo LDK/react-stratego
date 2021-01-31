@@ -1,6 +1,32 @@
 import React, { Component } from 'react';
 import TileSpace from '../widgets/TileSpace.js';
 import {PIECES} from '../Helpers.js';
+import { isMobile } from "react-device-detect";
+
+function PlacementIndicator(props) {
+	var { game, tileRack } = props;
+	var indicator = '';
+	if (game.state.placementMode == 'click' && tileRack.remaining) {
+		var placementText = '';
+		var placementAction = isMobile ? 'Tap' : 'Click';
+		if (game.selectedRank) {
+			placementText = (
+				<div>{ placementAction + ' a square to place a ' }
+					<div className={"d-inline-block position-relative tileFace rank-"+game.selectedRank}></div>
+				</div>
+			);
+		}
+		else {
+			placementText = placementAction + ' a tile on the rack to select that piece.';
+		}
+		indicator = (
+			<div className="d-table d-lg-none position-fixed w-100" style={{ height:'56px', backgroundColor: 'rgba(1, 1, 1, 0.75)', bottom: 0, left: 0 }}>
+				<span className="d-table-cell w-100 p-0 m-0 text-white text-center" style={{ bottom: 0, left: 0, height:'48px', fontSize:'24px', backgroundColor: 'rgba(1,1,1,.75)', verticalAlign: 'middle' }}>{placementText}</span>
+			</div>
+		);
+	}
+	return indicator;
+}
 
 class TileRack extends React.Component {
 	constructor(props) {
@@ -60,6 +86,7 @@ class TileRack extends React.Component {
 		this.app.tileRack = null;
 		this.app.tileSpaces = {};
 	}
+	
 	render() {
 		var readyButton = '';
 		var startButton = '';
@@ -69,14 +96,14 @@ class TileRack extends React.Component {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (
 					<div className="col-12">
-						<a className="go-button d-block blue text-white text-center mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
+						<a className="go-button d-block blue text-white text-center mx-auto my-md-3" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
 					</div>
 				);
 			}
 			else if (!this.remaining && this.state.allPlaced) {
 				readyButton = (
 					<div className="col-12">
-						<a className="go-button d-block red text-white text-center mx-auto my-3" tabIndex="-1" onClick={() => this.setReady(false)}>I&apos;m Not Ready!</a>
+						<a className="go-button d-block red text-white text-center mx-auto my-md-3" tabIndex="-1" onClick={() => this.setReady(false)}>I&apos;m Not Ready!</a>
 					</div>
 				);
 			}
@@ -95,6 +122,7 @@ class TileRack extends React.Component {
 					{readyButton}
 					{this.tileSpaces()}
 				</div>
+				<PlacementIndicator game={game} tileRack={this} />
 			</div>
 		)
 	}

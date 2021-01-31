@@ -12,7 +12,7 @@ class GameBoard extends React.Component {
 		this.state = {
 			spaces: {},
 			highlighted: null,
-			selectedSpace: 1,
+			selectedSpace: null,
 			battleContent: (
 				<div className="row">
 					<h3 className="col-12 text-center">Attacking...</h3>
@@ -96,7 +96,7 @@ class GameBoard extends React.Component {
 	placeByKeyboard(rank) {
 		rank = rank.toUpperCase();
 		var app = this.props.app;
-		var spaceId = parseInt(this.state.selectedSpace);
+		var spaceId = parseInt(this.state.selectedSpace || 1);
 		var playerColor = app.tileRack.playerColor;
 		var targetSpace = app.tileSpaces[rank];
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
@@ -106,14 +106,14 @@ class GameBoard extends React.Component {
 		this.resetSpace(id);
 	}
 	highlightByKeyboard() {
-		var spaceId = parseInt(this.state.selectedSpace);
+		var spaceId = parseInt(this.state.selectedSpace || 1);
 		if (!this.state.spaces[spaceId] || !this.state.spaces[spaceId].props.children) {
 			return;
 		}
 		this.highlightSpace(spaceId);
 	}
 	swapByKeyboard(fromId) {
-		var spaceId = parseInt(this.state.selectedSpace);
+		var spaceId = parseInt(this.state.selectedSpace || 1);
 		if (fromId == spaceId) {
 			this.setState({ highlighted: false });
 			this.resetSpace(fromId);
@@ -128,11 +128,14 @@ class GameBoard extends React.Component {
 		var placementMaxY = (playerColor == 'red') ? 4 : 10;
 		var minId = xyToId(1,placementMinY);
 		var maxId = xyToId(10,placementMaxY);
-		var oldSelected = parseInt(this.state.selectedSpace) || 1;
-		if (id < minId) {
+		var oldSelected = parseInt(this.state.selectedSpace || 1);
+		if (id == null) {
+			
+		}
+		else if (id < minId) {
 			id = Math.max(oldSelected,minId);
 		}
-		if (id > maxId) {
+		else if (id > maxId) {
 			id = Math.min(oldSelected,maxId);
 		}
 		this.setState({ selectedSpace: id });
@@ -315,8 +318,8 @@ class GameBoard extends React.Component {
 		var fromCoords = idToXy(fromId);
 		var toCoords = idToXy(toId);
 		
-		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={toInfo.fromX} fromY={toInfo.fromY} fromId={toId} placed={true} game={this} />);
-		var toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this} />);
+		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={toInfo.fromX} fromY={toInfo.fromY} fromId={toId} placed={true} game={this.props.game} />);
+		var toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this.props.game} />);
 
 		spaces[toId] = this.renderGameSpace(toCoords.y,toCoords.x,toId,fromPiece);
 		spaces[fromId] = this.renderGameSpace(fromCoords.y,fromCoords.x,fromId,toPiece);
@@ -432,6 +435,11 @@ class GameBoard extends React.Component {
 				}
 			}
 			tileSpace.setState({ remaining: tileSpace.remaining });
+			if (!tileSpace.remaining) {
+				game.selectedRank = null;
+				var ts = Date.now() / 1000;
+				app.tileRack.setState({ rendered: ts });
+			}
 		}
 		if (pieceInfo.fromId) {
 			var moveVector = getVector(pieceInfo.fromId,id);

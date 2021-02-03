@@ -45,6 +45,7 @@ class TileRack extends React.Component {
 		this.tileSpaces = this.tileSpaces.bind(this);
 		this.setReady = this.setReady.bind(this);
 		this.resetCounts = this.resetCounts.bind(this);
+		this.handleClick = this.handleClick.bind(this);
 		this.app = props.app;
 		this.app.tileRack = this;
 		this.app.tileSpaces = {};
@@ -94,7 +95,27 @@ class TileRack extends React.Component {
 		this.app.tileRack = null;
 		this.app.tileSpaces = {};
 	}
-	
+	returnTileToRack(game,app) {
+		var board = app.gameBoard;
+		var rank = board.state.spaces[board.state.selectedSpace].props.children.props.rank;
+		app.tileSpaces[rank].remaining++;
+		this.remaining++;
+		board.emptySpace(board.state.selectedSpace);
+		if (game.state.placementMode == 'click') {
+			board.selectSpace(null);
+			board.highlightSpace(null);
+		}
+		app.tileSpaces[rank].setState({ remaining: app.tileSpaces[rank].remaining });
+		this.setState({ allPlaced: false });
+		app.saveActiveGame();
+	}
+	handleClick(event) {
+		var game = this.props.game;
+		var app = this.props.app;
+		if (game.state.placementMode == 'click' && !!app.gameBoard.state.selectedSpace) {
+			this.returnTileToRack(game,app);
+		}
+	}
 	render() {
 		var readyButton = '';
 		var startButton = '';
@@ -124,7 +145,7 @@ class TileRack extends React.Component {
 			}
 		}
 		return (
-			<div className="container-fluid px-0">
+			<div className="container-fluid px-0" onClick={this.handleClick}>
 				<div className="tileRack row no-gutters px-3 px-md-0">
 					{startButton}
 					{readyButton}

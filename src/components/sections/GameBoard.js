@@ -101,6 +101,11 @@ class GameBoard extends React.Component {
 		var targetSpace = app.tileSpaces[rank];
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
 	}
+	removeByKeyboard() {
+		var app = this.props.app;
+		var game = this.props.game;
+		app.tileRack.returnTileToRack(game,app);
+	}
 	highlightSpace(id) {
 		this.setState({ highlighted: id });
 		this.resetSpace(id);

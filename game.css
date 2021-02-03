@@ -392,6 +392,13 @@ a.button:active {
 	cursor: move;
 }
 
+.player-red .mode-click .piece-red, .player-blue .mode-click .piece-blue {
+	cursor: crosshair;
+}
+.player-red .mode-click .gameSpace[data-territory="red"],
+.player-blue .mode-click .gameSpace[data-territory="blue"] {
+	cursor: crosshair;
+}
 .player-red .text-opponent-color {
 	color: blue !important;
 }

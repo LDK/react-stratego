@@ -151,6 +151,11 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	}
 	const handleClick = function(event) {
 		if (game.state.placementMode == 'click') {
+			if (typeof children == 'undefined' && board.state.selectedSpace) {
+				board.swapPieces(board.state.selectedSpace,id);
+				board.highlightSpace(null);
+				board.selectSpace(null);
+			}
 			var rank = game.selectedRank;
 			var tileSpace = game.props.app.tileSpaces[rank];
 			if (!rank || !tileSpace) {

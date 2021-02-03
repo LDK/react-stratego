@@ -110,11 +110,12 @@ class TileRack extends React.Component {
 		app.saveActiveGame();
 	}
 	handleClick(event) {
-		var game = this.props.game;
-		var app = this.props.app;
-		if (game.state.placementMode == 'click' && !!app.gameBoard.state.selectedSpace) {
-			this.returnTileToRack(game,app);
-		}
+		// var game = this.props.game;
+		// var app = this.props.app;
+		// if (game.state.placementMode == 'click' && !!app.gameBoard.state.selectedSpace) {
+		// 	this.returnTileToRack(game,app);
+		// }
+		// Do nothing for now
 	}
 	render() {
 		var readyButton = '';

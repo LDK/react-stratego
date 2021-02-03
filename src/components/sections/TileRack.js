@@ -23,7 +23,7 @@ function PlacementIndicator(props) {
 			);
 		}
 		else {
-			placementText = placementAction + ' a tile on the rack to select that piece.';
+			placementText = placementAction + ' any ' + app.tileRack.playerColor + ' tile to select that piece.';
 		}
 	}
 	if (placementText) {

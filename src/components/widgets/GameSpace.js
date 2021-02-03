@@ -19,9 +19,9 @@ class GameSpace extends React.Component {
 	render() {
 		return (
 			<div id={"gameSpace-"+this.props.id} 
-				data-col={this.props.col} 
-				data-row={this.props.row} 
-				data-territory={this.territory}
+				data-col={this.props.x} 
+				data-row={this.props.y} 
+				data-territory={this.props.territory}
 				className={"gameSpace col " + this.props.spaceKey + (this.props.passable ? ' passable' : '') + ' ' + this.state.extraClass} 
 			>
 				{this.props.children}
@@ -159,8 +159,10 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 			var uid = parseInt(game.props.app.state.currentUser.user_id);
 			var starterUid = parseInt(game.props.starter);
 			var playerColor = (uid == starterUid) ? 'blue' : 'red';
-			var piece = { rank: rank, color: playerColor, tileSpace: tileSpace, gameSpaceId: id };
-			board.placePiece(piece, id, false);
+			if (territory == playerColor) {
+				var piece = { rank: rank, color: playerColor, tileSpace: tileSpace, gameSpaceId: id };
+				board.placePiece(piece, id, false);
+			}
 		}
 		else if (game.state.placementMode == 'keyboard') {
 			board.selectSpace(id);

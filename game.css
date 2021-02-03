@@ -1145,6 +1145,13 @@ ul.suggestions {
 	margin-right: auto;
 	text-align: center;
 }
+
+.mode-click [data-territory="neutral"],
+.player-blue .mode-click [data-territory="red"],
+.player-red .mode-click [data-territory="blue"]
+{
+	cursor: not-allowed;
+}
 @media (max-width:991px) {
 	.tileRack-col {
 		position: absolute;

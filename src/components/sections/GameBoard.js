@@ -528,7 +528,7 @@ class GameBoard extends React.Component {
 		var app = this.props.app;
 		var classes = 'gameBoard';
 		if (!game.state.started) {
-			classes += ' placement zoom';
+			classes += ' placement zoom mode-'+game.state.placementMode;
 		}
 		return (
 			<div className={classes}>

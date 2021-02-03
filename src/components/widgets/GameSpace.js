@@ -179,10 +179,10 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	var passableClass = passable ? ' passable' : ' not-passable';
 	return (
 		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+selectedClass+highlightClass+passableClass} onClick={handleClick}>
-			<div className="gameSpace-overlay"></div>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}
 			</GameSpace>
+			<div className="gameSpace-overlay"></div>
 		</div>
 	);
 }

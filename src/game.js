@@ -259,11 +259,12 @@ class Game extends React.Component {
 							labelClass="px-2 px-md-3"
 							listLabelClass="pb-2"
 							options={[
-								{key: 'Drag & Drop', value: 'drag', className: 'lg-up', tooltip: 'Drag & drop tiles from the rack to the board'},
-								{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: this.openQuickLoadModal},
+								// {key: 'Drag & Drop', value: 'drag', className: 'lg-up', tooltip: 'Drag & drop tiles from the rack to the board'},
 								{key: 'Tap & Place', value: 'click', className: 'md-down', tooltip: 'Tap the tile on the rack you want to place, then tap the space(s) where you want to place it'},
 								{key: 'Click & Place', value: 'click', className: 'lg-up', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
-								{key: 'Keyboard', value: 'keyboard', className: 'lg-up', tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'}
+								{key: 'Keyboard', value: 'keyboard', className: 'lg-up', tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'},
+								{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: this.openQuickLoadModal},
+								{key: 'Erase', value: 'erase', tooltip: 'Click to remove tiles you have placed' }
 							]} 
 							name="placementMode" label="Placement Mode"
 							callback={this.modeChange} 

@@ -95,12 +95,15 @@ class TileRack extends React.Component {
 		this.app.tileRack = null;
 		this.app.tileSpaces = {};
 	}
-	returnTileToRack(game,app) {
+	returnTileToRack(game,app,spaceId) {
 		var board = app.gameBoard;
-		var rank = board.state.spaces[board.state.selectedSpace].props.children.props.rank;
+		if (typeof spaceId == 'undefined') {
+			spaceId = board.state.selectedSpace;
+		}
+		var rank = board.state.spaces[spaceId].props.children.props.rank;
 		app.tileSpaces[rank].remaining++;
 		this.remaining++;
-		board.emptySpace(board.state.selectedSpace);
+		board.emptySpace(spaceId);
 		if (game.state.placementMode == 'click') {
 			board.selectSpace(null);
 			board.highlightSpace(null);

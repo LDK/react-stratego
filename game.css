@@ -392,6 +392,13 @@ a.button:active {
 	cursor: move;
 }
 
+.player-red .mode-click .piece-red, .player-blue .mode-click .piece-blue {
+	cursor: crosshair;
+}
+.player-red .mode-click .gameSpace[data-territory="red"],
+.player-blue .mode-click .gameSpace[data-territory="blue"] {
+	cursor: crosshair;
+}
 .player-red .text-opponent-color {
 	color: blue !important;
 }
@@ -1144,6 +1151,20 @@ ul.suggestions {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+}
+
+.placement [data-territory="neutral"],
+.player-blue .placement [data-territory="red"],
+.player-red .placement [data-territory="blue"]
+{
+	cursor: not-allowed;
+}
+.placement [data-territory="neutral"] + .gameSpace-overlay,
+.player-blue .placement [data-territory="red"] + .gameSpace-overlay,
+.player-red .placement [data-territory="blue"] + .gameSpace-overlay
+{
+	background-color: var(--darker);
+	opacity: .3;
 }
 @media (max-width:991px) {
 	.tileRack-col {

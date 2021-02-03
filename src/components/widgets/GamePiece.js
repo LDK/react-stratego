@@ -39,6 +39,9 @@ class GamePiece extends React.Component {
 			game.selectedRank = (game.selectedRank != this.props.rank) ? this.props.rank : null;
 			app.tileRack.setState({});
 		}
+		else if (this.props.placed && game && game.state.placementMode == 'erase'){
+			app.tileRack.returnTileToRack(game,app,this.props.gameSpaceId);
+		}
 	}
 	render() {
 		var divClass = "gamePiece text-center mx-auto" + (this.props.className || '');

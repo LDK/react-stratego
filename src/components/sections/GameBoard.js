@@ -101,6 +101,11 @@ class GameBoard extends React.Component {
 		var targetSpace = app.tileSpaces[rank];
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
 	}
+	removeByKeyboard() {
+		var app = this.props.app;
+		var game = this.props.game;
+		app.tileRack.returnTileToRack(game,app);
+	}
 	highlightSpace(id) {
 		this.setState({ highlighted: id });
 		this.resetSpace(id);
@@ -141,6 +146,8 @@ class GameBoard extends React.Component {
 		this.setState({ selectedSpace: id });
 		this.resetSpace(id);
 		this.resetSpace(oldSelected);
+		var ts = Date.now() / 1000;
+		this.props.app.tileRack.setState({ rendered: ts });
 	}
 	openBattleModal() {
 		this.setState({ battleModalOpen: true });
@@ -306,24 +313,27 @@ class GameBoard extends React.Component {
 		var app = this.props.app;
 		var spaces = this.state.spaces;
 		var toSpace = spaces[toId];
-
-		if (!toSpace.props.children) {
-			this.setState({ highlighted: false });
-			this.resetSpace(fromId);
-			return;
+		var toInfo = null;
+		if (typeof toSpace.props.children != 'undefined') {
+			toInfo = toSpace.props.children.props;
 		}
-		
-		var toInfo = toSpace.props.children.props;
 		var fromInfo = spaces[fromId].props.children.props;
 		var fromCoords = idToXy(fromId);
 		var toCoords = idToXy(toId);
-		
-		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={toInfo.fromX} fromY={toInfo.fromY} fromId={toId} placed={true} game={this.props.game} />);
-		var toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this.props.game} />);
+		var fromX = null, fromY = null;
+		if (toInfo) {
+			fromX = toInfo.fromX;
+			fromY = toInfo.fromY;
+		}
 
-		spaces[toId] = this.renderGameSpace(toCoords.y,toCoords.x,toId,fromPiece);
-		spaces[fromId] = this.renderGameSpace(fromCoords.y,fromCoords.x,fromId,toPiece);
+		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={fromX} fromY={fromY} fromId={toId} placed={true} game={this.props.game} />);
+		var toPiece = null;
+		if (!!toInfo) {
+			toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this.props.game} />);
+		}
 		
+		spaces[toId] = this.renderGameSpace(toCoords.y,toCoords.x,toId,fromPiece);
+		spaces[fromId] = this.renderGameSpace(fromCoords.y,fromCoords.x,fromId,toPiece || undefined);		
 		this.setState({spaces: spaces});
 		app.saveActiveGame();
 		
@@ -528,7 +538,7 @@ class GameBoard extends React.Component {
 		var app = this.props.app;
 		var classes = 'gameBoard';
 		if (!game.state.started) {
-			classes += ' placement zoom';
+			classes += ' placement zoom mode-'+game.state.placementMode;
 		}
 		return (
 			<div className={classes}>

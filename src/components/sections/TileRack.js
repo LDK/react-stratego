@@ -4,10 +4,16 @@ import {PIECES} from '../Helpers.js';
 import { isMobile } from "react-device-detect";
 
 function PlacementIndicator(props) {
-	var { game, tileRack } = props;
+	var { app, game, tileRack } = props;
+	var board = app.gameBoard;
 	var indicator = '';
-	if (game.state.placementMode == 'click' && tileRack.remaining) {
-		var placementText = '';
+	var placementText = false;
+	var placementSubtext = '';
+	if (game.state.placementMode == 'click' && !!board.state.selectedSpace) {
+		placementText = 'Click any space to move the selected tile there.';
+		placementSubtext = 'Click the rack to remove this tile from the board.';
+	}
+	else if (game.state.placementMode == 'click' && tileRack.remaining) {
 		var placementAction = isMobile ? 'Tap' : 'Click';
 		if (game.selectedRank) {
 			placementText = (
@@ -17,8 +23,10 @@ function PlacementIndicator(props) {
 			);
 		}
 		else {
-			placementText = placementAction + ' a tile on the rack to select that piece.';
+			placementText = placementAction + ' any ' + app.tileRack.playerColor + ' tile to select that piece.';
 		}
+	}
+	if (placementText) {
 		indicator = (
 			<div className="d-table d-lg-none position-fixed w-100" style={{ height:'56px', backgroundColor: 'rgba(1, 1, 1, 0.75)', bottom: 0, left: 0 }}>
 				<span className="d-table-cell w-100 p-0 m-0 text-white text-center" style={{ bottom: 0, left: 0, height:'48px', fontSize:'24px', backgroundColor: 'rgba(1,1,1,.75)', verticalAlign: 'middle' }}>{placementText}</span>
@@ -37,6 +45,7 @@ class TileRack extends React.Component {
 		this.tileSpaces = this.tileSpaces.bind(this);
 		this.setReady = this.setReady.bind(this);
 		this.resetCounts = this.resetCounts.bind(this);
+		this.handleClick = this.handleClick.bind(this);
 		this.app = props.app;
 		this.app.tileRack = this;
 		this.app.tileSpaces = {};
@@ -86,7 +95,31 @@ class TileRack extends React.Component {
 		this.app.tileRack = null;
 		this.app.tileSpaces = {};
 	}
-	
+	returnTileToRack(game,app,spaceId) {
+		var board = app.gameBoard;
+		if (typeof spaceId == 'undefined') {
+			spaceId = board.state.selectedSpace;
+		}
+		var rank = board.state.spaces[spaceId].props.children.props.rank;
+		app.tileSpaces[rank].remaining++;
+		this.remaining++;
+		board.emptySpace(spaceId);
+		if (game.state.placementMode == 'click') {
+			board.selectSpace(null);
+			board.highlightSpace(null);
+		}
+		app.tileSpaces[rank].setState({ remaining: app.tileSpaces[rank].remaining });
+		this.setState({ allPlaced: false });
+		app.saveActiveGame();
+	}
+	handleClick(event) {
+		// var game = this.props.game;
+		// var app = this.props.app;
+		// if (game.state.placementMode == 'click' && !!app.gameBoard.state.selectedSpace) {
+		// 	this.returnTileToRack(game,app);
+		// }
+		// Do nothing for now
+	}
 	render() {
 		var readyButton = '';
 		var startButton = '';
@@ -116,13 +149,13 @@ class TileRack extends React.Component {
 			}
 		}
 		return (
-			<div className="container-fluid px-0">
+			<div className="container-fluid px-0" onClick={this.handleClick}>
 				<div className="tileRack row no-gutters px-3 px-md-0">
 					{startButton}
 					{readyButton}
 					{this.tileSpaces()}
 				</div>
-				<PlacementIndicator game={game} tileRack={this} />
+				<PlacementIndicator game={game} app={this.app} tileRack={this} />
 			</div>
 		)
 	}

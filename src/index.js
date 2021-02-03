@@ -649,6 +649,14 @@ class App extends React.Component {
 					}
 				}
 			break;
+			case keyCodes['x']:
+				if (this.gameRef) {
+					var game = this.gameRef;
+					if (!game.state.started && game.state.placementMode == 'keyboard') {
+						this.gameBoard.removeByKeyboard();
+					}
+				}
+			break;
 			case keyCodes['esc']:
 				if (this.activeModal && this.activeModal.props.onKeyDown) {
 					this.activeModal.props.onKeyDown(e);

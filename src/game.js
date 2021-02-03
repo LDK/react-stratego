@@ -211,6 +211,10 @@ class Game extends React.Component {
 		if (val == 'keyboard') {
 			this.props.app.gameBoard.selectSpace(1);
 		}
+		else {
+			this.props.app.gameBoard.selectSpace(null);
+			this.props.app.gameBoard.highlightSpace(null);
+		}
 		if (val != 'quick') {
 			this.props.app.gameBoard.QuickLoadMenu.previousMode = val;
 		}

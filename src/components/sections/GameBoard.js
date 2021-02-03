@@ -141,6 +141,8 @@ class GameBoard extends React.Component {
 		this.setState({ selectedSpace: id });
 		this.resetSpace(id);
 		this.resetSpace(oldSelected);
+		var ts = Date.now() / 1000;
+		this.props.app.tileRack.setState({ rendered: ts });
 	}
 	openBattleModal() {
 		this.setState({ battleModalOpen: true });

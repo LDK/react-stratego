@@ -4,10 +4,16 @@ import {PIECES} from '../Helpers.js';
 import { isMobile } from "react-device-detect";
 
 function PlacementIndicator(props) {
-	var { game, tileRack } = props;
+	var { app, game, tileRack } = props;
+	var board = app.gameBoard;
 	var indicator = '';
-	if (game.state.placementMode == 'click' && tileRack.remaining) {
-		var placementText = '';
+	var placementText = false;
+	var placementSubtext = '';
+	if (game.state.placementMode == 'click' && !!board.state.selectedSpace) {
+		placementText = 'Click any space to move the selected tile there.';
+		placementSubtext = 'Click the rack to remove this tile from the board.';
+	}
+	else if (game.state.placementMode == 'click' && tileRack.remaining) {
 		var placementAction = isMobile ? 'Tap' : 'Click';
 		if (game.selectedRank) {
 			placementText = (
@@ -19,6 +25,8 @@ function PlacementIndicator(props) {
 		else {
 			placementText = placementAction + ' a tile on the rack to select that piece.';
 		}
+	}
+	if (placementText) {
 		indicator = (
 			<div className="d-table d-lg-none position-fixed w-100" style={{ height:'56px', backgroundColor: 'rgba(1, 1, 1, 0.75)', bottom: 0, left: 0 }}>
 				<span className="d-table-cell w-100 p-0 m-0 text-white text-center" style={{ bottom: 0, left: 0, height:'48px', fontSize:'24px', backgroundColor: 'rgba(1,1,1,.75)', verticalAlign: 'middle' }}>{placementText}</span>
@@ -122,7 +130,7 @@ class TileRack extends React.Component {
 					{readyButton}
 					{this.tileSpaces()}
 				</div>
-				<PlacementIndicator game={game} tileRack={this} />
+				<PlacementIndicator game={game} app={this.app} tileRack={this} />
 			</div>
 		)
 	}

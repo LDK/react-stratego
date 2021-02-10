@@ -24,7 +24,7 @@ class GamePiece extends React.Component {
 		var game = this.props.game;
 		var app = game.props.app;
 		var gb = app.gameBoard;
-		if (this.props.placed && this.props.gameSpaceId && game.state.placementMode == 'click' && !game.selectedRank) {
+		if (this.props.placed && this.props.gameSpaceId && game && game.state.placementMode == 'click' && !game.selectedRank && !game.state.started) {
 			if (!gb.state.selectedSpace) {
 				gb.selectSpace(this.props.gameSpaceId);
 				gb.highlightSpace(this.props.gameSpaceId);
@@ -35,11 +35,11 @@ class GamePiece extends React.Component {
 				gb.selectSpace(null);
 			}
 		}
-		else if (!this.props.placed && game && game.state.placementMode == 'click'){
+		else if (!this.props.placed && game && !game.state.started && game.state.placementMode == 'click'){
 			game.selectedRank = (game.selectedRank != this.props.rank) ? this.props.rank : null;
 			app.tileRack.setState({});
 		}
-		else if (this.props.placed && game && game.state.placementMode == 'erase'){
+		else if (this.props.placed && game && !game.state.started && game.state.placementMode == 'erase'){
 			app.tileRack.returnTileToRack(game,app,this.props.gameSpaceId);
 		}
 	}
@@ -141,7 +141,7 @@ function DragPiece(props) {
 		color: props.color || 'black',
 		opacity: isDragging ? 0 : 1,
 	};
-	if (canDrag) {
+	if (canDrag && props.game.state.started) {
 		styles['cursor'] = 'move';
 	}
 	var piece = false;

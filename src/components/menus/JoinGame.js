@@ -17,9 +17,6 @@ class JoinGameMenu extends React.Component {
 		this.closeForm = this.closeForm.bind(this);
 		props.app.JoinGameMenu = this;
 	}
-	componentDidMount() {
-		this.parentMenu.getOpenGames();
-	}
 	closeForm() {
 		this.setState({ formOpen: false });
 		this.parentMenu.setState({ formOpen: true });

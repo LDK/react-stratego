@@ -182,7 +182,7 @@ var getGameData = function(gameId, uid) {
 				return;
 			}
 			rv = {};
-			if (!uid) {
+			if (row.status == 'done') {
 				rv.spaces = row.spaces;
 			}
 			else {

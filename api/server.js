@@ -387,7 +387,14 @@ var saveGameData = function(data) {
 			// Encode list into new json string
 			var spaceString = JSON.stringify(combinedSpaces);
 			// Update spaces field in db
-			var updateSql = "UPDATE `game` SET spaces='"+spaceString+"', started='" + (started ? 1 : 0) + "', starter_ready='" + (starterReady ? 1 : 0) + "', opponent_ready='" + (oppReady ? 1 : 0) + "', turn=" + turn + " WHERE id = '" + data.id + "'";
+			var updateSql = '';
+			if (started) {
+				updateSql = "UPDATE `game` SET spaces='"+spaceString+"', started='1', turn='" + turn + "' WHERE id = '" + data.id + "' and turn='" + userColor + "'";
+			}
+			else {
+				updateSql = "UPDATE `game` SET spaces='"+spaceString+"', started='0', starter_ready='" + (starterReady ? 1 : 0) + "', opponent_ready='" + (oppReady ? 1 : 0) + "', turn='" + turn + "' WHERE id = '" + data.id + "'";
+			}
+			updateSql = "UPDATE `game` SET spaces='"+spaceString+"', started='" + (started ? 1 : 0) + "', starter_ready='" + (starterReady ? 1 : 0) + "', opponent_ready='" + (oppReady ? 1 : 0) + "', turn=" + turn + " WHERE id = '" + data.id + "'";
 			db.run(updateSql, [], function(error) {
 				if (error) {
 					reject(error);

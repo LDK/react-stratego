@@ -115,7 +115,11 @@ class TileRack extends React.Component {
 		if (typeof spaceId == 'undefined') {
 			spaceId = board.state.selectedSpace;
 		}
-		var rank = board.state.spaces[spaceId].props.children.props.rank;
+		var space = board.state.spaces[spaceId];
+		if (!space.props.children) {
+			return;
+		}
+		var rank = space.props.children.props.rank;
 		app.tileSpaces[rank].remaining++;
 		this.remaining++;
 		board.emptySpace(spaceId);

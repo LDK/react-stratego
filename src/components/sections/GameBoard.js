@@ -106,6 +106,7 @@ class GameBoard extends React.Component {
 		var app = this.props.app;
 		var game = this.props.game;
 		app.tileRack.returnTileToRack(game,app);
+		this.checkTilesPlaced();
 	}
 	highlightSpace(id) {
 		this.setState({ highlighted: id });

@@ -101,6 +101,7 @@ class GameBoard extends React.Component {
 		var playerColor = app.tileRack.playerColor;
 		var targetSpace = app.tileSpaces[rank];
 		this.placePiece({ rank: rank, color: playerColor, tileSpace: targetSpace }, spaceId, false);
+		this.checkTilesPlaced();
 	}
 	removeByKeyboard() {
 		var app = this.props.app;
@@ -360,7 +361,7 @@ class GameBoard extends React.Component {
 		for (var rank in PIECES) {
 			var defaultCount = PIECES[rank].count;
 			remaining[rank] = defaultCount - (placedRanks[rank] || 0);
-			remaining.total = remaining.total - PIECES[rank].count;
+			remaining.total = remaining.total - (placedRanks[rank] || 0);
 		}
 		app.tileRack.resetCounts(remaining);
 	}

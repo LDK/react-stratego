@@ -217,7 +217,7 @@ class GameBoard extends React.Component {
 			var action = 'defeated';
 			game.setState({ players: players });
 			if (defendRank == 'Bomb' && attacking) {
-				outcome = 'Catastrope!';
+				outcome = 'Catastrophe!';
 				action = 'blown up';
 			}
 			else if (defendRank == 'Bomb') {

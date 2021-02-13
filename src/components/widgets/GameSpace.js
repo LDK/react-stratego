@@ -151,19 +151,21 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	}
 	const handleClick = function(event) {
 		if (game.state.placementMode == 'click') {
-			if (typeof children == 'undefined' && board.state.selectedSpace) {
+			var uid = parseInt(game.props.app.state.currentUser.user_id);
+			var starterUid = parseInt(game.props.starter);
+			var playerColor = (uid == starterUid) ? 'blue' : 'red';
+			if (typeof children == 'undefined' && board.state.selectedSpace && territory == playerColor) {
 				board.swapPieces(board.state.selectedSpace,id);
 				board.highlightSpace(null);
 				board.selectSpace(null);
 			}
+
 			var rank = game.selectedRank;
 			var tileSpace = game.props.app.tileSpaces[rank];
 			if (!rank || !tileSpace) {
 				return;
 			}
-			var uid = parseInt(game.props.app.state.currentUser.user_id);
-			var starterUid = parseInt(game.props.starter);
-			var playerColor = (uid == starterUid) ? 'blue' : 'red';
+
 			if (territory == playerColor) {
 				var piece = { rank: rank, color: playerColor, tileSpace: tileSpace, gameSpaceId: id };
 				board.placePiece(piece, id, false);

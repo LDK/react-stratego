@@ -294,8 +294,9 @@ class App extends React.Component {
 	newGame(event){
 	}
 	openNewGameMenu(){
-		this.newGameMenu.setState({ formOpen: true });
-		return;
+		if (!!this.newGameMenu) {
+			this.newGameMenu.openMenu({ formOpen: true });
+		}
 	}
 	openUserProfile(profile_uid){
 		var userProfile = this.userProfile;

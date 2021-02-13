@@ -21,15 +21,20 @@ class NewGameMenu extends React.Component {
 		this.updateUserSearch = this.updateUserSearch.bind(this);
 		this.updatePastOpp = this.updatePastOpp.bind(this);
 		this.getOpenGames = this.getOpenGames.bind(this);
+		this.openMenu = this.openMenu.bind(this);
 		this.getPastOpponents = this.getPastOpponents.bind(this);
 		this.changeOpponentSelectMode = this.changeOpponentSelectMode.bind(this);
 		props.app.newGameMenu = this;
-		this.getPastOpponents();
-		this.getOpenGames();
 	}
 	componentDidMount() {
 		this.getPastOpponents();
+		this.props.app.getUsernames();
+	}
+	openMenu() {
+		this.getPastOpponents();
 		this.getOpenGames();
+		this.props.app.getUsernames();
+		this.setState({ formOpen: true });
 	}
 	getOpenGames() {
 		var app = this.props.app;
@@ -167,6 +172,7 @@ class NewGameMenu extends React.Component {
 		}
 		if (mode == 'join') {
 			this.setState({ formOpen: false });
+			this.getOpenGames();
 			this.props.app.JoinGameMenu.setState({ formOpen: true });
 			return;
 		}

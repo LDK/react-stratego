@@ -65,13 +65,28 @@ class TileRack extends React.Component {
 	renderTileSpace(key) {
 		return <TileSpace id={"tileSpace-"+key} rack={this} key={key} rank={key} game={this.props.game} />;
 	}
-	resetCounts() {
+	resetCounts(remaining) {
 		var app = this.props.app;
-		this.remaining = 40;
-		this.setState({allPlaced: false});
-		for (var rank in PIECES) {
-			app.tileSpaces[rank].remaining = PIECES[rank].count;
-			app.tileSpaces[rank].setState({remaining: PIECES[rank].count});
+		if (!remaining || typeof remaining == 'undefined') { 
+			this.remaining = 40;
+			this.setState({allPlaced: false});
+			for (var rank in PIECES) {
+				app.tileSpaces[rank].remaining = PIECES[rank].count;
+				app.tileSpaces[rank].setState({remaining: PIECES[rank].count});
+			}
+		}
+		else {
+			for (var rank in remaining) {
+				if (rank == 'total') {
+					continue;
+				}
+				app.tileSpaces[rank].remaining = remaining[rank];
+				app.tileSpaces[rank].setState({remaining: remaining[rank]});
+			}
+			if (typeof remaining.total != 'undefined') {
+				this.remaining = remaining.total;
+				this.setState({allPlaced: this.remaining < 1});
+			}
 		}
 	}
 	tileSpaces() {
@@ -100,7 +115,11 @@ class TileRack extends React.Component {
 		if (typeof spaceId == 'undefined') {
 			spaceId = board.state.selectedSpace;
 		}
-		var rank = board.state.spaces[spaceId].props.children.props.rank;
+		var space = board.state.spaces[spaceId];
+		if (!space.props.children) {
+			return;
+		}
+		var rank = space.props.children.props.rank;
 		app.tileSpaces[rank].remaining++;
 		this.remaining++;
 		board.emptySpace(spaceId);

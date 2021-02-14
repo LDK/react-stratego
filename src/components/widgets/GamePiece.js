@@ -67,7 +67,7 @@ class GamePiece extends React.Component {
 		}
 		return (
 			<CSSTransition
-			in={!!this.props.moveInfo && !!this.props.game.started}
+			in={!!this.props.moveInfo && !!this.props.game.state.started}
 			timeout={1000}
 			classNames="piece-moving"
 			appear

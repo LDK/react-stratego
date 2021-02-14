@@ -22,7 +22,7 @@ class GameSpace extends React.Component {
 				data-col={this.props.x} 
 				data-row={this.props.y} 
 				data-territory={this.props.territory}
-				className={"gameSpace col " + this.props.spaceKey + (this.props.passable ? ' passable' : '') + ' ' + this.state.extraClass} 
+				className={"gameSpace col " + (this.props.spaceKey || '') + (this.props.passable ? ' passable' : '') + ' ' + this.state.extraClass}
 			>
 				{this.props.children}
 			</div>

@@ -25,12 +25,18 @@ class GamePiece extends React.Component {
 		var app = game.props.app;
 		var gb = app.gameBoard;
 		if (this.props.placed && this.props.gameSpaceId && game && game.state.placementMode == 'click' && !game.selectedRank && !game.state.started) {
+			var space = gb.state.spaces[this.props.gameSpaceId];
 			if (!gb.state.selectedSpace) {
 				gb.selectSpace(this.props.gameSpaceId);
 				gb.highlightSpace(this.props.gameSpaceId);
 			}
 			else {
-				gb.swapPieces(this.props.gameSpaceId,gb.state.selectedSpace);
+				var y = Math.ceil(parseInt(this.props.gameSpaceId) / 10);
+				var x = parseInt(this.props.gameSpaceId) % 10 || 10
+				const territory = y < 5 ? 'red' : (y > 6 ? 'blue' : 'neutral');
+				if (territory == app.tileRack.playerColor) {
+					gb.swapPieces(this.props.gameSpaceId,gb.state.selectedSpace);
+				}
 				gb.highlightSpace(null);
 				gb.selectSpace(null);
 			}
@@ -61,7 +67,7 @@ class GamePiece extends React.Component {
 		}
 		return (
 			<CSSTransition
-			in={!!this.props.moveInfo}
+			in={!!this.props.moveInfo && !!this.props.game.started}
 			timeout={1000}
 			classNames="piece-moving"
 			appear

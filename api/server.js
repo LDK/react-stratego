@@ -189,11 +189,14 @@ var getGameData = function(gameId, uid) {
 				uid = parseInt(uid);
 				var starterUid = parseInt(row.starting_user_id);
 				var userColor = (starterUid == uid) ? 'blue' : 'red';
+				if (isNaN(uid)) {
+					userColor = false;
+				}
 				var spaceInfo = JSON.parse(row.spaces);
 				var combinedSpaces = {};
 				for (var i in spaceInfo) {
 					var space = spaceInfo[i];
-					if (space.color != userColor) {
+					if (userColor && space.color != userColor) {
 						space.rank = null;
 					}
 					combinedSpaces[space.id] = space;

@@ -295,3 +295,10 @@
     transition: transform 1s;
 }
 
+.gamePiece-wrapper.piece-moving,
+.gamePiece-wrapper.piece-moving-enter,
+.gamePiece-wrapper.piece-moving-enter-done,
+.gamePiece-wrapper.piece-moving-appear,
+.gamePiece-wrapper.piece-moving-appear-done {
+	z-index: 2;
+}

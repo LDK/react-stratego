@@ -62,6 +62,7 @@ class RegistrationMenu extends React.Component {
 				}
 				else {
 					Reg.setState({formOpen: false});
+					res.user_id = res.id;
 					app.setCurrentUser(res);
 				}
 			});

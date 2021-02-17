@@ -366,7 +366,7 @@ class GameBoard extends React.Component {
 		app.tileRack.resetCounts(remaining);
 	}
 	// 'id' in placePiece refers to the board square id
-	placePiece(pieceInfo,id,loading,moveInfo) {
+	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
 		var game = this.props.game;
@@ -374,7 +374,7 @@ class GameBoard extends React.Component {
 		var playerColor = app.tileRack.playerColor;
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
-		moveInfo = moveInfo || null;
+		var moveInfo = null;
 		if (x == pieceInfo.fromX && y == pieceInfo.fromY) {
 			return;
 		}

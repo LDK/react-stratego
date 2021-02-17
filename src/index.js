@@ -513,29 +513,32 @@ class App extends React.Component {
 		if (turn) {
 			payload.turn = turn;
 		}
-		if (moveData) {
-			payload.moveData = JSON.stringify(moveData);
-		}
 		var capturedList = this.getCapturedList(captured);
 		payload.capturedList = JSON.stringify(capturedList);
-		var spaces = this.gameBoard.state.spaces;
-		var saveSpaces = {};
-		for (var i in spaces) {
-			var space = {};
-			if (spaces[i].props.occupied) {
-				space.id = spaces[i].props.id;
-				space.rank = spaces[i].props.children.props.rank;
-				space.color = spaces[i].props.children.props.color;
-				saveSpaces[space.id] = space;
-			}
+		if (moveData) {
+			payload.moveData = JSON.stringify(moveData);
+			console.log('the payload',payload);
 		}
-		for (var i in saveSpaces) {
-			var space = saveSpaces[i];
-			if (!space || !space.id || !space.rank) {
-				delete saveSpaces[i];
+		else {
+			var spaces = this.gameBoard.state.spaces;
+			var saveSpaces = {};
+			for (var i in spaces) {
+				var space = {};
+				if (spaces[i].props.occupied) {
+					space.id = spaces[i].props.id;
+					space.rank = spaces[i].props.children.props.rank;
+					space.color = spaces[i].props.children.props.color;
+					saveSpaces[space.id] = space;
+				}
 			}
+			for (var i in saveSpaces) {
+				var space = saveSpaces[i];
+				if (!space || !space.id || !space.rank) {
+					delete saveSpaces[i];
+				}
+			}
+			payload.spaces = JSON.stringify(saveSpaces);
 		}
-		payload.spaces = JSON.stringify(saveSpaces);
 		window.fetch(this.gameServer+'saveGame', {
 			method: 'POST', 
 			headers: { "Accept": "application/json", 'Content-Type': 'application/json' },

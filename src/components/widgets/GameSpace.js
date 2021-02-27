@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import GamePiece from './GamePiece.js';
 import { PIECES } from '../Helpers.js';
 import { xyToId } from '../Helpers.js';
-import { getSpaceId } from '../Helpers.js';
 import { DropTarget } from 'react-dnd'
 import { useDrop } from 'react-dnd';
 
@@ -59,51 +58,6 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 
 		}
 	}
-	const getValidMoveSpaces = function(x, y, item, piece, game) {
-		// For each direction on the board, we'll see how far this piece can go in each direction with valid game moves.
-		var directions = ['east','west','south','north'];
-		var blockHit, oppFound;
-		var validSpaces = [xyToId(x,y)];
-		for (var di in directions) {
-			var dir = directions[di];
-			blockHit = false;
-			oppFound = false;
-			var i = 1;
-			while (i <= piece.move && !blockHit) {
-				// We've gone as far as we can go, so nothing beyond this point in this direction should be added
-				if (oppFound) { blockHit = true; continue; }
-				// Otherwise, grab next space in this direction
-				var spaceId = getSpaceId(x, y, i, dir);
-				// If there's not a space in that direction, we've hit the edge of the board, so a block.
-				if (!spaceId) {
-					blockHit = true;
-					continue;
-				}
-				var spaceInfo = game.props.app.gameBoard.state.spaces[spaceId].props;
-				// If this space isn't passable, we've hit a block.
-				if (!spaceInfo.passable) { blockHit = true; }
-				if (spaceInfo.children) {
-					// If player's one piece is in this space, we've hit a block.
-					if (spaceInfo.children.props.color == item.color) {
-						blockHit = true;
-						continue;
-					}
-					// If an opponent is there, we haven't hit a block, but we've found an opponent.
-					// We will add this space to the list of valid spaces, but nothing beyond it.
-					else {
-						oppFound = true;
-					}
-				}
-				
-				// No blocks!  Add it to the list.
-				if (!blockHit) {
-					validSpaces.push(spaceId);
-				}
-				i++;
-			}
-		}
-		return validSpaces;
-	}
 	const isDroppable = function(x,y,territory,item,game) {
 		// var pieceInfo = PIECES[item.rank];
 		if (!item || !game || !game.state) {
@@ -120,9 +74,13 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		else {
 			// Game started situation
 			var piece = PIECES[item.rank];
-			var validSpaces = getValidMoveSpaces(item.fromX,item.fromY,item,piece,game);
+			var validSpaces = board.getValidMoveSpaces(item.fromX,item.fromY,item.color,piece,game);
 			var spaceId = xyToId(x,y);
-			return (spaceId && validSpaces.indexOf(spaceId) != -1);
+			var droppable = (spaceId && validSpaces.indexOf(spaceId) != -1);
+			if (droppable) {
+				
+			}
+			return droppable;
 		}
 	}
 	const territory = y < 5 ? 'red' : (y > 6 ? 'blue' : 'neutral');
@@ -149,11 +107,11 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 			spaceClass = 'no-drop';
 		}
 	}
+	var uid = parseInt(game.props.app.state.currentUser.user_id);
+	var starterUid = parseInt(game.props.starter);
+	var playerColor = (uid == starterUid) ? 'blue' : 'red';
 	const handleClick = function(event) {
-		if (game.state.placementMode == 'click') {
-			var uid = parseInt(game.props.app.state.currentUser.user_id);
-			var starterUid = parseInt(game.props.starter);
-			var playerColor = (uid == starterUid) ? 'blue' : 'red';
+		if (game && !game.state.started && game.state.placementMode == 'click') {
 			if (typeof children == 'undefined' && board.state.selectedSpace && territory == playerColor) {
 				board.swapPieces(board.state.selectedSpace,id);
 				board.highlightSpace(null);
@@ -171,16 +129,54 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 				board.placePiece(piece, id, false);
 			}
 		}
-		else if (game.state.placementMode == 'keyboard') {
+		else if (game && !game.state.started && game.state.placementMode == 'keyboard') {
 			board.selectSpace(id);
+		}
+		else if (game.state.started && !children) {
+			if (board.state.selectedSpace) {
+				var piece = board.state.spaces[board.state.selectedSpace].props.children;
+				var item = { 
+					type: 'piece', 
+					rank: piece.props.rank || null, 
+					game: game, 
+					color: piece.props.color, 
+					tileSpace: false, 
+					fromX: piece.props.fromX, 
+					fromY: piece.props.fromY, 
+					fromId: piece.props.fromId 
+				}
+				if (isDroppable(x, y, territory, item, game)) {
+					spaceClass = 'droppable';
+					board.droppable[id] = true;
+				}
+			}
 		}
 	}
 	var selectedClass = '';
 	var highlightClass = '';
-	if (!game.state.started && (game.state.placementMode == 'keyboard' || game.state.placementMode == 'click') && board.state.selectedSpace == id) {
+	
+	if (board.state.selectedSpace) {
+		var piece = board.state.spaces[board.state.selectedSpace].props.children;
+		var item = { 
+			type: 'piece', 
+			rank: piece.props.rank || null, 
+			game: game, 
+			color: piece.props.color, 
+			tileSpace: false, 
+			fromX: piece.props.fromX, 
+			fromY: piece.props.fromY, 
+			fromId: piece.props.fromId 
+		}
+		if (isDroppable(x, y, territory, item, game)) {
+			spaceClass = 'droppable';
+		}
+		board.render();
+	}
+
+	if (board.state.selectedSpace && board.state.selectedSpace == id) {
 		selectedClass = ' selectedSpace';
 	}
-	if (!game.state.started && (game.state.placementMode == 'keyboard' || game.state.placementMode == 'click') && board.state.highlighted && board.state.highlighted == id) {
+	if (board.state.highlighted && board.state.highlighted == id) {
 		highlightClass = ' highlightedSpace';
 	}
 	var passableClass = passable ? ' passable' : ' not-passable';

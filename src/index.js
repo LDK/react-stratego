@@ -517,7 +517,6 @@ class App extends React.Component {
 		payload.capturedList = JSON.stringify(capturedList);
 		if (moveData) {
 			payload.moveData = JSON.stringify(moveData);
-			console.log('the payload',payload);
 		}
 		else {
 			var spaces = this.gameBoard.state.spaces;

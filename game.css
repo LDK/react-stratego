@@ -264,7 +264,10 @@ a.button:active {
 	z-index: 1;
 }
 .gameSpace-wrapper.droppable .gameSpace-overlay {
-	background-color: lime;
+	background-color: yellow;
+	z-index: 1;
+	opacity: .6;
+	mix-blend-mode: overlay;
 }
 .gameSpace-wrapper.drop-target .gameSpace-overlay {
 	background-color: white;

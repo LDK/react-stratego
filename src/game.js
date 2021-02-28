@@ -308,7 +308,7 @@ class Game extends React.Component {
 			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col bg-md-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
+				<div className="md-up col-4 col-lg-3 px-0 gameStatus-col bg-md-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters">
 						{winLabel}
 						<h4 className="mx-auto d-block my-3 col-12">Captured</h4>

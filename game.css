@@ -1197,6 +1197,9 @@ ul.suggestions {
 		bottom: 0px;
 		overflow: hidden;
 	}
+	.gameStatus-col {
+		height: 100%;
+	}
 	.gamePiece,
 	.tileFace {
 		width: 29px;

@@ -48,7 +48,7 @@ class GamePiece extends React.Component {
 		else if (this.props.placed && game && !game.state.started && game.state.placementMode == 'erase'){
 			app.tileRack.returnTileToRack(game,app,this.props.gameSpaceId);
 		}
-		else if (isMobile && game && game.state.started && this.props.placed && app.tileRack.playerColor == this.props.color) {
+		else if (isMobile && game && game.state.started && this.props.placed && (game.state.turn == app.tileRack.playerColor) && app.tileRack.playerColor == this.props.color) {
 			gb.selectSpace(this.props.gameSpaceId);
 			gb.highlightSpace(this.props.gameSpaceId);
 			var spaces = gb.state.spaces;

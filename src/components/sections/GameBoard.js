@@ -5,6 +5,7 @@ import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
 import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
+import { isMobile } from "react-device-detect";
 
 class GameBoard extends React.Component {
 	constructor(props) {

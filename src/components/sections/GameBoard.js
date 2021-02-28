@@ -452,7 +452,9 @@ class GameBoard extends React.Component {
 				}
 			}
 			else {
-				this.clearDroppables();
+				if (isMobile) {
+					this.clearDroppables();
+				}
 				if (!spaces[id].props.occupied) {
 					// Render the target space with the piece in it, and empty the source space.
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);

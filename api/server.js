@@ -4,6 +4,7 @@ var sqlite3 = require('sqlite3').verbose();
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var cloneDeep = require('lodash/cloneDeep');
 
 var restapi = express();
 restapi.use(express.static('public'));
@@ -360,7 +361,15 @@ var saveGameData = function(data) {
 				reject('Unable to retrieve game data');
 			}
 			var started = data.started;
-			var turn = data['turn'] ? "'"+data['turn']+"'" : 'NULL';
+			var turn = 'NULL';
+			if (started) {
+				if (gameData.turn == 'blue') {
+					turn = "'red'";
+				}
+				else {
+					turn = "'blue'";
+				}
+			}
 			// Decode spaces json data into list
 			var spaceInfo = JSON.parse(gameData.spaces);
 			var newSpaceInfo = JSON.parse(data.spaces);
@@ -1488,20 +1497,39 @@ restapi.post('/saveGame', function(req, res) {
 		function(uid){
 			var gameId = req.body.game_id;
 			if (req.body.moveData) {
-				updateLastMove(gameId, req.body.moveData).then(function(rv) {
+				getGameData(gameId, false).then(function(gameData){
+					updateLastMove(gameId, req.body.moveData).then(function(rv) {
+						var spaces = JSON.parse(gameData.spaces);
+						var moveData = JSON.parse(req.body.moveData);
+						var movedSpace = cloneDeep(spaces[moveData.from]);
+						movedSpace.id = moveData.to;
+						delete spaces[moveData.from];
+						spaces[moveData.to] = movedSpace;
+						gameData.spaces = JSON.stringify(spaces);
+						gameData.players = req.body.players;
+						gameData.captured = req.body.captured;
+						gameData.sender = uid;
+						gameData.turn = req.body.turn;
+						saveGameData(gameData).then(function(gid) {
+							res.status(200).json({ id: gameId });
+						});
+					});
 				});
 			}
-			saveGameData({
-				spaces: req.body.spaces,
-				players: req.body.players,
-				captured: req.body.captured,
-				started: req.body.started,
-				id: gameId,
-				sender: uid,
-				turn: req.body.turn || null
-			}).then(function(gid) {
-				res.status(200).json({ id: gameId });
-			});
+			else {
+				var gameData = {
+					spaces: req.body.spaces,
+					players: req.body.players,
+					captured: req.body.captured,
+					started: req.body.started,
+					id: gameId,
+					sender: uid,
+					turn: req.body.turn || null
+				};
+				saveGameData(gameData).then(function(gid) {
+					res.status(200).json({ id: gameId });
+				});
+			}
 		}
 	);
 });

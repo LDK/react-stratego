@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {PIECES} from '../Helpers.js';
 import { useDrag } from 'react-dnd';
 import { CSSTransition } from 'react-transition-group';
+import { isMobile } from "react-device-detect";
 
 class GamePiece extends React.Component {
 	constructor(props) {
@@ -25,7 +26,6 @@ class GamePiece extends React.Component {
 		var app = game.props.app;
 		var gb = app.gameBoard;
 		if (this.props.placed && this.props.gameSpaceId && game && game.state.placementMode == 'click' && !game.selectedRank && !game.state.started) {
-			var space = gb.state.spaces[this.props.gameSpaceId];
 			if (!gb.state.selectedSpace) {
 				gb.selectSpace(this.props.gameSpaceId);
 				gb.highlightSpace(this.props.gameSpaceId);
@@ -47,6 +47,20 @@ class GamePiece extends React.Component {
 		}
 		else if (this.props.placed && game && !game.state.started && game.state.placementMode == 'erase'){
 			app.tileRack.returnTileToRack(game,app,this.props.gameSpaceId);
+		}
+		else if (isMobile && game && game.state.started && this.props.placed && (game.state.turn == app.tileRack.playerColor) && app.tileRack.playerColor == this.props.color) {
+			gb.selectSpace(this.props.gameSpaceId);
+			gb.highlightSpace(this.props.gameSpaceId);
+			gb.clearDroppables();
+			var moves = gb.getValidMoveSpaces(this.props.fromX, this.props.fromY, this.props.color, this, game);
+			for (var i in moves) {
+				var id = moves[i];
+				if (id == this.props.gameSpaceId) {
+					continue;
+				}
+				gb.droppable[id] = true;
+				gb.resetSpace(id);
+			}
 		}
 	}
 	render() {
@@ -171,7 +185,7 @@ function DragPiece(props) {
 			style={styles}
 			className={wrapperClass}
 		>
-			<GamePiece color={props.color} rank={props.rank} moveInfo={props.moveInfo || null} gameSpaceId={props.fromId || null} placed={props.placed || false} captured={props.captured || false} game={props.game} className={props.className} />
+			<GamePiece color={props.color} rank={props.rank} moveInfo={props.moveInfo || null} gameSpaceId={props.fromId || null} placed={props.placed || false} captured={props.captured || false} game={props.game} fromX={props.fromX} fromY={props.fromY} className={props.className} />
 			{countLabel}
 		</div>
   );

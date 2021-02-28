@@ -3,7 +3,7 @@ import DropSpace from '../widgets/GameSpace.js';
 import DragPiece from '../widgets/GamePiece.js';
 import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
-import { PIECES, xyToId, idToXy, getVector } from '../Helpers.js';
+import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 
 class GameBoard extends React.Component {
@@ -20,6 +20,7 @@ class GameBoard extends React.Component {
 			),
 			battleModalOpen: false
 		};
+		this.droppable = {};
 		this.obscuredSpaces = { 43: true, 44: true, 47: true, 48: true, 53: true, 54: true, 57: true, 58: true };
 		this.renderGameSpace = this.renderGameSpace.bind(this);
 		this.gameSpaceRow = this.gameSpaceRow.bind(this);
@@ -28,9 +29,11 @@ class GameBoard extends React.Component {
 		this.placePiece = this.placePiece.bind(this);
 		this.emptySpace = this.emptySpace.bind(this);
 		this.resetSpace = this.resetSpace.bind(this);
+		this.clearDroppables = this.clearDroppables.bind(this);
 		this.swapPieces = this.swapPieces.bind(this);
 		this.swapByKeyboard = this.swapByKeyboard.bind(this);
 		this.checkTilesPlaced = this.checkTilesPlaced.bind(this);
+		this.getValidMoveSpaces = this.getValidMoveSpaces.bind(this);
 		
 		this.highlightSpace = this.highlightSpace.bind(this);
 		this.placementArrowMove = this.placementArrowMove.bind(this);
@@ -70,6 +73,14 @@ class GameBoard extends React.Component {
 	}
 	componentWillUnmount() {
 		this.props.app.gameBoard = null;
+	}
+	clearDroppables() {
+		for (var id in this.droppable) {
+			if (this.droppable[id]) {
+				this.droppable[id] = false;
+				this.resetSpace(id);
+			}
+		}
 	}
 	placementArrowMove(keyCode) {
 		var { x, y } = idToXy(this.state.selectedSpace);
@@ -138,6 +149,9 @@ class GameBoard extends React.Component {
 		var maxId = xyToId(10,placementMaxY);
 		var oldSelected = parseInt(this.state.selectedSpace || 1);
 		if (id == null) {
+			
+		}
+		else if (this.props.game.state.started) {
 			
 		}
 		else if (id < minId) {
@@ -283,10 +297,57 @@ class GameBoard extends React.Component {
 		this.setState({ battleContent: content });
 	}
 	renderGameSpace(row,col,key,piece) {
-		var occupied = (piece !== undefined);
-		return <DropSpace id={key} board={this} y={row} x={col} occupied={occupied} key={key} passable={!(this.obscuredSpaces[key] || false)} game={this.props.game}>
+		var occupied = (piece !== undefined && !!piece);
+		var selected = (this.selectedSpace !== undefined && !!this.selectedSpace && this.selectedSpace == key);
+		var passable = !(this.obscuredSpaces[key] || false);
+		return <DropSpace id={key} selected={selected} board={this} y={row} x={col} occupied={occupied} key={key} passable={passable} game={this.props.game}>
 				{piece}
 			</DropSpace>;
+	}
+	getValidMoveSpaces(x, y, color, piece, game) {
+		// For each direction on the board, we'll see how far this piece can go in each direction with valid game moves.
+		var directions = ['east','west','south','north'];
+		var blockHit, oppFound;
+		var validSpaces = [xyToId(x,y)];
+		for (var di in directions) {
+			var dir = directions[di];
+			blockHit = false;
+			oppFound = false;
+			var i = 1;
+			while (i <= piece.move && !blockHit) {
+				// We've gone as far as we can go, so nothing beyond this point in this direction should be added
+				if (oppFound) { blockHit = true; continue; }
+				// Otherwise, grab next space in this direction
+				var spaceId = getSpaceId(x, y, i, dir);
+				// If there's not a space in that direction, we've hit the edge of the board, so a block.
+				if (!spaceId) {
+					blockHit = true;
+					continue;
+				}
+				var spaceInfo = game.props.app.gameBoard.state.spaces[spaceId].props;
+				// If this space isn't passable, we've hit a block.
+				if (!spaceInfo.passable) { blockHit = true; }
+				if (spaceInfo.children) {
+					// If player's one piece is in this space, we've hit a block.
+					if (spaceInfo.children.props.color == color) {
+						blockHit = true;
+						continue;
+					}
+					// If an opponent is there, we haven't hit a block, but we've found an opponent.
+					// We will add this space to the list of valid spaces, but nothing beyond it.
+					else {
+						oppFound = true;
+					}
+				}
+			
+				// No blocks!  Add it to the list.
+				if (!blockHit) {
+					validSpaces.push(spaceId);
+				}
+				i++;
+			}
+		}
+		return validSpaces;
 	}
 	emptySpace(id) {
 		var spaces = this.state.spaces;
@@ -366,7 +427,7 @@ class GameBoard extends React.Component {
 		app.tileRack.resetCounts(remaining);
 	}
 	// 'id' in placePiece refers to the board square id
-	placePiece(pieceInfo,id,loading,moveInfo) {
+	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
 		var game = this.props.game;
@@ -374,7 +435,7 @@ class GameBoard extends React.Component {
 		var playerColor = app.tileRack.playerColor;
 		var { x, y, territory } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
-		moveInfo = moveInfo || null;
+		var moveInfo = null;
 		if (x == pieceInfo.fromX && y == pieceInfo.fromY) {
 			return;
 		}
@@ -391,6 +452,9 @@ class GameBoard extends React.Component {
 				}
 			}
 			else {
+				if (isMobile) {
+					this.clearDroppables();
+				}
 				if (!spaces[id].props.occupied) {
 					// Render the target space with the piece in it, and empty the source space.
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);
@@ -412,7 +476,7 @@ class GameBoard extends React.Component {
 					var saveSpaces = {};
 					for (var i in spaces) {
 						var space = {};
-						if (spaces[i].props.occupied) {
+						if (spaces[i].props.occupied && spaces[i].props.children) {
 							space.id = spaces[i].props.id;
 							space.rank = spaces[i].props.children.props.rank;
 							space.color = spaces[i].props.children.props.color;
@@ -489,7 +553,12 @@ class GameBoard extends React.Component {
 			}
 		}
 		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} moveInfo={lastMove} game={this.props.game} />);
-		this.setState({spaces: spaces});
+		var newState = {spaces: spaces};
+		if (this.props.game.state.started) {
+			newState.selectedSpace = null;
+			newState.highlighted = null;
+		}
+		this.setState(newState);
 		if (tileSpace) {
 			this.checkTilesPlaced();
 		}

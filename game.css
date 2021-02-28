@@ -40,8 +40,8 @@ body {
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
-	--square-size-landscape: 29px;
-	--square-size-portrait: 32px;
+	--square-size-landscape: 30px;
+	--square-size-portrait: 38px;
 }
 h3 {
 	font-size: 1.5rem;
@@ -264,7 +264,10 @@ a.button:active {
 	z-index: 1;
 }
 .gameSpace-wrapper.droppable .gameSpace-overlay {
-	background-color: lime;
+	background-color: yellow;
+	z-index: 1;
+	opacity: .6;
+	mix-blend-mode: overlay;
 }
 .gameSpace-wrapper.drop-target .gameSpace-overlay {
 	background-color: white;
@@ -433,8 +436,10 @@ a.button:active {
 div.captured-tiles label {
 	position: relative;
 	font-size: .85rem;
-	top: -1rem;
+	top: 0rem;
 	left: 0rem;
+	color: black;
+	display: inline;
 }
 .tileRack {
 	height: 100%;
@@ -502,6 +507,9 @@ div.captured-tiles label {
 		display: none !important;
 	}
 	.gameBoard {
+		height: 100vh;
+	}
+	.gameStatus-col {
 		height: 100vh;
 	}
 } 
@@ -1193,6 +1201,9 @@ ul.suggestions {
 		left: 0px;
 		bottom: 0px;
 		overflow: hidden;
+	}
+	.gameStatus-col {
+		height: 100%;
 	}
 	.gamePiece,
 	.tileFace {

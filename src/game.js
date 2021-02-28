@@ -190,6 +190,9 @@ class Game extends React.Component {
 	}
 	startGame() {
 		var app = this.props.app;
+		var gb = this.props.app.gameBoard;
+		gb.selectSpace(null);
+		gb.highlightSpace(null);
 		this.setState({ started: true });
 		var turn = (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue';
 		app.gameStates[this.props.id].started = true;
@@ -280,7 +283,7 @@ class Game extends React.Component {
 			var turnLabel, winLabel;
 			var turnClass;
 			if (this.state.turn && this.state.status && this.state.status != 'done') {
-				turnLabel = (<h6 className="text-center mx-auto my-3">Current Turn: <span className={"text-"+this.state.turn}>{this.state.players[this.state.turn].name}</span></h6>);
+				turnLabel = (<h6 className="text-center mx-auto my-3">Current Turn: <br className="sm-down" /><span className={"text-"+this.state.turn}>{this.state.players[this.state.turn].name}</span></h6>);
 				turnClass = ' turn-'+this.state.turn;
 			}
 			else if (this.state.status && this.state.status == 'done') {
@@ -305,11 +308,12 @@ class Game extends React.Component {
 			}
 			gameClass += turnClass+playerColorClass;
 			rightPanel = (
-				<div className="col-12 col-md-4 col-lg-3 px-0 gameStatus-col bg-md-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
+				<div className="sm-up col-4 col-lg-3 px-0 gameStatus-col bg-md-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
 					<div className="row no-gutters">
 						{winLabel}
+						{turnLabel}
 						<h4 className="mx-auto d-block my-3 col-12">Captured</h4>
-						<div className="col-12 col-md-6 px-3">
+						<div className="col-6 px-3">
 							<span className="text-red">
 								<UserLink app={app} user={this.state.players.red} className="anchor" />
 							</span>
@@ -317,7 +321,7 @@ class Game extends React.Component {
 								{captured.red.length ? captured.red : 'None'}
 							</div>
 						</div>
-						<div className="col-12 col-md-6 px-3">
+						<div className="col-6 px-3">
 							<span className="text-blue">
 								<UserLink app={app} user={this.state.players.blue} className="anchor" />
 							</span>
@@ -325,7 +329,6 @@ class Game extends React.Component {
 								{captured.blue.length ? captured.blue : 'None'}
 							</div>
 						</div>
-						{turnLabel}
 					</div>
 					<div className="d-none">
 						<TileRack game={this} app={app} />
@@ -338,7 +341,7 @@ class Game extends React.Component {
 			<div className={gameClass}>
 			<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
-						<div className="col-12 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
+						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
 							{gameBoard}
 						</div>
 						{rightPanel}

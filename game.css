@@ -40,8 +40,8 @@ body {
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
-	--square-size-landscape: 29px;
-	--square-size-portrait: 32px;
+	--square-size-landscape: 30px;
+	--square-size-portrait: 38px;
 }
 h3 {
 	font-size: 1.5rem;

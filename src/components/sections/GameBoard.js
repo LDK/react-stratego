@@ -288,8 +288,10 @@ class GameBoard extends React.Component {
 		this.setState({ battleContent: content });
 	}
 	renderGameSpace(row,col,key,piece) {
-		var occupied = (piece !== undefined);
-		return <DropSpace id={key} selected={this.selectedSpace && this.selectedSpace == key} board={this} y={row} x={col} occupied={occupied} key={key} passable={!(this.obscuredSpaces[key] || false)} game={this.props.game}>
+		var occupied = (piece !== undefined && !!piece);
+		var selected = (this.selectedSpace !== undefined && !!this.selectedSpace && this.selectedSpace == key);
+		var passable = !(this.obscuredSpaces[key] || false);
+		return <DropSpace id={key} selected={selected} board={this} y={row} x={col} occupied={occupied} key={key} passable={passable} game={this.props.game}>
 				{piece}
 			</DropSpace>;
 	}
@@ -462,7 +464,7 @@ class GameBoard extends React.Component {
 					var saveSpaces = {};
 					for (var i in spaces) {
 						var space = {};
-						if (spaces[i].props.occupied) {
+						if (spaces[i].props.occupied && spaces[i].props.children) {
 							space.id = spaces[i].props.id;
 							space.rank = spaces[i].props.children.props.rank;
 							space.color = spaces[i].props.children.props.color;
@@ -539,7 +541,12 @@ class GameBoard extends React.Component {
 			}
 		}
 		spaces[id] = this.renderGameSpace(y,x,id,<DragPiece color={color} fromX={x} fromY={y} fromId={id} rank={rank} placed={true} moveInfo={lastMove} game={this.props.game} />);
-		this.setState({spaces: spaces});
+		var newState = {spaces: spaces};
+		if (this.props.game.state.started) {
+			newState.selectedSpace = null;
+			newState.highlighted = null;
+		}
+		this.setState(newState);
 		if (tileSpace) {
 			this.checkTilesPlaced();
 		}

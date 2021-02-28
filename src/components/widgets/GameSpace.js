@@ -29,7 +29,7 @@ class GameSpace extends React.Component {
 	}
 }
 
-function DropSpace({ id, x, y, passable, board, game, children }) {
+function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 
 	const handleDrop = function(x,y,territory,dropped) {
 		if (!game || !game.state) {
@@ -45,7 +45,7 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 			return;
 		}
 		dropped.gameSpaceId = id;
-		board.placePiece(dropped,id);
+		board.placePiece(dropped,id,false);
 	}
 	const handleHover = function(x,y,territory,item) {
 		if (!passable) {
@@ -56,6 +56,60 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		}
 		else {
 
+		}
+	}
+	const handleClick = function(event) {
+		if (!game || !game.state) {
+			return;
+		}
+		if (!game.state.started && dropped.color != territory) {
+			return;
+		}
+		if (!passable) {
+			return;
+		}
+		if (game.state.status == 'done') {
+			return;
+		}
+		if (!game.state.started && game.state.placementMode == 'click') {
+			if (typeof children == 'undefined' && board.state.selectedSpace && territory == playerColor) {
+				board.swapPieces(board.state.selectedSpace,id);
+				board.highlightSpace(null);
+				board.selectSpace(null);
+			}
+
+			var rank = game.selectedRank;
+			var tileSpace = game.props.app.tileSpaces[rank];
+			if (!rank || !tileSpace) {
+				return;
+			}
+
+			if (territory == playerColor) {
+				var piece = { rank: rank, color: playerColor, tileSpace: tileSpace, gameSpaceId: id };
+				board.placePiece(piece, id, false);
+			}
+		}
+		else if (!game.state.started && game.state.placementMode == 'keyboard') {
+			board.selectSpace(id);
+		}
+		else if (game.state.started) {
+			if (board.state.selectedSpace) {
+				var piece = board.state.spaces[board.state.selectedSpace].props.children;
+				var item = { 
+					type: 'piece', 
+					rank: piece.props.rank || null, 
+					game: game, 
+					color: piece.props.color, 
+					tileSpace: undefined, 
+					fromX: piece.props.fromX, 
+					fromY: piece.props.fromY, 
+					fromId: piece.props.fromId 
+				}
+				if (isDroppable(x, y, territory, item, game)) {
+					item.gameSpaceId = id;
+					board.placePiece(item,id,false);
+				}
+			}
 		}
 	}
 	const isDroppable = function(x,y,territory,item,game) {
@@ -110,50 +164,9 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	var uid = parseInt(game.props.app.state.currentUser.user_id);
 	var starterUid = parseInt(game.props.starter);
 	var playerColor = (uid == starterUid) ? 'blue' : 'red';
-	const handleClick = function(event) {
-		if (game && !game.state.started && game.state.placementMode == 'click') {
-			if (typeof children == 'undefined' && board.state.selectedSpace && territory == playerColor) {
-				board.swapPieces(board.state.selectedSpace,id);
-				board.highlightSpace(null);
-				board.selectSpace(null);
-			}
-
-			var rank = game.selectedRank;
-			var tileSpace = game.props.app.tileSpaces[rank];
-			if (!rank || !tileSpace) {
-				return;
-			}
-
-			if (territory == playerColor) {
-				var piece = { rank: rank, color: playerColor, tileSpace: tileSpace, gameSpaceId: id };
-				board.placePiece(piece, id, false);
-			}
-		}
-		else if (game && !game.state.started && game.state.placementMode == 'keyboard') {
-			board.selectSpace(id);
-		}
-		else if (game.state.started && !children) {
-			if (board.state.selectedSpace) {
-				var piece = board.state.spaces[board.state.selectedSpace].props.children;
-				var item = { 
-					type: 'piece', 
-					rank: piece.props.rank || null, 
-					game: game, 
-					color: piece.props.color, 
-					tileSpace: false, 
-					fromX: piece.props.fromX, 
-					fromY: piece.props.fromY, 
-					fromId: piece.props.fromId 
-				}
-				if (isDroppable(x, y, territory, item, game)) {
-					spaceClass = 'droppable';
-					board.droppable[id] = true;
-				}
-			}
-		}
-	}
 	var selectedClass = '';
 	var highlightClass = '';
+	var occupiedClass = (typeof occupied != 'undefined' && !!occupiedClass) ? ' occupied' : '';
 	
 	if (board.state.selectedSpace) {
 		var piece = board.state.spaces[board.state.selectedSpace].props.children;
@@ -170,7 +183,7 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 		if (isDroppable(x, y, territory, item, game)) {
 			spaceClass = 'droppable';
 		}
-		board.render();
+		// board.render();
 	}
 
 	if (board.state.selectedSpace && board.state.selectedSpace == id) {
@@ -181,7 +194,7 @@ function DropSpace({ id, x, y, passable, board, game, children }) {
 	}
 	var passableClass = passable ? ' passable' : ' not-passable';
 	return (
-		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+selectedClass+highlightClass+passableClass} onClick={handleClick}>
+		<div ref={drop} className={"gameSpace-wrapper col px-0 mx-0 "+spaceClass+selectedClass+highlightClass+passableClass+occupiedClass} onClick={handleClick}>
 			<GameSpace id={id} x={x} y={y} passable={passable} territory={territory} board={board}>
 				{children}
 			</GameSpace>

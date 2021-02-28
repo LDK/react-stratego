@@ -190,6 +190,9 @@ class Game extends React.Component {
 	}
 	startGame() {
 		var app = this.props.app;
+		var gb = this.props.app.gameBoard;
+		gb.selectSpace(null);
+		gb.highlightSpace(null);
 		this.setState({ started: true });
 		var turn = (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue';
 		app.gameStates[this.props.id].started = true;

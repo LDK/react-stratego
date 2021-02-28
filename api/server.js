@@ -361,7 +361,15 @@ var saveGameData = function(data) {
 				reject('Unable to retrieve game data');
 			}
 			var started = data.started;
-			var turn = data['turn'] ? "'"+data['turn']+"'" : 'NULL';
+			var turn = 'NULL';
+			if (started) {
+				if (gameData.turn == 'blue') {
+					turn = "'red'";
+				}
+				else {
+					turn = "'blue'";
+				}
+			}
 			// Decode spaces json data into list
 			var spaceInfo = JSON.parse(gameData.spaces);
 			var newSpaceInfo = JSON.parse(data.spaces);

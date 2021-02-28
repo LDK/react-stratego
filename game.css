@@ -436,8 +436,10 @@ a.button:active {
 div.captured-tiles label {
 	position: relative;
 	font-size: .85rem;
-	top: -1rem;
+	top: 0rem;
 	left: 0rem;
+	color: black;
+	display: inline;
 }
 .tileRack {
 	height: 100%;
@@ -505,6 +507,9 @@ div.captured-tiles label {
 		display: none !important;
 	}
 	.gameBoard {
+		height: 100vh;
+	}
+	.gameStatus-col {
 		height: 100vh;
 	}
 } 

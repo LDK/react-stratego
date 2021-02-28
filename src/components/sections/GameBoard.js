@@ -29,6 +29,7 @@ class GameBoard extends React.Component {
 		this.placePiece = this.placePiece.bind(this);
 		this.emptySpace = this.emptySpace.bind(this);
 		this.resetSpace = this.resetSpace.bind(this);
+		this.clearDroppables = this.clearDroppables.bind(this);
 		this.swapPieces = this.swapPieces.bind(this);
 		this.swapByKeyboard = this.swapByKeyboard.bind(this);
 		this.checkTilesPlaced = this.checkTilesPlaced.bind(this);
@@ -72,6 +73,14 @@ class GameBoard extends React.Component {
 	}
 	componentWillUnmount() {
 		this.props.app.gameBoard = null;
+	}
+	clearDroppables() {
+		for (var id in this.droppable) {
+			if (this.droppable[id]) {
+				this.droppable[id] = false;
+				this.resetSpace(id);
+			}
+		}
 	}
 	placementArrowMove(keyCode) {
 		var { x, y } = idToXy(this.state.selectedSpace);
@@ -443,6 +452,7 @@ class GameBoard extends React.Component {
 				}
 			}
 			else {
+				this.clearDroppables();
 				if (!spaces[id].props.occupied) {
 					// Render the target space with the piece in it, and empty the source space.
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);

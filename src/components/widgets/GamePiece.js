@@ -48,19 +48,10 @@ class GamePiece extends React.Component {
 		else if (this.props.placed && game && !game.state.started && game.state.placementMode == 'erase'){
 			app.tileRack.returnTileToRack(game,app,this.props.gameSpaceId);
 		}
-		else if (isMobile && game && game.state.started && this.props.placed && (game.state.turn == app.tileRack.playerColor) && app.tileRack.playerColor == this.props.color) {
+		else if (!isMobile && game && game.state.started && this.props.placed && (game.state.turn == app.tileRack.playerColor) && app.tileRack.playerColor == this.props.color) {
 			gb.selectSpace(this.props.gameSpaceId);
 			gb.highlightSpace(this.props.gameSpaceId);
-			var spaces = gb.state.spaces;
-			var oldMoves = gb.droppable;
-			for (var id in oldMoves) {
-				if (oldMoves[id]) {
-					oldMoves[id] = false;
-					var space = spaces[id];
-					var newSpace = gb.renderGameSpace(space.props.y,space.props.x,id,space.props.children || false);
-					spaces[id] = newSpace;
-				}
-			}
+			gb.clearDroppables();
 			var moves = gb.getValidMoveSpaces(this.props.fromX, this.props.fromY, this.props.color, this, game);
 			for (var i in moves) {
 				var id = moves[i];
@@ -68,14 +59,8 @@ class GamePiece extends React.Component {
 					continue;
 				}
 				gb.droppable[id] = true;
-				var space = spaces[id];
-				var newSpace = gb.renderGameSpace(space.props.y,space.props.x,id,space.props.children || false);
-				spaces[id] = newSpace;
+				gb.resetSpace(id);
 			}
-			this.setState({ spaces: spaces });
-
-			var ts = Date.now() / 1000;
-			gb.setState({ rendered: ts });
 		}
 	}
 	render() {

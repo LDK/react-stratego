@@ -179,11 +179,12 @@ function DragPiece(props) {
 	if (props.count && props.count > 1) {
 		countLabel = (<label>x{props.count}</label>);
 	}
+	
 	return (
 		<div
 			ref={drag}
 			style={styles}
-			className={wrapperClass}
+			className={wrapperClass+' '+(props.extraClass || '')}
 		>
 			<GamePiece color={props.color} rank={props.rank} moveInfo={props.moveInfo || null} gameSpaceId={props.fromId || null} placed={props.placed || false} captured={props.captured || false} game={props.game} fromX={props.fromX} fromY={props.fromY} className={props.className} />
 			{countLabel}

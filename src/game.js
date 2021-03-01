@@ -178,7 +178,7 @@ class Game extends React.Component {
 		if (captured[pieceInfo.color][pieceInfo.rank]) {
 			pieceCount = captured[pieceInfo.color][pieceInfo.rank].props.count + 1;
 		}
-		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} />
+		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} extraClass="w-50 d-inline-block mb-2" />
 		if (loading) {
 			this.state.captured = captured;
 		}

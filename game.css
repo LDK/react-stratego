@@ -40,7 +40,7 @@ body {
 	--unpassable: rgba(255,64,64,.75);
 	--square-size-default: 54px;
 	--square-size-tablet: 45px;
-	--square-size-landscape: 30px;
+	--square-size-landscape: 29px;
 	--square-size-portrait: 38px;
 }
 h3 {
@@ -510,7 +510,8 @@ div.captured-tiles label {
 		height: 100vh;
 	}
 	.gameStatus-col {
-		height: 100vh;
+		height: 100%;
+		padding-bottom: 2rem;
 	}
 } 
 @media (min-width: 1200px) {

@@ -14,6 +14,40 @@ import { useDrag } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import { isMobile } from "react-device-detect";
 
+function HelpBar(props) {
+	var { app, game } = props;
+	var tileRack = app.tileRack;
+	var board = app.gameBoard;
+	var indicator = '';
+	var placementText = false;
+	var placementSubtext = '';
+	if (game.state.placementMode == 'click' && !!board.state.selectedSpace) {
+		placementText = 'Click any space to move the selected tile there.';
+		placementSubtext = 'Click the rack to remove this tile from the board.';
+	}
+	else if (game.state.placementMode == 'click' && tileRack.remaining) {
+		var placementAction = isMobile ? 'Tap' : 'Click';
+		if (game.selectedRank) {
+			placementText = (
+				<div>{ placementAction + ' a square to place a ' }
+					<div className={"d-inline-block position-relative tileFace rank-"+game.selectedRank}></div>
+				</div>
+			);
+		}
+		else {
+			placementText = placementAction + ' any ' + app.tileRack.playerColor + ' tile to select that piece.';
+		}
+	}
+	if (placementText) {
+		indicator = (
+			<div className="d-table d-lg-none position-fixed w-100" id="help-bar" style={{ height:'56px', backgroundColor: 'rgba(1, 1, 1, 0.75)', bottom: 0, left: 0 }}>
+				<span className="d-table-cell w-100 p-0 m-0 text-white text-center" style={{ bottom: 0, left: 0, height:'48px', fontSize:'24px', backgroundColor: 'rgba(1,1,1,.75)', verticalAlign: 'middle' }}>{placementText}</span>
+			</div>
+		);
+	}
+	return indicator;
+}
+
 class Game extends React.Component {
 	constructor(props) {
 		super(props);
@@ -339,13 +373,14 @@ class Game extends React.Component {
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
 			<div className={gameClass}>
-			<DndProvider backend={MultiBackend} options={backendOpts}>
+				<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
 						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
 							{gameBoard}
 						</div>
 						{rightPanel}
 					</div>
+						<HelpBar game={this} app={app} />
 				</DndProvider>
 			</div>
 		);

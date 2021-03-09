@@ -43,6 +43,7 @@ class Game extends React.Component {
 		this.modeChange = this.modeChange.bind(this);
 		this.openQuickLoadModal = this.openQuickLoadModal.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
+		this.clearCaptured = this.clearCaptured.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
 		this.polled = false;
 		if (props.captured) {
@@ -166,11 +167,8 @@ class Game extends React.Component {
 		this.props.app.gameRef = this;
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 	}
-	componentWillUnmount() {
-		clearInterval(this.opponentPoll);
-		var app = this.props.app;
-		app.gameRef = null;
-		app.gameOpened = false;
+	clearCaptured() {
+		this.state.captured = { blue: {}, red: {} };
 	}
 	addCaptured(pieceInfo,loading) {
 		var captured = this.state.captured;
@@ -180,12 +178,14 @@ class Game extends React.Component {
 		}
 		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} extraClass="w-50 d-inline-block mb-2" />
 		if (loading) {
-			// TODO: this needs to go away some time.  Direct modification of state.
+			// this needs to go away 
 			this.state.captured = captured;
 		}
 		else {
 			this.setState({ captured: captured });
 		}
+		// this.state.captured = captured;
+		// captured[pieceInfo.color].push(<GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} />)
 	}
 	startGame() {
 		var app = this.props.app;
@@ -225,6 +225,12 @@ class Game extends React.Component {
 		var app = this.props.app;
 		app.gameBoard.QuickLoadMenu.setState({ formOpen: true });
 	}
+	componentWillUnmount() {
+		clearInterval(this.opponentPoll);
+		var app = this.props.app
+		app.gameRef = null;
+		app.gameOpened = false;
+	}
 	render() {
 		var app = this.props.app;
 		if (app.reportRenders) { console.log('Game rendering'); }
@@ -237,7 +243,7 @@ class Game extends React.Component {
 		var gameClass = "container mx-auto player-"+playerColor;
 		if (this.state.started) {
 			if (this.state.turn && this.state.status && this.state.status != 'done') {
-				gameClass += ' turn-' + this.state.turn + playerColorClass;
+				gameClass += ' turn-' + this.state.turn;
 			}
 		}
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };

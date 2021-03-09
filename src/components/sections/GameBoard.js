@@ -46,19 +46,9 @@ class GameBoard extends React.Component {
 	componentDidMount() {
 		var app = this.props.app;
 		app.gameBoard = this;
-		var game = this.props.game;
 		var spaces = this.props.game.props.spaces;
 		var uid = app.state.currentUser.user_id;
-
-		if (app.tileRack) {
-			if (game.props.starter == uid) {
-				app.tileRack.playerColor = 'blue';
-			}
-			else {
-				app.tileRack.playerColor = 'red';
-			}
-		}
-		if (spaces && app.tileSpaces) {
+		if (!!spaces && !!app.tileSpaces) {
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;

@@ -8,7 +8,6 @@ import UserProfile from './components/menus/UserProfile.js';
 import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
-import HTML5Backend from 'react-dnd-html5-backend';
 import DataBrowser from './components/widgets/DataBrowser.js';
 import {PIECES} from './components/Helpers.js';
 import {keyCodes} from './components/Helpers.js';

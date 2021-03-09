@@ -8,7 +8,6 @@ import HelpBar from './components/widgets/HelpBar.js';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
-import { useDrag } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import { isMobile } from "react-device-detect";
 

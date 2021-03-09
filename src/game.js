@@ -5,7 +5,6 @@ import GameBoard from './components/sections/GameBoard.js';
 import GamePiece from './components/widgets/GamePiece.js';
 import InfoPanel from './components/widgets/InfoPanel.js';
 import HelpBar from './components/widgets/HelpBar.js';
-import ReactTooltip from 'react-tooltip';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
@@ -44,7 +43,6 @@ class Game extends React.Component {
 		this.modeChange = this.modeChange.bind(this);
 		this.openQuickLoadModal = this.openQuickLoadModal.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
-		this.clearCaptured = this.clearCaptured.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
 		this.polled = false;
 		if (props.captured) {
@@ -168,8 +166,11 @@ class Game extends React.Component {
 		this.props.app.gameRef = this;
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 	}
-	clearCaptured() {
-		this.state.captured = { blue: {}, red: {} };
+	componentWillUnmount() {
+		clearInterval(this.opponentPoll);
+		var app = this.props.app;
+		app.gameRef = null;
+		app.gameOpened = false;
 	}
 	addCaptured(pieceInfo,loading) {
 		var captured = this.state.captured;
@@ -179,13 +180,12 @@ class Game extends React.Component {
 		}
 		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} extraClass="w-50 d-inline-block mb-2" />
 		if (loading) {
+			// TODO: this needs to go away some time.  Direct modification of state.
 			this.state.captured = captured;
 		}
 		else {
 			this.setState({ captured: captured });
 		}
-		// this.state.captured = captured;
-		// captured[pieceInfo.color].push(<GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} />)
 	}
 	startGame() {
 		var app = this.props.app;
@@ -225,36 +225,20 @@ class Game extends React.Component {
 		var app = this.props.app;
 		app.gameBoard.QuickLoadMenu.setState({ formOpen: true });
 	}
-	componentWillUnmount() {
-		clearInterval(this.opponentPoll);
-		var app = this.props.app
-		app.gameRef = null;
-		app.gameOpened = false;
-	}
 	render() {
 		var app = this.props.app;
 		if (app.reportRenders) { console.log('Game rendering'); }
 		if (this.props.id) {
 			app.gameStates[this.props.id] = this.state;
 		}
-		var gameBoard = <GameBoard game={this} app={app} />;
-		var gameClass = "container mx-auto";
 		var uid = parseInt(app.state.currentUser.user_id);
 		var starterUid = parseInt(this.props.starter);
 		var playerColor = (uid == starterUid) ? 'blue' : 'red';
-		var playerColorClass;
-		if (playerColor) {
-			playerColorClass = ' player-'+playerColor;
-		}
-		gameClass += playerColorClass;
+		var gameClass = "container mx-auto player-"+playerColor;
 		if (this.state.started) {
-			var turnClass;
 			if (this.state.turn && this.state.status && this.state.status != 'done') {
-				turnClass = ' turn-'+this.state.turn;
+				gameClass += ' turn-' + this.state.turn + playerColorClass;
 			}
-			else if (this.state.status && this.state.status == 'done') {
-			}
-			gameClass += turnClass+playerColorClass;
 		}
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
@@ -262,7 +246,7 @@ class Game extends React.Component {
 				<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
 						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
-							{gameBoard}
+							<GameBoard game={this} app={app} />
 						</div>
 						<InfoPanel game={this} app={app} playerColor={playerColor} />
 					</div>

@@ -405,9 +405,9 @@ class App extends React.Component {
 						started: started,
 						turn: turn,
 						players: players,
-						status: gameStatus
+						status: gameStatus,
+						captured: { blue: {}, red: {} }
 					});
-					app.gameRef.clearCaptured();
 					for (var i in captured) {
 						var pieceId = captured[i];
 						var pieceColor = pieceId.split('-')[0];

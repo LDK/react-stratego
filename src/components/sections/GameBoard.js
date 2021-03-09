@@ -459,6 +459,7 @@ class GameBoard extends React.Component {
 				if (!spaces[id].props.occupied) {
 					// Render the target space with the piece in it, and empty the source space.
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);
+					// TODO: Review whether this is necessary.  If not, get rid of toggleTurn on <Game>
 					this.props.game.toggleTurn();
 				}
 				else {

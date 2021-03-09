@@ -62,7 +62,7 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 		if (!game || !game.state) {
 			return;
 		}
-		if (!game.state.started && dropped.color != territory) {
+		if (!game.state.started && playerColor != territory) {
 			return;
 		}
 		if (!passable) {
@@ -170,18 +170,21 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 	
 	if (board.state.selectedSpace) {
 		var piece = board.state.spaces[board.state.selectedSpace].props.children;
-		var item = { 
-			type: 'piece', 
-			rank: piece.props.rank || null, 
-			game: game, 
-			color: piece.props.color, 
-			tileSpace: false, 
-			fromX: piece.props.fromX, 
-			fromY: piece.props.fromY, 
-			fromId: piece.props.fromId 
-		}
-		if (isDroppable(x, y, territory, item, game)) {
-			spaceClass = 'droppable';
+		var item = {};
+		if (!!piece) {
+			item = { 
+				type: 'piece', 
+				rank: piece.props.rank || null, 
+				game: game, 
+				color: piece.props.color, 
+				tileSpace: false, 
+				fromX: piece.props.fromX, 
+				fromY: piece.props.fromY, 
+				fromId: piece.props.fromId 
+			}
+			if (isDroppable(x, y, territory, item, game)) {
+				spaceClass = 'droppable';
+			}
 		}
 		// board.render();
 	}

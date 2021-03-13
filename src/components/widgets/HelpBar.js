@@ -1,5 +1,4 @@
 import React from 'react';
-import { isMobile } from "react-device-detect";
 
 function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles }) {
 	var tileRack = app.tileRack;

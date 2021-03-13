@@ -1,6 +1,7 @@
 import React from 'react';
 
 function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles }) {
+	console.log('wrapperClass',wrapperClass,game.state.helpText);
 	var tileRack = app.tileRack;
 	var board = app.gameBoard;
 	var hbar = '';
@@ -10,7 +11,7 @@ function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles
 		wrapperClass = "d-table";
 	}
 	if (textClass === undefined) {
-		textClass = "d-table-cell w-100 p-0 m-0 text-white text-center";
+		textClass = "d-table-cell w-100 p-0 m-0 text-center";
 	}
 	if (wrapperStyles === undefined) {
 		wrapperStyles = { };

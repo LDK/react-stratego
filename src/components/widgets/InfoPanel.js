@@ -84,7 +84,7 @@ function InfoPanel({ game, app, playerColor }) {
 						</div>
 					</div>
 				</div>
-				<HelpBar game={game} app={app} wrapperClass={"d-none d-lg-table w-100"} wrapperStyles={{ height: 'auto' }} />
+				<HelpBar game={game} app={app} wrapperClass={"d-none d-md-table w-100"} wrapperStyles={{ height: 'auto' }} />
 				<div className="d-none">
 					<TileRack game={game} app={app} />
 				</div>

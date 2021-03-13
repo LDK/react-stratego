@@ -502,6 +502,7 @@ class GameBoard extends React.Component {
 						});
 					});
 				}
+				game.resetHelpText();
 			}
 		}
 		if (tileSpace) {
@@ -633,6 +634,7 @@ class GameBoard extends React.Component {
 		var game = this.props.game;
 		var app = this.props.app;
 		var classes = 'gameBoard';
+		var helpBar = game.state.started ? null : (<HelpBar game={game} app={app} />);
 		if (!game.state.started) {
 			classes += ' placement zoom mode-'+game.state.placementMode;
 		}
@@ -649,7 +651,7 @@ class GameBoard extends React.Component {
 					additionalClasses={"p-5 text-black"}
 				/>
 				{this.gameSpaceRows(1,10,10)}
-				<HelpBar game={game} app={app} />
+				{helpBar}
 			</div>
 		)
 	}

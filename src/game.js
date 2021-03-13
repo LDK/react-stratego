@@ -150,6 +150,7 @@ class Game extends React.Component {
 				}
 				if (Object.keys(gameChanges).length) {
 					game.setState(gameChanges);
+					game.resetHelpText();
 				}
 				var last_attack = null;
 				if (attacks != game.state.attacks) {
@@ -199,6 +200,20 @@ class Game extends React.Component {
 				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
 			});
 		}
+		else if (this.state.started && !!this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
+			if (isMobile) {
+				if (!this.props.app.gameBoard.selectedRank) {
+					var headline = 'Tap a ' + this.props.app.tileRack.playerColor + ' tile to select it.';
+				}
+				else {
+					var headline = 'Tap a highlighted square to move the selected piece there';
+				}
+			}
+			else {
+				var headline = 'Drag & drop a ' + this.props.app.tileRack.playerColor + ' tile to make your move.';
+			}
+			this.setHelpText(headline);
+		} 
 		else {
 			this.setHelpText(null);
 		}

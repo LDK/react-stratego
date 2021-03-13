@@ -1322,28 +1322,46 @@ ul.suggestions {
 
 /* HELP BAR STYLES */
 #help-bar {
+	background-color: var(--water);
+	margin-top: 1rem;
+	padding: 1rem .5rem;
+}
+#help-bar span {
+	bottom: 0;
+	left: 0;
+	height: 48px;
+	font-size: 1.25rem;
+	background-color: tranparent;
+	vertical-align: middle;
+	color: white;
+	font-weight: 500;
+}
+.placement #help-bar {
+	margin-top: unset;
 	height:56px;
 	background-color: rgba(0, 0, 0, 0.75);
 	bottom: 0;
 	left: 0;
 	position: fixed;
 }
-#help-bar span {
+.placement #help-bar span {
 	bottom: 0;
 	left: 0;
 	height: 48px;
 	font-size: 24px;
 	background-color: rgba(0,0,0,.75);
 	vertical-align: middle;
+	color: white;
 }
 @media (min-width:992px) {
 	#help-bar {
+
+	}
+	.placement #help-bar {
 		background-color: rgba(0, 0, 0, 0.25);
 		z-index: 3;
 		border-radius: 8px;
 		position: relative;
-	}
-	.placement #help-bar {
 		height: 6rem;
 		width: 32rem;
 		position: absolute;
@@ -1354,7 +1372,7 @@ ul.suggestions {
 	}
 	.player-red .placement #help-bar {
 	}
-	#help-bar span {
+	.placement #help-bar span {
 		border-radius: 8px;
 		bottom: 0;
 		left: 0;

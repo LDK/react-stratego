@@ -6,6 +6,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 import { isMobile } from "react-device-detect";
+import HelpBar from '../widgets/HelpBar.js';
 
 class GameBoard extends React.Component {
 	constructor(props) {
@@ -525,6 +526,10 @@ class GameBoard extends React.Component {
 					if (!app.tileRack.remaining) {
 						app.tileRack.setState({ allPlaced: true });
 					}
+					if (!tileSpace.remaining) {
+						game.selectedRank = null;
+						game.resetHelpText();
+					}
 				}
 			}
 			tileSpace.setState({ remaining: tileSpace.remaining });
@@ -644,6 +649,7 @@ class GameBoard extends React.Component {
 					additionalClasses={"p-5 text-black"}
 				/>
 				{this.gameSpaceRows(1,10,10)}
+				<HelpBar game={game} app={app} />
 			</div>
 		)
 	}

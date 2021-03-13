@@ -4,7 +4,6 @@ import 'whatwg-fetch';
 import GameBoard from './components/sections/GameBoard.js';
 import GamePiece from './components/widgets/GamePiece.js';
 import InfoPanel from './components/widgets/InfoPanel.js';
-import HelpBar from './components/widgets/HelpBar.js';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
@@ -38,6 +37,8 @@ class Game extends React.Component {
 			this.state.placementMode = 'click';
 		}
 		this.selectedRank =  null;
+		this.setHelpText =  this.setHelpText.bind(this);
+		this.resetHelpText =  this.resetHelpText.bind(this);
 		this.startGame = this.startGame.bind(this);
 		this.modeChange = this.modeChange.bind(this);
 		this.openQuickLoadModal = this.openQuickLoadModal.bind(this);
@@ -53,6 +54,34 @@ class Game extends React.Component {
 				this.addCaptured({color: pieceColor, rank: pieceRank },true);
 			}
 		}
+	}
+	setHelpText(text) {
+		if (typeof text == 'object' && !!text) {
+			if (!!text.$$typeof) {
+				// If we are passed JSX markup, just pass that through as the headline text with no subtext
+				var headline = text;
+				var subtext = false;
+			}
+			else {
+				var { headline, subtext } = text;
+			}
+		}
+		else if (typeof text == 'string') {
+			var headline = text;
+			var subtext = false;
+		}
+		else if (!text) {
+			var headline = false;
+			var subtext = false;
+		}
+		else {
+			// hey get out 
+			return;
+		}
+		this.setState({
+			helpText: headline,
+			helpSubtext: subtext
+		});
 	}
 	pollOpponentStatus(){
 		var app = this.props.app;
@@ -162,9 +191,22 @@ class Game extends React.Component {
 			});
 		});
 	}
+	resetHelpText() {
+		if (!this.state.started && this.state.placementMode == 'click' && !!this.props.app.tileRack) {
+			var placementAction = isMobile ? 'Tap' : 'Click';
+			this.setHelpText({
+				headline: placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',
+				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
+			});
+		}
+		else {
+			this.setHelpText(null);
+		}
+	}
 	componentDidMount() {
 		this.props.app.gameRef = this;
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
+		this.resetHelpText();
 	}
 	clearCaptured() {
 		this.state.captured = { blue: {}, red: {} };
@@ -250,12 +292,11 @@ class Game extends React.Component {
 			<div className={gameClass}>
 				<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
+						<InfoPanel game={this} app={app} playerColor={playerColor} />
 						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
 							<GameBoard game={this} app={app} />
 						</div>
-						<InfoPanel game={this} app={app} playerColor={playerColor} />
 					</div>
-					<HelpBar game={this} app={app} />
 				</DndProvider>
 			</div>
 		);

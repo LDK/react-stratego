@@ -115,7 +115,7 @@ class TileRack extends React.Component {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (
 					<div className="col-12">
-						<a className="go-button d-block blue text-white text-center mx-auto my-md-3" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
+						<a className="go-button d-block blue text-white text-center mx-auto my-md-3 glowing" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
 					</div>
 				);
 			}
@@ -129,14 +129,14 @@ class TileRack extends React.Component {
 			if (game.state.players.blue.ready && game.state.players.red.ready) {
 				startButton = (
 					<div className="col-12">
-						<a className="go-button d-block text-white text-center mx-auto my-3" tabIndex="-1" onClick={game.startGame}>START GAME</a>
+						<a className="go-button d-block text-white text-center mx-auto my-3 glowing" tabIndex="-1" onClick={game.startGame}>START GAME</a>
 					</div>
 				);
 			}
 		}
 		return (
 			<div className="container-fluid px-0" onClick={this.handleClick}>
-				<div className="tileRack row no-gutters px-3 px-md-0">
+			<div className="tileRack row no-gutters px-3 px-md-0 pt-3">
 					{startButton}
 					{readyButton}
 					{this.tileSpaces()}

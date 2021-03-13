@@ -42,12 +42,14 @@ body {
 	--square-size-tablet: 45px;
 	--square-size-landscape: 29px;
 	--square-size-portrait: 38px;
+	--glow-high: rgba(212,212,116,0.9);
+	--glow-low: rgba(212,212,116,0.4);
 }
 h3 {
 	font-size: 1.5rem;
 }
 .status {
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 a.anchor:hover {
 	text-decoration: underline !important;
@@ -56,21 +58,21 @@ a.anchor:hover {
 	min-width: 3rem;
 }
 .kbd-navigation .cell:focus {
-  background: #ddd;
+	background: #ddd;
 }
 
 .game {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .game-info {
-  margin-left: 20px;
+	margin-left: 20px;
 }
 
 .hidden {
-  
- display: none;  
+	
+ display: none;	
 }
 
 .pattern-bg {
@@ -110,13 +112,13 @@ div.contextMenu-wrapper:not(.open) select {
 	position: absolute;
 }
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
+	-webkit-touch-callout: none; /* iOS Safari */
 	-webkit-user-select: none; /* Safari */
 	 -khtml-user-select: none; /* Konqueror HTML */
-	   -moz-user-select: none; /* Firefox */
+		 -moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* Internet Explorer/Edge */
 			user-select: none; /* Non-prefixed version, currently
-								  supported by Chrome and Opera */
+									supported by Chrome and Opera */
 }
 a.anchor {
 	color: blue;
@@ -126,7 +128,7 @@ a.button {
 	color: black;
 	text-decoration: none;
 	cursor: pointer;
-	padding: .5rem 1rem;
+	padding: .5rem 1rem !important;
 	background: #ccc;
 	text-align: center;
 	border-radius: .5rem;
@@ -372,7 +374,7 @@ a.button:active {
 	margin-right: .5em;
 }
 .link-list li:last-child:after {
-    content: "";
+		content: "";
 	display: none;
 }
 
@@ -676,30 +678,30 @@ div.captured-tiles label {
 .optionIndicator ul li {
 	list-style-type: none;
 	break-inside: avoid;
-  display: inline-block;
-  position: relative;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+	display: inline-block;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 /* Hide the browser's default radio button */
 .optionIndicator ul li label input {
-  position: absolute;
-  opacity: 0;
+	position: absolute;
+	opacity: 0;
 }
 .optionIndicator ul li label {
-  font-size: .8rem;
+	font-size: .8rem;
 }
 /* Create a custom radio button */
 .optionIndicator ul li label .checkmark {
-  position: absolute;
-  top: 0;
-  left: calc(50% - 4px);
-  height: 8px;
-  width: 8px;
-  background-color: #6a6a6a;
-  border-radius: 50%;
+	position: absolute;
+	top: 0;
+	left: calc(50% - 4px);
+	height: 8px;
+	width: 8px;
+	background-color: #6a6a6a;
+	border-radius: 50%;
 }
 .optionIndicator ul.vertical li label .checkmark {
 	left: auto;
@@ -718,13 +720,13 @@ div.captured-tiles label {
 }
 /* Create the indicator (the dot/circle - hidden when not checked) */
 .optionIndicator ul li label .checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
+	content: "";
+	position: absolute;
+	display: none;
 }
 /* Show the indicator (dot/circle) when checked */
 .optionIndicator ul li label input:checked ~ .checkmark:after {
-  display: block;
+	display: block;
 }
 
 /* Style the indicator (dot/circle) */
@@ -1105,25 +1107,25 @@ span.notification-counter {
 	bottom: -.25rem;
 }
 ul.item-buttons {
-    padding: 0;
+		padding: 0;
 }
 ul.item-buttons li {
-    display: inline-block;
+		display: inline-block;
 }
 ul.item-buttons li a.button {
-    font-size: .8rem;
-    min-width: unset;
-    display: block;
-    text-align: center;
-    width: 5rem;
+		font-size: .8rem;
+		min-width: unset;
+		display: block;
+		text-align: center;
+		width: 5rem;
 }
 
 div.no-suggestions, ul.suggestions {
-    position: absolute;
-    background: white;
-    width: calc(100% - 4rem - 2px);
-    border: 1px solid black;
-    margin-top: -1px;	
+		position: absolute;
+		background: white;
+		width: calc(100% - 4rem - 2px);
+		border: 1px solid black;
+		margin-top: -1px;	
 	list-style-type: none;
 	padding-left: 0;
 }
@@ -1145,12 +1147,13 @@ ul.suggestions {
 	font-size: 18px; 
 	width:172px;
 	height:44px;
-	line-height: 44px;
+	line-height: 24px;
 	background: #72b53b;
 	border: 1px solid white;
 	border-radius: .25rem;
 	cursor: pointer;
 	text-align: center;
+	padding: .5rem 1rem;
 }
 .go-button:hover {
 	text-decoration: none;
@@ -1313,5 +1316,87 @@ ul.suggestions {
 @media (min-width:768px) {
 	.bg-md-white {
 		background-color: white !important;
+	}
+}
+
+
+/* HELP BAR STYLES */
+#help-bar {
+	height:56px;
+	background-color: rgba(0, 0, 0, 0.75);
+	bottom: 0;
+	left: 0;
+	position: fixed;
+}
+#help-bar span {
+	bottom: 0;
+	left: 0;
+	height: 48px;
+	font-size: 24px;
+	background-color: rgba(0,0,0,.75);
+	vertical-align: middle;
+}
+@media (min-width:992px) {
+	#help-bar {
+		background-color: rgba(0, 0, 0, 0.25);
+		z-index: 3;
+		border-radius: 8px;
+		position: relative;
+	}
+	.placement #help-bar {
+		height: 6rem;
+		width: 32rem;
+		position: absolute;
+		left: 4.25rem;
+		top: 17.25rem;
+	}
+	.player-blue .placement #help-bar {
+	}
+	.player-red .placement #help-bar {
+	}
+	#help-bar span {
+		border-radius: 8px;
+		bottom: 0;
+		left: 0;
+		height: 48px;
+		font-size: 24px;
+		background-color: rgba(0,0,0,.75);
+		vertical-align: middle;
+	}
+	#help-bar .tileFace {
+		height: 2rem;
+		margin-left: .25rem;
+	}
+	#help-bar p.subtext {
+		font-size: 1rem;
+		font-weight: 300;
+	}
+}
+
+.glowing {
+	animation: border-glow 2s linear infinite;
+/*	position: relative;
+	z-index: 1;
+*/
+	}
+
+@keyframes border-glow {
+	0% {
+		border:1px solid rgba(255, 255, 255, .9);
+		-webkit-box-shadow: 0px 0px 45px 24px var(--glow-high);
+-moz-box-shadow: 0px 0px 45px 24px var(--glow-high);
+box-shadow: 0px 0px 45px 24px var(--glow-high);
+	}
+	50% {
+		border:1px solid rgba(255, 255, 255, .6);
+		-webkit-box-shadow: 0px 0px 45px 24px var(--glow-low);
+-moz-box-shadow: 0px 0px 45px 24px var(--glow-low);
+box-shadow: 0px 0px 45px 24px var(--glow-low);
+	}
+	100% {
+		border:1px solid rgba(255, 255, 255, .9);
+		-webkit-box-shadow: 0px 0px 45px 24px var(--glow-high);
+-moz-box-shadow: 0px 0px 45px 24px var(--glow-high);
+box-shadow: 0px 0px 45px 24px var(--glow-high);
 	}
 }

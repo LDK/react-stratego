@@ -2,6 +2,7 @@ import React from 'react';
 import UserLink from './UserLink.js';
 import OptionIndicator from './OptionIndicator.js';
 import TileRack from '../sections/TileRack.js';
+import HelpBar from './HelpBar.js';
 
 function InfoPanel({ game, app, playerColor }) {
 	var panel = '';
@@ -83,6 +84,7 @@ function InfoPanel({ game, app, playerColor }) {
 						</div>
 					</div>
 				</div>
+				<HelpBar game={game} app={app} wrapperClass={"d-none d-lg-table w-100"} wrapperStyles={{ height: 'auto' }} />
 				<div className="d-none">
 					<TileRack game={game} app={app} />
 				</div>

@@ -213,7 +213,7 @@ function DragPiece(props) {
 		wrapperClass = 'piece-'+props.color;
 	}
 	var countLabel = '';
-	if (props.count && props.count > 1) {
+	if (props.count) {
 		countLabel = (<label>x{props.count}</label>);
 	}
 	

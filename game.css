@@ -82,6 +82,10 @@ a.anchor:hover {
 .disabled span {
 	color: #676767;
 }
+.transparent {
+	opacity: 0 !important;
+	transition: all .25s;
+}
 div.contextMenu-wrapper a {
 	position: relative;
 	background-image: url(img/see-more-vertical.svg);
@@ -455,8 +459,8 @@ div.captured-tiles label {
 .gameStatus-col {
 	background-image: url(img/parchment.jpg);
 	background-size: cover;
-	background-blend-mode: color-dodge;
-	background-color: rgba(125,125,0,.25) !important;
+	background-blend-mode: overlay;
+	background-color: rgba(125,111,0,.5) !important;
 }
 .preview-square {
 	width: 10%;
@@ -1325,6 +1329,9 @@ ul.suggestions {
 	background-color: var(--water);
 	margin-top: 1rem;
 	padding: 1rem .5rem;
+	opacity: 1;
+	transition: opacity .25s;
+	height: 8rem;
 }
 #help-bar span {
 	bottom: 0;
@@ -1388,6 +1395,25 @@ ul.suggestions {
 	#help-bar p.subtext {
 		font-size: 1rem;
 		font-weight: 300;
+	}
+	.circle-link {
+		color: white;
+		font-size: 2rem;
+		position: fixed;
+		bottom: 3rem;
+		left: 2rem;
+		border: 3px solid white;
+		width: 3.4rem;
+		height: 3rem;
+		text-align: center;
+		vertical-align: middle;
+		border-radius: 50%;
+		margin: 0;
+		display: table;
+		background-color: rgba(0, 0, 0, 0.33);
+		backdrop-filter: hue-rotate(45deg);
+		-webkit-backdrop-filter: hue-rotate(45deg);
+		z-index: 3;
 	}
 }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 
 function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles }) {
-	console.log('wrapperClass',wrapperClass,game.state.helpText);
 	var tileRack = app.tileRack;
 	var board = app.gameBoard;
 	var hbar = '';
@@ -25,16 +24,18 @@ function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles
 	if (game.state.helpSubtext) {
 		helpSubtext = (<p className="m-0 subtext">{game.state.helpSubtext}</p>);
 	}
-	if (helpText) {
-		hbar = (
-			<div className={wrapperClass} id="help-bar" style={wrapperStyles}>
-				<span className={textClass} style={textStyles}>
-					{helpText}
-					{helpSubtext}
-				</span>
-			</div>
-		);
+	if (!helpText) {
+		wrapperClass += " transparent";
 	}
+	hbar = (
+		<div className={wrapperClass} id="help-bar" style={wrapperStyles}>
+			<span className={textClass} style={textStyles}>
+				{helpText}
+				{helpSubtext}
+			</span>
+			<p className="circle-link">?</p>
+		</div>
+	);
 	return hbar;
 }
 

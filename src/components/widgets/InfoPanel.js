@@ -62,7 +62,7 @@ function InfoPanel({ game, app, playerColor }) {
 			}
 		}
 		panel = (
-			<div className="sm-up col-4 col-lg-3 px-0 gameStatus-col bg-md-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
+			<div className="sm-up col-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
 				<div className="row no-gutters">
 					{winLabel}
 					{turnLabel}
@@ -84,7 +84,7 @@ function InfoPanel({ game, app, playerColor }) {
 						</div>
 					</div>
 				</div>
-				<HelpBar game={game} app={app} wrapperClass={"d-none d-md-table w-100"} wrapperStyles={{ height: 'auto' }} />
+				<HelpBar game={game} app={app} wrapperClass={"d-none d-md-table w-100"} wrapperStyles={{ height: '8rem' }} />
 				<div className="d-none">
 					<TileRack game={game} app={app} />
 				</div>

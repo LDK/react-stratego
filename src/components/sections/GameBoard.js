@@ -113,8 +113,29 @@ class GameBoard extends React.Component {
 		this.checkTilesPlaced();
 	}
 	highlightSpace(id) {
+		if (typeof id == 'object') {
+			if (id == null) {
+				if (!!this.state.highlighted) {
+					if (typeof this.state.highlighted == 'object') {
+						for (var n in this.state.highlighted) {
+							this.resetSpace(this.state.highlighted[n]);
+						}
+					}
+					else {
+						this.resetSpace(this.state.highlighted);
+					}
+				}
+			}
+			else {
+				for (var i in id) {
+					this.resetSpace(id[i]);
+				}
+			}
+		}
+		else {
+			this.resetSpace(id);
+		}
 		this.setState({ highlighted: id });
-		this.resetSpace(id);
 	}
 	highlightByKeyboard() {
 		var spaceId = parseInt(this.state.selectedSpace || 1);
@@ -152,7 +173,7 @@ class GameBoard extends React.Component {
 		else if (id > maxId) {
 			id = Math.min(oldSelected,maxId);
 		}
-		this.setState({ selectedSpace: id });
+		this.setState({ selectedSpace: id, highlightedSpace: null });
 		this.resetSpace(id);
 		this.resetSpace(oldSelected);
 		var ts = Date.now() / 1000;

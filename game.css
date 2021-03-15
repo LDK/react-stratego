@@ -1349,6 +1349,7 @@ ul.suggestions {
 	background-color: rgba(0, 0, 0, 0.75);
 	bottom: 0;
 	left: 0;
+	padding: 0;
 	position: fixed;
 }
 .placement #help-bar span {
@@ -1359,6 +1360,26 @@ ul.suggestions {
 	background-color: rgba(0,0,0,.75);
 	vertical-align: middle;
 	color: white;
+}
+#help-bar-close {
+	display: none;
+	text-decoration: none !important;
+}
+.placement #help-bar-close {
+	display: block;
+	position: absolute;
+	top: .5rem;
+	right: 1rem;
+	font-weight: 700;
+}
+#help-bar-open {
+	display: none;
+}
+.help-bar-minimized #help-bar-open {
+	display: table;
+}
+.help-bar-minimized #help-bar {
+	display: none !important;
 }
 @media (min-width:992px) {
 	#help-bar {
@@ -1396,24 +1417,34 @@ ul.suggestions {
 		font-size: 1rem;
 		font-weight: 300;
 	}
+	#help-bar-close {
+		cursor: pointer;
+	}
 	.circle-link {
+		cursor: pointer;
 		color: white;
 		font-size: 2rem;
 		position: fixed;
 		bottom: 3rem;
-		left: 2rem;
+		left: 1.5rem;
 		border: 3px solid white;
-		width: 3.4rem;
+		width: 3.5rem;
 		height: 3rem;
 		text-align: center;
 		vertical-align: middle;
 		border-radius: 50%;
 		margin: 0;
+		padding: 0;
 		display: table;
 		background-color: rgba(0, 0, 0, 0.33);
 		backdrop-filter: hue-rotate(45deg);
 		-webkit-backdrop-filter: hue-rotate(45deg);
 		z-index: 3;
+	}
+	.circle-link span {
+		display: table-cell;
+		vertical-align: middle;
+		font-weight: 700;
 	}
 }
 

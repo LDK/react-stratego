@@ -28,12 +28,15 @@ function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles
 		wrapperClass += " transparent";
 	}
 	hbar = (
-		<div className={wrapperClass} id="help-bar" style={wrapperStyles}>
-			<span className={textClass} style={textStyles}>
-				{helpText}
-				{helpSubtext}
-			</span>
-			<p className="circle-link">?</p>
+		<div>
+			<div className={wrapperClass} id="help-bar" style={wrapperStyles}>
+				<span className={textClass} style={textStyles}>
+					{helpText}
+					{helpSubtext}
+				</span>
+				<a className="text-white" id="help-bar-close" onClick={game.closeHelpBar}>X</a>
+			</div>
+			<a className="circle-link text-white" id="help-bar-open" onClick={game.openHelpBar}>?</a>
 		</div>
 	);
 	return hbar;

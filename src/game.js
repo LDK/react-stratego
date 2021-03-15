@@ -41,6 +41,8 @@ class Game extends React.Component {
 		this.resetHelpText =  this.resetHelpText.bind(this);
 		this.startGame = this.startGame.bind(this);
 		this.modeChange = this.modeChange.bind(this);
+		this.openHelpBar = this.openHelpBar.bind(this);
+		this.closeHelpBar = this.closeHelpBar.bind(this);
 		this.openQuickLoadModal = this.openQuickLoadModal.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);
@@ -264,6 +266,12 @@ class Game extends React.Component {
 		}
 		this.setState({turn: turn});
 	}
+	closeHelpBar() {
+		this.setState({ helpBarMinimized: true });
+	}
+	openHelpBar() {
+		this.setState({ helpBarMinimized: false });
+	}
 	modeChange(val) {
 		this.setState({ placementMode: val });
 		if (val == 'keyboard') {
@@ -301,6 +309,10 @@ class Game extends React.Component {
 			if (this.state.turn && this.state.status && this.state.status != 'done') {
 				gameClass += ' turn-' + this.state.turn;
 			}
+			gameClass += ' started';
+		}
+		if (this.state.helpBarMinimized) {
+			gameClass += ' help-bar-minimized';
 		}
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (

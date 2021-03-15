@@ -269,7 +269,7 @@ a.button:active {
 	pointer-events: none;
 	z-index: 1;
 }
-.gameSpace-wrapper.droppable .gameSpace-overlay {
+.started .gameSpace-wrapper.droppable .gameSpace-overlay {
 	background-color: yellow;
 	z-index: 1;
 	opacity: .6;
@@ -696,6 +696,7 @@ div.captured-tiles label {
 }
 .optionIndicator ul li label {
 	font-size: .8rem;
+	position: relative;
 }
 /* Create a custom radio button */
 .optionIndicator ul li label .checkmark {
@@ -718,6 +719,13 @@ div.captured-tiles label {
 	margin-right: 0rem !important;
 	width: 100%;
 }
+.optionIndicator ul.horizontal {
+	height: 6rem;
+}
+.optionIndicator ul.horizontal li {
+	
+}
+
 /* When the radio button is checked, add a blue background */
 .optionIndicator ul li label input:checked ~ .checkmark {
 	background-color: var(--disabled-light);

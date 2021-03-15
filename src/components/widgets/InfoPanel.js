@@ -3,6 +3,7 @@ import UserLink from './UserLink.js';
 import OptionIndicator from './OptionIndicator.js';
 import TileRack from '../sections/TileRack.js';
 import HelpBar from './HelpBar.js';
+import { isMobile } from "react-device-detect";
 
 function InfoPanel({ game, app, playerColor }) {
 	var panel = '';
@@ -19,10 +20,9 @@ function InfoPanel({ game, app, playerColor }) {
 						labelClass="px-2 px-md-3"
 						listLabelClass="pb-2"
 						options={[
-							// {key: 'Drag & Drop', value: 'drag', className: 'lg-up', tooltip: 'Drag & drop tiles from the rack to the board'},
-							{key: 'Tap & Place', value: 'click', className: 'md-down', tooltip: 'Tap the tile on the rack you want to place, then tap the space(s) where you want to place it'},
-							{key: 'Click & Place', value: 'click', className: 'lg-up', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
-							{key: 'Keyboard', value: 'keyboard', className: 'lg-up', tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'},
+							// {key: 'Drag & Drop', value: 'drag', exclude: isMobile, tooltip: 'Drag & drop tiles from the rack to the board'},
+							{key: 'Click & Place', value: 'click', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
+							{key: 'Keyboard', value: 'keyboard', exclude: isMobile, tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'},
 							{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: game.openQuickLoadModal},
 							{key: 'Erase', value: 'erase', tooltip: 'Click to remove tiles you have placed' }
 						]} 

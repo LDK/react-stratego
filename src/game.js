@@ -10,6 +10,8 @@ import { DndProvider } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import { isMobile } from "react-device-detect";
 
+const placementAction = isMobile ? 'Tap' : 'Click';
+
 class Game extends React.Component {
 	constructor(props) {
 		super(props);
@@ -195,22 +197,8 @@ class Game extends React.Component {
 		});
 	}
 	resetHelpText() {
-		if (!this.state.started && this.state.placementMode == 'click' && !!this.props.app.tileRack) {
-			var placementAction = isMobile ? 'Tap' : 'Click';
-			this.setHelpText({
-				headline: placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',
-				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
-			});
-		}
-		else if (!this.state.started && this.state.placementMode == 'erase' && !!this.props.app.tileRack) {
-			var placementAction = isMobile ? 'Tap' : 'Click';
-			this.setHelpText(placementAction + ' a ' + this.props.app.tileRack.playerColor + ' tile on the board to return it to the rack');
-		}
-		else if (!this.state.started && this.state.placementMode == 'keyboard' && !!this.props.app.tileRack) {
-			this.setHelpText({
-				headline: placementAction + 'Use the arrow keys to choose a square.',
-				subtext: 'Type rank (1-9,S,F,B) to place a piece, or X to erase.'
-			});
+		if (!this.state.started && this.state.placementMode == 'click' && !!this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
+			this.setHelpText(this.HelpMessages.clickSelected);
 		}
 		else if (this.state.started && !!this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
 			if (isMobile) {
@@ -231,6 +219,22 @@ class Game extends React.Component {
 		}
 	}
 	componentDidMount() {
+		this.HelpMessages = {
+			'clickSelected': {
+				headline: placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',
+				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
+			},
+			'quickSelected': {
+				headline: 'Using a preset tile configuration.',
+				subtext: isMobile ? false : 'You can drag & drop tiles to rearrange them.'
+			},
+			'keyboardSelected': {
+				headline: 'Use the arrow keys to choose a square.',
+				subtext: 'Type rank (1-9, S, F, B) to place a piece, or X to erase.'
+			},
+			'eraseSelected': placementAction + ' a ' + this.props.app.tileRack.playerColor + ' tile on the board to return it to the rack'
+		};
+
 		this.props.app.gameRef = this;
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
 		this.resetHelpText();
@@ -294,7 +298,9 @@ class Game extends React.Component {
 		if (val != 'quick') {
 			this.props.app.gameBoard.QuickLoadMenu.previousMode = val;
 		}
-		this.resetHelpText();
+		if (typeof this.HelpMessages != 'undefined') {
+			this.setHelpText(this.HelpMessages[val+'Selected']);
+		}
 	}
 	openQuickLoadModal() {
 		var app = this.props.app;

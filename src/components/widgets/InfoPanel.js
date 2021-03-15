@@ -20,11 +20,11 @@ function InfoPanel({ game, app, playerColor }) {
 						labelClass="px-2 px-md-3"
 						listLabelClass="pb-2"
 						options={[
-							// {key: 'Drag & Drop', value: 'drag', exclude: isMobile, tooltip: 'Drag & drop tiles from the rack to the board'},
-							{key: 'Click & Place', value: 'click', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
-							{key: 'Keyboard', value: 'keyboard', exclude: isMobile, tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'},
-							{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: game.openQuickLoadModal},
-							{key: 'Erase', value: 'erase', tooltip: 'Click to remove tiles you have placed' }
+							// {key: 'Drag & Drop', value: 'drag', exclude: isMobile },
+							{key: 'Click & Place', value: 'click' },
+							{key: 'Keyboard', value: 'keyboard', exclude: isMobile },
+							{key: 'Quick Load', value: 'quick', onSelect: game.openQuickLoadModal},
+							{key: 'Erase', value: 'erase' }
 						]} 
 						name="placementMode" label="Placement Mode"
 						callback={game.modeChange} 

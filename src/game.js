@@ -202,6 +202,16 @@ class Game extends React.Component {
 				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
 			});
 		}
+		else if (!this.state.started && this.state.placementMode == 'erase' && !!this.props.app.tileRack) {
+			var placementAction = isMobile ? 'Tap' : 'Click';
+			this.setHelpText(placementAction + ' a ' + this.props.app.tileRack.playerColor + ' tile on the board to return it to the rack');
+		}
+		else if (!this.state.started && this.state.placementMode == 'keyboard' && !!this.props.app.tileRack) {
+			this.setHelpText({
+				headline: placementAction + 'Use the arrow keys to choose a square.',
+				subtext: 'Type rank (1-9,S,F,B) to place a piece, or X to erase.'
+			});
+		}
 		else if (this.state.started && !!this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
 			if (isMobile) {
 				if (!this.props.app.gameBoard.selectedRank) {
@@ -284,6 +294,7 @@ class Game extends React.Component {
 		if (val != 'quick') {
 			this.props.app.gameBoard.QuickLoadMenu.previousMode = val;
 		}
+		this.resetHelpText();
 	}
 	openQuickLoadModal() {
 		var app = this.props.app;

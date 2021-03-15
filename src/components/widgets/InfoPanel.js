@@ -14,8 +14,8 @@ function InfoPanel({ game, app, playerColor }) {
 					<OptionIndicator id="placementMode" className="col-12 px-0 lg-up mb-3" layout="horizontal" 
 						value={game.state.placementMode}
 						disableArrows={true}
-						ulClass="text-center px-0 mt-3"
-						liClass="col-4 col-md-6 px-0 mx-2 pt-3 mx-auto"
+						ulClass="text-center px-0"
+						liClass="col-6 col-sm-4 col-md-6 p-0 mx-auto h-50"
 						disabled={game.state.players[playerColor].ready}
 						labelClass="px-2 px-md-3"
 						listLabelClass="pb-2"

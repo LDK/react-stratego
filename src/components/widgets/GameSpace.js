@@ -155,7 +155,7 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 		if (canDrop && isOver) {
 			spaceClass = 'drop-target';
 		}
-		else if (canDrop) {
+		else if (canDrop && game.state.started) {
 			spaceClass = 'droppable';
 		}
 		else {

@@ -76,6 +76,7 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 				board.swapPieces(board.state.selectedSpace,id);
 				board.highlightSpace(null);
 				board.selectSpace(null);
+				game.resetHelpText();
 			}
 
 			var rank = game.selectedRank;
@@ -154,7 +155,7 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 		if (canDrop && isOver) {
 			spaceClass = 'drop-target';
 		}
-		else if (canDrop) {
+		else if (canDrop && game.state.started) {
 			spaceClass = 'droppable';
 		}
 		else {

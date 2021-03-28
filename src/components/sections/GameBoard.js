@@ -6,6 +6,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 import { isMobile } from "react-device-detect";
+import HelpBar from '../widgets/HelpBar.js';
 
 class GameBoard extends React.Component {
 	constructor(props) {
@@ -46,19 +47,9 @@ class GameBoard extends React.Component {
 	componentDidMount() {
 		var app = this.props.app;
 		app.gameBoard = this;
-		var game = this.props.game;
 		var spaces = this.props.game.props.spaces;
 		var uid = app.state.currentUser.user_id;
-
-		if (app.tileRack) {
-			if (game.props.starter == uid) {
-				app.tileRack.playerColor = 'blue';
-			}
-			else {
-				app.tileRack.playerColor = 'red';
-			}
-		}
-		if (spaces && app.tileSpaces) {
+		if (!!spaces && !!app.tileSpaces) {
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;
@@ -122,8 +113,29 @@ class GameBoard extends React.Component {
 		this.checkTilesPlaced();
 	}
 	highlightSpace(id) {
+		if (typeof id == 'object') {
+			if (id == null) {
+				if (!!this.state.highlighted) {
+					if (typeof this.state.highlighted == 'object') {
+						for (var n in this.state.highlighted) {
+							this.resetSpace(this.state.highlighted[n]);
+						}
+					}
+					else {
+						this.resetSpace(this.state.highlighted);
+					}
+				}
+			}
+			else {
+				for (var i in id) {
+					this.resetSpace(id[i]);
+				}
+			}
+		}
+		else {
+			this.resetSpace(id);
+		}
 		this.setState({ highlighted: id });
-		this.resetSpace(id);
 	}
 	highlightByKeyboard() {
 		var spaceId = parseInt(this.state.selectedSpace || 1);
@@ -161,7 +173,7 @@ class GameBoard extends React.Component {
 		else if (id > maxId) {
 			id = Math.min(oldSelected,maxId);
 		}
-		this.setState({ selectedSpace: id });
+		this.setState({ selectedSpace: id, highlightedSpace: null });
 		this.resetSpace(id);
 		this.resetSpace(oldSelected);
 		var ts = Date.now() / 1000;
@@ -459,6 +471,7 @@ class GameBoard extends React.Component {
 				if (!spaces[id].props.occupied) {
 					// Render the target space with the piece in it, and empty the source space.
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);
+					// TODO: Review whether this is necessary.  If not, get rid of toggleTurn on <Game>
 					this.props.game.toggleTurn();
 				}
 				else {
@@ -510,6 +523,7 @@ class GameBoard extends React.Component {
 						});
 					});
 				}
+				game.resetHelpText();
 			}
 		}
 		if (tileSpace) {
@@ -533,6 +547,10 @@ class GameBoard extends React.Component {
 					app.tileRack.remaining--;
 					if (!app.tileRack.remaining) {
 						app.tileRack.setState({ allPlaced: true });
+					}
+					if (!tileSpace.remaining) {
+						game.selectedRank = null;
+						game.resetHelpText();
 					}
 				}
 			}
@@ -637,8 +655,9 @@ class GameBoard extends React.Component {
 		var game = this.props.game;
 		var app = this.props.app;
 		var classes = 'gameBoard';
+		var helpBar = game.state.started ? null : (<HelpBar game={game} app={app} />);
 		if (!game.state.started) {
-			classes += ' placement zoom mode-'+game.state.placementMode;
+			classes += ' placement mode-'+game.state.placementMode;
 		}
 		return (
 			<div className={classes}>
@@ -653,6 +672,7 @@ class GameBoard extends React.Component {
 					additionalClasses={"p-5 text-black"}
 				/>
 				{this.gameSpaceRows(1,10,10)}
+				{helpBar}
 			</div>
 		)
 	}

@@ -2,17 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import GameBoard from './components/sections/GameBoard.js';
-import TileRack from './components/sections/TileRack.js';
 import GamePiece from './components/widgets/GamePiece.js';
-import UserLink from './components/widgets/UserLink.js';
-import OptionIndicator from './components/widgets/OptionIndicator.js';
-import ReactTooltip from 'react-tooltip';
+import InfoPanel from './components/widgets/InfoPanel.js';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
-import { useDrag } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import { isMobile } from "react-device-detect";
+
+const placementAction = isMobile ? 'Tap' : 'Click';
 
 class Game extends React.Component {
 	constructor(props) {
@@ -41,8 +39,12 @@ class Game extends React.Component {
 			this.state.placementMode = 'click';
 		}
 		this.selectedRank =  null;
+		this.setHelpText =  this.setHelpText.bind(this);
+		this.resetHelpText =  this.resetHelpText.bind(this);
 		this.startGame = this.startGame.bind(this);
 		this.modeChange = this.modeChange.bind(this);
+		this.openHelpBar = this.openHelpBar.bind(this);
+		this.closeHelpBar = this.closeHelpBar.bind(this);
 		this.openQuickLoadModal = this.openQuickLoadModal.bind(this);
 		this.addCaptured = this.addCaptured.bind(this);
 		this.clearCaptured = this.clearCaptured.bind(this);
@@ -56,6 +58,34 @@ class Game extends React.Component {
 				this.addCaptured({color: pieceColor, rank: pieceRank },true);
 			}
 		}
+	}
+	setHelpText(text) {
+		if (typeof text == 'object' && !!text) {
+			if (!!text.$$typeof) {
+				// If we are passed JSX markup, just pass that through as the headline text with no subtext
+				var headline = text;
+				var subtext = false;
+			}
+			else {
+				var { headline, subtext } = text;
+			}
+		}
+		else if (typeof text == 'string') {
+			var headline = text;
+			var subtext = false;
+		}
+		else if (!text) {
+			var headline = false;
+			var subtext = false;
+		}
+		else {
+			// hey get out 
+			return;
+		}
+		this.setState({
+			helpText: headline,
+			helpSubtext: subtext
+		});
 	}
 	pollOpponentStatus(){
 		var app = this.props.app;
@@ -95,7 +125,7 @@ class Game extends React.Component {
 				var attacks = gameData.attacks;
 				var last_move = gameData.last_move ? JSON.parse(gameData.last_move) : {};
 				var gameChanges = {};
-				if (last_move && (app.tileRack.playerColor != last_move.color) && (!game.state.last_move || (last_move.ts != game.state.last_move.ts))) {
+				if (last_move && !!app.tileRack && (app.tileRack.playerColor != last_move.color) && (!game.state.last_move || (last_move.ts != game.state.last_move.ts))) {
 					gameChanges.last_move = last_move;
 				}
 				var opponentColor;
@@ -124,6 +154,7 @@ class Game extends React.Component {
 				}
 				if (Object.keys(gameChanges).length) {
 					game.setState(gameChanges);
+					game.resetHelpText();
 				}
 				var last_attack = null;
 				if (attacks != game.state.attacks) {
@@ -165,9 +196,48 @@ class Game extends React.Component {
 			});
 		});
 	}
+	resetHelpText() {
+		if (!this.state.started && this.state.placementMode == 'click' && !!this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
+			this.setHelpText(this.HelpMessages.clickSelected);
+		}
+		else if (this.state.started && !!this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
+			if (isMobile) {
+				if (!this.props.app.gameBoard.selectedRank) {
+					var headline = 'Tap a ' + this.props.app.tileRack.playerColor + ' tile to select it.';
+				}
+				else {
+					var headline = 'Tap a highlighted square to move the selected piece there';
+				}
+			}
+			else {
+				var headline = 'Drag & drop a ' + this.props.app.tileRack.playerColor + ' tile to make your move.';
+			}
+			this.setHelpText(headline);
+		} 
+		else {
+			this.setHelpText(null);
+		}
+	}
 	componentDidMount() {
+		this.HelpMessages = {
+			'clickSelected': {
+				headline: placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',
+				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
+			},
+			'quickSelected': {
+				headline: 'Using a preset tile configuration.',
+				subtext: isMobile ? false : 'You can drag & drop tiles to rearrange them.'
+			},
+			'keyboardSelected': {
+				headline: 'Use the arrow keys to choose a square.',
+				subtext: 'Type rank (1-9, S, F, B) to place a piece, or X to erase.'
+			},
+			'eraseSelected': placementAction + ' a ' + this.props.app.tileRack.playerColor + ' tile on the board to return it to the rack'
+		};
+
 		this.props.app.gameRef = this;
 		this.opponentPoll = setInterval( this.pollOpponentStatus, 3000 );
+		this.resetHelpText();
 	}
 	clearCaptured() {
 		this.state.captured = { blue: {}, red: {} };
@@ -180,6 +250,7 @@ class Game extends React.Component {
 		}
 		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} extraClass="w-50 d-inline-block mb-2" />
 		if (loading) {
+			// this needs to go away 
 			this.state.captured = captured;
 		}
 		else {
@@ -209,6 +280,12 @@ class Game extends React.Component {
 		}
 		this.setState({turn: turn});
 	}
+	closeHelpBar() {
+		this.setState({ helpBarMinimized: true });
+	}
+	openHelpBar() {
+		this.setState({ helpBarMinimized: false });
+	}
 	modeChange(val) {
 		this.setState({ placementMode: val });
 		if (val == 'keyboard') {
@@ -220,6 +297,9 @@ class Game extends React.Component {
 		}
 		if (val != 'quick') {
 			this.props.app.gameBoard.QuickLoadMenu.previousMode = val;
+		}
+		if (typeof this.HelpMessages != 'undefined') {
+			this.setHelpText(this.HelpMessages[val+'Selected']);
 		}
 	}
 	openQuickLoadModal() {
@@ -238,113 +318,28 @@ class Game extends React.Component {
 		if (this.props.id) {
 			app.gameStates[this.props.id] = this.state;
 		}
-		var gameBoard = <GameBoard game={this} app={app} />;
-		var rightPanel;
-		var gameClass = "container mx-auto";
 		var uid = parseInt(app.state.currentUser.user_id);
 		var starterUid = parseInt(this.props.starter);
 		var playerColor = (uid == starterUid) ? 'blue' : 'red';
-		var playerColorClass;
-		if (playerColor) {
-			playerColorClass = ' player-'+playerColor;
-		}
-		gameClass += playerColorClass;
-		if (!this.state.started) {
-			rightPanel = (
-				<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-md-white mt-lg-3 mr-xl-auto">
-					<div className="row no-gutters pt-1 pt-md-3">
-						<OptionIndicator id="placementMode" className="col-12 px-0 lg-up mb-3" layout="horizontal" 
-							value={this.state.placementMode}
-							disableArrows={true}
-							ulClass="text-center px-0 mt-3"
-							liClass="col-4 col-md-6 px-0 mx-2 pt-3 mx-auto"
-							disabled={this.state.players[playerColor].ready}
-							labelClass="px-2 px-md-3"
-							listLabelClass="pb-2"
-							options={[
-								// {key: 'Drag & Drop', value: 'drag', className: 'lg-up', tooltip: 'Drag & drop tiles from the rack to the board'},
-								{key: 'Tap & Place', value: 'click', className: 'md-down', tooltip: 'Tap the tile on the rack you want to place, then tap the space(s) where you want to place it'},
-								{key: 'Click & Place', value: 'click', className: 'lg-up', tooltip: 'Click the tile on the rack you want to place, then click the space(s) where you want to place it'},
-								{key: 'Keyboard', value: 'keyboard', className: 'lg-up', tooltip: 'Use the arrow keys to select a square and place tiles by typing the rank'},
-								{key: 'Quick Load', value: 'quick', tooltip: 'Choose from a list of preset tile layouts', onSelect: this.openQuickLoadModal},
-								{key: 'Erase', value: 'erase', tooltip: 'Click to remove tiles you have placed' }
-							]} 
-							name="placementMode" label="Placement Mode"
-							callback={this.modeChange} 
-						/>
-						<div className="col-12 mx-auto">
-							<TileRack game={this} app={app} />
-						</div>
-					</div>
-				</div>
-			);
-		}
-		else {
-			var turnLabel, winLabel;
-			var turnClass;
+		var gameClass = "container mx-auto player-"+playerColor;
+		if (this.state.started) {
 			if (this.state.turn && this.state.status && this.state.status != 'done') {
-				turnLabel = (<h6 className="text-center mx-auto my-3">Current Turn: <br className="sm-down" /><span className={"text-"+this.state.turn}>{this.state.players[this.state.turn].name}</span></h6>);
-				turnClass = ' turn-'+this.state.turn;
+				gameClass += ' turn-' + this.state.turn;
 			}
-			else if (this.state.status && this.state.status == 'done') {
-				var winnerName, winnerClass;
-				if (this.state.winner_uid == starterUid) {
-					winnerName = this.props.starterName;
-					winnerClass = 'text-blue';
-				}
-				else {
-					winnerName = this.props.opponentName;
-					winnerClass = 'text-red';
-				}
-				var winnerInfo = { name: winnerName, id: this.state.winner_uid};
-				var winnerLink = (<UserLink app={app} user={winnerInfo} className={"anchor "+winnerClass} />);
-				winLabel = (<h5 className="text-center mx-auto mt-4">{winnerLink} is the winner!</h5>);
-			}
-			var captured = { red: [], blue: [] };
-			for (var color in this.state.captured) {
-				for (var rank in this.state.captured[color]) {
-					captured[color].push(this.state.captured[color][rank]);
-				}
-			}
-			gameClass += turnClass+playerColorClass;
-			rightPanel = (
-				<div className="sm-up col-4 col-lg-3 px-0 gameStatus-col bg-md-white text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
-					<div className="row no-gutters">
-						{winLabel}
-						{turnLabel}
-						<h4 className="mx-auto d-block my-3 col-12">Captured</h4>
-						<div className="col-6 px-3">
-							<span className="text-red">
-								<UserLink app={app} user={this.state.players.red} className="anchor" />
-							</span>
-							<div className="captured-tiles player-red mt-3">
-								{captured.red.length ? captured.red : 'None'}
-							</div>
-						</div>
-						<div className="col-6 px-3">
-							<span className="text-blue">
-								<UserLink app={app} user={this.state.players.blue} className="anchor" />
-							</span>
-							<div className="captured-tiles player-blue mt-3">
-								{captured.blue.length ? captured.blue : 'None'}
-							</div>
-						</div>
-					</div>
-					<div className="d-none">
-						<TileRack game={this} app={app} />
-					</div>
-				</div>
-			);
+			gameClass += ' started';
+		}
+		if (this.state.helpBarMinimized) {
+			gameClass += ' help-bar-minimized';
 		}
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
 			<div className={gameClass}>
-			<DndProvider backend={MultiBackend} options={backendOpts}>
+				<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
+						<InfoPanel game={this} app={app} playerColor={playerColor} />
 						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
-							{gameBoard}
+							<GameBoard game={this} app={app} />
 						</div>
-						{rightPanel}
 					</div>
 				</DndProvider>
 			</div>

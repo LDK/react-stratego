@@ -32,13 +32,16 @@ class OptionIndicator extends React.Component {
 		var cb = this.callback;
 		var layout = state.layout;
 		const radios = this.props.options.map((opt,i) => 
-			<li className={props.liClass+" "+opt.className} key={i} onClick={opt.onSelect} data-tip={opt.tooltip}>
-				<label className={props.labelClass}>{opt.key}
-					<input type="radio" defaultChecked={opt.value === state.value}
-					tabIndex="-1" value={opt.value} name={props.name} disabled={props.disabled} onClick={cb} />
-					<span className="checkmark"></span>
-				</label>
-			</li>
+			!!opt.exclude ? null : (
+				<li className={props.liClass+" "+opt.className} key={i} onClick={opt.onSelect} data-tip={opt.tooltip}>
+					<label className={props.labelClass}>
+						<p className="mt-3">{opt.key}</p>
+						<input type="radio" defaultChecked={opt.value === state.value}
+						tabIndex="-1" value={opt.value} name={props.name} disabled={props.disabled} onClick={cb} />
+						<span className="checkmark"></span>
+					</label>
+				</li>
+			)
 		);
 		var listClass = props.ulClass + " " + layout;
 		var wrapperClass = "optionIndicator text-center" +  (props.disabled ? ' disabled ' : ' ') + (this.props.className || '');

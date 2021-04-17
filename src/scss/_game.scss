@@ -275,6 +275,11 @@
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
+	@include atleast_res($lg) {
+		width: unset;
+		height: unset;
+	}
+	
 }
 .gameBoard .gamePiece, .gameBoard .tileFace {
 	@include below_res($sm) {
@@ -290,6 +295,9 @@
 	}
 	@include between_res($md, $lg - 1) {
 		width: calc((var(--square-size-tablet) * 10));
+	}
+	@include atleast_res($lg) {
+		width: unset;
 	}
 }
 #presetSelector {

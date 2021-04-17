@@ -789,13 +789,6 @@ span.notification-counter {
     width: var(--square-size-tablet);
   }
 }
-@media (min-width: 992px) {
-  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
-.gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
-    height: var(--square-size-default);
-    width: var(--square-size-default);
-  }
-}
 
 @media (max-width: 575px) {
   .gameBoard .gamePiece, .gameBoard .tileFace {

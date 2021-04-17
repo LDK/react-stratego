@@ -276,11 +276,6 @@
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
-	@include atleast_res($lg) {
-		height: var(--square-size-default);
-		width: var(--square-size-default);
-	}
-	
 }
 .gameBoard .gamePiece, .gameBoard .tileFace {
 	@include below_res($sm) {

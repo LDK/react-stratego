@@ -775,14 +775,14 @@ span.notification-counter {
     width: var(--square-size-portrait);
   }
 }
-@media (min-width: 576px) {
+@media (min-width: 576px) and (max-width: 767px) {
   .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
 .gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-landscape);
     width: var(--square-size-landscape);
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 991px) {
   .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
 .gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-tablet);

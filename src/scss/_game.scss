@@ -268,11 +268,11 @@
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
 	}
-	@include atleast_res($sm) {
+	@include between_res($sm, $md - 1) {
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
-	@include atleast_res($md) {
+	@include between_res($md, $lg - 1) {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}

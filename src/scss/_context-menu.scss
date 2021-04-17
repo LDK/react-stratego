@@ -1,0 +1,34 @@
+// Context menu
+div.contextMenu-wrapper {
+	a {
+		position: relative;
+		background-image: url(img/see-more-vertical.svg);
+		background-repeat: no-repeat;
+		background-size: 75%;
+		-webkit-appearance: none;
+		border-radius: 3rem;
+		background-position: center 75%;
+		background-color: transparent;
+		cursor: pointer;
+		outline: none !important;
+		height: 24px;
+		width: 18px;
+		display: inline-block;
+	}
+	select {
+		position: absolute;
+		z-index: 5;
+		overflow: auto;
+		cursor: pointer;
+		option:hover {
+			color: white;
+			background-color: blue;
+		}
+	}
+	&:not(.open) {
+		select {
+			display: none;
+			position: absolute;
+		}
+	}
+}

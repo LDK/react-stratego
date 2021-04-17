@@ -1,0 +1,48 @@
+// Variables
+$xs: 320px;
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1200px;
+$hd: 1800px;
+
+body {
+	--blue-button: #3777c7;
+	--blue-shadow: #275797;
+	--blue-highlight: #6797c7;
+	--blue-light: #d7e7f7;
+	--blue-grey: #373757;
+	--blue-dark: #171747;
+	--green-light: #d7f7e7;
+	--green-grey: #97B797;
+	--green-dark: #174717;
+	--green-darker: #063606;
+	--white: #f7f7f7;
+	--red-button: rgb(199,55,55);
+	--red-button-glow: rgba(255,111,111,.5);
+	--red-shadow: #672727;
+	--red-highlight: #e78787;
+	--grey: #373737;
+	--blue-grey-light: #c7cee7;
+	--disabled-highlight: #676767;
+	--disabled-light: #c7c7c7;
+	--small-label-size: 12px;
+	--yellow-highlight: #c7c767;
+	--yellow-light: #f7f7d7;
+	--space-border: rgba(2,2,2,.9);
+	--midtone1: #79bd9a;
+	--midtone2: #a8dba8;
+	--highlight: #cff09e;
+	--dark: #3b8686;
+	--darker: #1b6666;
+	--water: #3880be;
+	--grass: #7cc43f;
+	--sand: #d1c05b;
+	--unpassable: rgba(255,64,64,.75);
+	--square-size-default: 54px;
+	--square-size-tablet: 45px;
+	--square-size-landscape: 29px;
+	--square-size-portrait: 38px;
+	--glow-high: rgba(212,212,116,0.9);
+	--glow-low: rgba(212,212,116,0.4);
+}

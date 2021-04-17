@@ -1,0 +1,144 @@
+// Modals
+.modal-container {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	transition: all .25s;
+	.modal-overlay {
+		opacity: 0;
+		pointer-events: none;
+		z-index: 2;
+		background-color: rgba(0,0,0,.66);
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	.modal-wrapper {
+		position: fixed;
+		display: block;
+		background: white;
+		z-index: 3;
+		margin: 0px;
+		opacity: 0;
+		transition: all .25s;
+		pointer-events: none;
+		height: 100%;
+		top: 0;
+		width: 100%;
+		left: 0;
+		@include atleast_res($md) {
+			height: 72%;
+			top: 14%;
+			width: 76%;
+			left: 12%;
+			&.height-xlarge {
+				height: 90%;
+				top: 5%;
+			}
+			&.width-xlarge {
+				width: 92%;
+				left: 4%;
+			}
+			&.height-large {
+				height: 82%;
+				top: 9%;
+			}
+			&.width-large {
+				width: 84%;
+				left: 8%;
+			}
+			&.height-small {
+				height: 56%;
+				top: 22%;
+			}
+			&.width-small {
+				width: 56%;
+				left: 22%;
+			}
+		}
+		@include atleast_res($lg) {
+			height: 72%;
+			top: 14%;
+			width: 70%;
+			left: 15%;
+			&.height-xlarge {
+				height: 90%;
+				top: 5%;
+			}
+			&.width-xlarge {
+				width: 86%;
+				left: 7%;
+			}
+			&.height-large {
+				height: 82%;
+				top: 9%;
+			}
+			&.width-large {
+				width: 76%;
+				left: 12%;
+			}
+			&.height-small {
+				height: 66%;
+				top: 17%;
+			}
+			&.width-small {
+				width: 64%;
+				left: 18%;
+			}
+		}
+		@include atleast_res($xl) {
+			width: 50%;
+			left: 25%;
+			&.height-xlarge {
+				height: 86%;
+				top: 7%;
+			}
+			&.width-xlarge {
+				width: 76%;
+				left: 12%;
+			}
+			&.height-large {
+				height: 76%;
+				top: 12%;
+			}
+			&.width-large {
+				width: 64%;
+				left: 18%;
+			}
+			&.height-small {
+				height: 50%;
+				top: 25%;
+			}
+			&.width-small {
+				width: 36%;
+				left: 32%;
+			}
+		}
+	}
+	&.open {
+		transition: all .25s;
+		pointer-events: auto;
+		.modal-wrapper {
+			transition: all .25s;
+			opacity: 1;
+			pointer-events: auto;
+		}
+		.modal-overlay {
+			opacity: 1;
+			pointer-events: auto;
+		}
+		a.close-button {
+			position: absolute !important;
+			right: 1rem;
+			background: none !important;
+			box-shadow: none !important;
+			top: 1rem;
+			font-weight: 700;
+			font-size: 1.5rem;
+			left: unset;
+		}
+	}
+}

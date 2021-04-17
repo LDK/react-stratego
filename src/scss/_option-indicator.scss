@@ -1,0 +1,74 @@
+// Option Indicators
+
+.optionIndicator {
+	ul {
+		li {
+			list-style-type: none;
+			break-inside: avoid;
+			display: inline-block;
+			position: relative;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			label {
+				font-size: .8rem;
+				position: relative;
+				.checkmark {
+					position: absolute;
+					top: 0;
+					left: calc(50% - 4px);
+					height: 8px;
+					width: 8px;
+					background-color: #6a6a6a;
+					border-radius: 50%;
+					&:after {
+						content: "";
+						position: absolute;
+						display: none;
+						width: 8px;
+						height: 8px;
+						border-radius: 50%;
+						background: var(--disabled-light);
+					}
+				}
+				input {
+					position: absolute;
+					opacity: 0;
+					&:checked ~ .checkmark {
+						background-color: var(--disabled-light);
+						&:after {
+							display: block;
+						}
+					}
+				}
+			}
+		}
+		&.vertical {
+			li {
+				label {
+					.checkmark {
+						left: auto;
+						right: auto;
+						text-align: center;
+						margin-left: -1rem;
+					}
+				}
+				margin-left: 0rem !important;
+				margin-right: 0rem !important;
+				width: 100%;
+			}
+		}
+		&.horizontal {
+			height: 6rem;
+		}
+	}
+}
+
+/* Style the indicator (dot/circle) */
+.optionIndicator ul li label .checkmark:after {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--disabled-light);
+}

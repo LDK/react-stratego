@@ -1,0 +1,35 @@
+// Typography
+h3 {
+	font-size: 1.5rem;
+}
+a.anchor {
+	color: blue;
+	cursor: pointer;
+	&:hover {
+		text-decoration: underline !important;
+	}
+}
+.no-underline {
+	text-decoration: none !important;
+}
+.underline {
+	text-decoration: underline !important;
+}
+.text-white {
+	color: white !important;
+}
+.text-black {
+	color: #333;
+}
+.text-red {
+	color: red !important;
+}
+.text-blue {
+	color: blue !important;
+}
+.player-red .text-opponent-color {
+	color: blue !important;
+}
+.player-blue .text-opponent-color {
+	color: red !important;
+}

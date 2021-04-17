@@ -1,0 +1,84 @@
+body, html {
+	margin:0;
+	padding:0;
+	width: 100%;
+	overflow: hidden;
+}
+
+// General utility
+.app-wrapper {
+	height: 100%
+}
+.hidden {
+	display: none;
+}
+.transparent {
+	opacity: 0 !important;
+	transition: all .25s;
+}
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	 -khtml-user-select: none; /* Konqueror HTML */
+		 -moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently
+									supported by Chrome and Opera */
+}
+@include atleast_res($md) {
+	.bg-md-white {
+		background-color: white !important;
+	}
+}
+
+.xs-only {
+	@include atleast_res($sm) {
+		display: none !important;
+	}
+}
+.sm-down {
+	@include atleast_res($md) {
+		display: none !important;
+	}
+}
+.md-down {
+	@include atleast_res($lg) {
+		display: none !important;
+	}
+}
+.lg-down {
+	@include atleast_res($xl) {
+		display: none !important;
+	}
+}
+.xl-down {
+	@include atleast_res($hd) {
+		display: none !important;
+	}
+}
+.sm-up {
+	@include below_res($sm) {
+		display: none !important;
+	}
+}
+.md-up {
+	@include below_res($md) {
+		display: none !important;
+	}
+}
+.lg-up {
+	@include below_res($lg) {
+		display: none !important;
+	}
+}
+.xl-up {
+	@include below_res($xl) {
+		display: none !important;
+	}
+}
+.hd-only {
+	@include below_res($hd) {
+		display: none !important;
+	}
+}
+

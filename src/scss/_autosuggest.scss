@@ -1,0 +1,22 @@
+// AutoSuggest
+
+div.no-suggestions, ul.suggestions {
+	position: absolute;
+	background: white;
+	width: calc(100% - 4rem - 2px);
+	border: 1px solid black;
+	margin-top: -1px;	
+	list-style-type: none;
+	padding-left: 0;
+}
+
+ul.suggestions {
+	cursor: pointer;
+	li {
+		padding-left: 1rem;
+		&:hover {
+			background: blue;
+			color: white;
+		}
+	}
+}

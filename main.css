@@ -782,7 +782,7 @@ span.notification-counter {
     width: var(--square-size-landscape);
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 768px) {
   .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
 .gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-tablet);
@@ -792,8 +792,8 @@ span.notification-counter {
 @media (min-width: 992px) {
   .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
 .gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
-    width: unset;
-    height: unset;
+    height: var(--square-size-default);
+    width: var(--square-size-default);
   }
 }
 
@@ -813,14 +813,14 @@ span.notification-counter {
     width: calc((var(--square-size-landscape) * 10));
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 768px) {
   .gameSpaceRow, #presetSelector {
     width: calc((var(--square-size-tablet) * 10));
   }
 }
 @media (min-width: 992px) {
   .gameSpaceRow, #presetSelector {
-    width: unset;
+    width: calc((var(--square-size-desktop) * 10));
   }
 }
 

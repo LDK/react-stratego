@@ -271,13 +271,13 @@
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
-	@include between_res($md,$lg - 1) {
+	@include atleast_res($md) {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
 	}
 	@include atleast_res($lg) {
-		width: unset;
-		height: unset;
+		height: var(--square-size-default);
+		width: var(--square-size-default);
 	}
 	
 }
@@ -293,11 +293,11 @@
 	@include atleast_res($sm) {
 		width: calc((var(--square-size-landscape) * 10));
 	}
-	@include between_res($md, $lg - 1) {
+	@include atleast_res($md) {
 		width: calc((var(--square-size-tablet) * 10));
 	}
 	@include atleast_res($lg) {
-		width: unset;
+		width: calc((var(--square-size-desktop) * 10));
 	}
 }
 #presetSelector {

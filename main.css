@@ -782,18 +782,11 @@ span.notification-counter {
     width: var(--square-size-landscape);
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 991px) {
   .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
 .gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-tablet);
     width: var(--square-size-tablet);
-  }
-}
-@media (min-width: 992px) {
-  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
-.gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
-    height: var(--square-size-default);
-    width: var(--square-size-default);
   }
 }
 
@@ -813,14 +806,9 @@ span.notification-counter {
     width: calc((var(--square-size-landscape) * 10));
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 991px) {
   .gameSpaceRow, #presetSelector {
     width: calc((var(--square-size-tablet) * 10));
-  }
-}
-@media (min-width: 992px) {
-  .gameSpaceRow, #presetSelector {
-    width: calc((var(--square-size-default) * 10));
   }
 }
 
@@ -1492,4 +1480,4 @@ ul.suggestions li:hover {
   animation: border-glow 2s linear infinite;
 }
 
-/*# sourceMappingURL=game.css.map */
+/*# sourceMappingURL=main.css.map */

@@ -271,13 +271,9 @@
 		height: var(--square-size-landscape);
 		width: var(--square-size-landscape);
 	}
-	@include atleast_res($md) {
+	@include between_res($md,$lg - 1) {
 		height: var(--square-size-tablet);
 		width: var(--square-size-tablet);
-	}
-	@include atleast_res($lg) {
-		height: var(--square-size-default);
-		width: var(--square-size-default);
 	}
 }
 .gameBoard .gamePiece, .gameBoard .tileFace {
@@ -292,11 +288,8 @@
 	@include atleast_res($sm) {
 		width: calc((var(--square-size-landscape) * 10));
 	}
-	@include atleast_res($md) {
+	@include between_res($md, $lg - 1) {
 		width: calc((var(--square-size-tablet) * 10));
-	}
-	@include atleast_res($lg) {
-		width: calc((var(--square-size-default) * 10));
 	}
 }
 #presetSelector {

@@ -615,9 +615,6 @@ span.notification-counter {
   padding: 0;
   margin: 0;
 }
-.gameSpace-wrapper:nth-child(12) .gameSpace {
-  border-bottom: 1px dashed var(--space-border);
-}
 .gameSpace-wrapper:nth-child(11) .gameSpace {
   border-right: 1px dashed var(--space-border);
 }
@@ -663,6 +660,9 @@ span.notification-counter {
 
 .gameSpaceRow {
   margin: auto;
+}
+.gameSpaceRow:nth-child(12) .gameSpace {
+  border-bottom: 1px dashed var(--space-border);
 }
 
 .gamePiece,

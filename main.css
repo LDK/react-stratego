@@ -912,6 +912,7 @@ div.captured-tiles label {
 @media (min-width: 992px) {
   .gameStatus-col {
     padding-bottom: 2rem;
+    height: 100%;
   }
 }
 

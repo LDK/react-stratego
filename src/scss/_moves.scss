@@ -1,0 +1,45 @@
+// This handles animating the other player's tiles when they make a move.
+
+@mixin move_transform($square_size) {
+	@for $spaces from 1 through 9 {
+		&.down-#{$spaces}.piece-moving-appear {
+			transform: translate(0px,calc(-#{$spaces} * #{$square_size}));
+			transition: transform 1s;
+		}
+		&.up-#{$spaces}.piece-moving-appear {
+			transform: translate(0px,calc(#{$spaces} * #{$square_size}));
+			transition: transform 1s;
+		}
+		&.left-#{$spaces}.piece-moving-appear {
+			transform: translate(calc(#{$spaces} * #{$square_size}),0px);
+			transition: transform 1s;
+		}
+		&.right-#{$spaces}.piece-moving-appear {
+			transform: translate(calc(-#{$spaces} * #{$square_size}),0px);
+			transition: transform 1s;
+		}
+	}
+}
+.gamePiece-wrapper {
+	@include move_transform(var(--square-size-default));
+	@include between_res($md,$lg - 1) {
+		@include move_transform(var(--square-size-tablet));
+	}
+	@include below_res($md) {
+		@include move_transform(var(--square-size-landscape));
+	}
+	@include below_res($sm) {
+		@include move_transform(var(--square-size-portrait));
+	}
+	&.piece-moving-enter-done.no-drag.piece-moving-appear-done {
+		transform: translate(0px,0px);
+		transition: transform 1s;
+	}
+	&.piece-moving,
+	&.piece-moving-enter,
+	&.piece-moving-enter-done,
+	&.piece-moving-appear,
+	&.piece-moving-appear-done {
+		z-index: 2;
+	}
+}

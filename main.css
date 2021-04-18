@@ -514,7 +514,7 @@ span.notification-counter {
 }
 @media (max-width: 991px) {
   .gameBoard {
-    background-color: var(--grass);
+    background-color: var(--grass) !important;
   }
 }
 @media (max-width: 991px) {
@@ -740,13 +740,28 @@ span.notification-counter {
   background-image: url("/img/stratego-piece-red.svg");
   background-size: contain;
 }
-.gameBoard .gamePiece {
-  left: -2px;
-  top: 5px;
+@media (min-width: 992px) {
+  .gameBoard .gamePiece {
+    top: 5px;
+    left: -2px;
+  }
+}
+@media (max-width: 991px) {
+  .gameBoard .gamePiece {
+    top: 3px;
+    left: 2px;
+  }
+}
+@media (max-width: 767px) {
+  .gameBoard .gamePiece {
+    top: 3px;
+    left: 2px;
+  }
 }
 @media (max-width: 575px) {
   .gameBoard .gamePiece {
     left: 4px;
+    top: 5px;
   }
 }
 .gamePiece.blue {

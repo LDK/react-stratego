@@ -16,7 +16,7 @@
 		height: 100vh;
 	}
 	@include below_res($lg) {
-		background-color: var(--grass);
+		background-color: var(--grass) !important;
 	}
 	&.zoom {
 		@include below_res($lg) {
@@ -239,10 +239,21 @@
 	background-size: contain;
 	.gameBoard & {
 		// Pieces that have been placed on the board
-		left: -2px;
-		top: 5px;
+		@include atleast_res($lg) {
+			top: 5px;
+			left: -2px;
+		}
+		@include below_res($lg) {
+			top: 3px;
+			left: 2px;
+		}
+		@include below_res($md) {
+			top: 3px;
+			left: 2px;
+		}
 		@include below_res($sm) {
 			left: 4px;
+			top: 5px;
 		}
 	}
 	&.blue {

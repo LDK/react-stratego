@@ -273,8 +273,7 @@
 		left: .25rem;
 	}
 }
-.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
-.gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
+.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square, .gameSpace {
 	@include below_res($sm) {
 		height: var(--square-size-portrait);
 		width: var(--square-size-portrait);
@@ -288,9 +287,34 @@
 		width: var(--square-size-tablet);
 	}
 }
-.gameBoard .gamePiece, .gameBoard .tileFace {
-	@include below_res($sm) {
-		top: 0;
+.gameBoard {
+	.gamePiece, .tileFace {
+		@include below_res($sm) {
+			height: var(--square-size-portrait);
+			width: var(--square-size-portrait);
+		}
+		@include between_res($sm, $md - 1) {
+			height: var(--square-size-landscape);
+			width: var(--square-size-landscape);
+		}
+		@include between_res($md, $lg - 1) {
+			height: calc(var(--square-size-tablet) *.9) !important;
+			width: calc(var(--square-size-tablet) *.9) !important;
+		}
+	}
+	.gamePiece {
+		@include below_res($sm) {
+			top: 0;
+		}
+		@include between_res($md, $lg - 1) {
+			top: calc(var(--square-size-tablet) * .05) !important;
+			left: 12.5% !important;
+		}
+	}
+	.tileFace {
+		@include between_res($md, $lg - 1) {
+			left: -1px;
+		}
 	}
 }
 .gameSpaceRow, #presetSelector {

@@ -1,0 +1,96 @@
+// Cursors
+.no-drop {
+	cursor: no-drop !important;
+}
+.player-red {
+	.piece-blue {
+		cursor: not-allowed !important;
+	}
+	.piece-red {
+		cursor: move;
+	}
+}
+.player-blue {
+	.piece-red {
+		cursor: not-allowed !important;
+	}
+	.piece-blue {
+		cursor: move;
+	}
+}
+.turn-red {
+	.piece-blue {
+		cursor: not-allowed !important;
+	}
+	.piece-red {
+		cursor: move;
+	}
+}
+.turn-blue {
+	.piece-red {
+		cursor: not-allowed !important;
+	}
+	.piece-blue {
+		cursor: move;
+	}
+}
+.mode-click {
+	.player-red & {
+		.piece-red {
+			cursor: grab;
+			&:active {
+				cursor: grabbing;
+			}
+		}
+		.gameSpace[data-territory="red"] {
+			cursor: crosshair;
+		}
+	}
+	.player-blue & {
+		.piece-blue {
+			cursor: grab;
+			&:active {
+				cursor: grabbing;
+			}
+		}
+		.gameSpace[data-territory="blue"] {
+			cursor: crosshair;
+		}
+	}
+}
+.tileRack {
+	.player-red & .piece-red, .player-blue & .piece-blue {
+		cursor: pointer;
+	}
+}
+.turn-red .piece-red, .turn-blue .piece-blue {
+	cursor: move;
+}
+.turn-red.player-blue .piece-blue,
+.turn-blue.player-red .piece-red {
+	cursor: default;
+}
+.placement {
+	&[data-territory="neutral"] {
+		cursor: not-allowed;
+	}
+	.player-blue & {
+		&[data-territory="red"] {
+			cursor: not-allowed;
+		}
+		&[data-territory="blue"] {
+			background-color: var(--darker);
+			opacity: .3;
+		}
+	}
+	.player-red & {
+		&[data-territory="blue"] {
+			cursor: not-allowed;
+		}
+		&[data-territory="red"] {
+			background-color: var(--darker);
+			opacity: .3;
+		}
+	}
+}
+

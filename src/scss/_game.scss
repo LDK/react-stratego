@@ -1,0 +1,347 @@
+// Game Board & Game Spaces
+.game {
+	display: flex;
+	flex-direction: row;
+}
+.game-info {
+	margin-left: 20px;
+}
+.disabled {
+	span {
+		color: #676767;
+	}
+}
+.gameBoard {
+	@include atleast_res($lg) {
+		height: 100vh;
+	}
+	@include below_res($lg) {
+		background-color: var(--grass) !important;
+	}
+	&.zoom {
+		@include below_res($lg) {
+			transform: scale(1.6);
+			top: 100px;
+			transition: all .35s;
+		}
+		@include below_res($md) {
+			transform: scale(1.45);
+		}
+		@include below_res($sm) {
+			transform: scale(1.15);
+		}
+	}
+	&.scroll {
+		@include below_res($md) {
+			overflow-y: hidden;
+			overflow-x: hidden;
+		}
+		@include below_res($sm) {
+			position: absolute;
+			top: 135px;
+		}
+	}
+	@include below_res($lg) {
+		top: 0px;
+		position: relative;
+		transition: all .35s;
+		.player-blue &.zoom {
+			top: -75px;
+		}
+	}
+	@include below_res($md) {
+		.player-blue &.zoom.placement {
+			top: -155px;
+		}
+		.player-red &.zoom.placement {
+			top: 148px;
+		}
+	}
+	@include below_res($sm) {
+		.player-blue &.zoom {
+			&.placement {
+				top: -96px;
+			}
+			&:not(.placement) {
+				top: -135px;
+				transform: unset;
+			}
+		}
+		.player-red &.zoom.placement {
+			top: 148px;
+		}
+	}
+}
+.border-wrapper {
+	@include below_res($md) {
+		display: none !important;
+	}
+}
+@include below_res($lg) {
+	.left-wrapper, 
+	.right-wrapper,
+	.border-wrapper:first-child,
+	.border-wrapper:last-child {
+		display: none !important;
+	}
+	.gameSpace.borderSpace {
+		background-color: var(--grass);
+		background-image: unset !important;
+	}
+}
+
+.gameSpace {
+	height: var(--square-size-default);
+	width: var(--square-size-default);
+	background-color: var(--midtone1);
+	border-left: 1px dashed var(--space-border);
+	border-top: 1px dashed var(--space-border);
+	padding: 0;
+	margin: 0;
+	position: relative;
+}
+.gameSpace-wrapper {
+	height: var(--square-size-default);
+	width: var(--square-size-default);
+	display: inline-block;
+	overflow: visible;
+	padding: 0;
+	margin: 0;
+	&:nth-child(11) .gameSpace {
+		border-right: 1px dashed var(--space-border);
+	}
+	
+	.gameSpace-overlay {
+		width: 100%;
+		height: 100%;
+		background-color: transparent;
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: .3;
+		pointer-events: none;
+		z-index: 1;
+	}
+	&.drop-target .gameSpace-overlay {
+		background-color: white;
+	}
+	&.no-drop .gameSpace-overlay {
+		background-color: black;
+	}
+	&.selectedSpace .gameSpace-overlay {
+		background-color: white;
+	}
+	&.highlightedSpace .gameSpace-overlay {
+		background-color: yellow;
+	}
+	&.selectedSpace.highlightedSpace {
+		.gameSpace-overlay {
+			background-color: lightyellow;
+			opacity: .5;
+		}
+	}
+	.started & {
+		&.droppable {
+			.gameSpace-overlay {
+				background-color: yellow;
+				z-index: 1;
+				opacity: .6;
+				mix-blend-mode: overlay;
+			}
+		}
+	}
+}
+.gameSpace-wrapper, .gameSpace { 
+	.col {
+		flex-basis: unset;
+		flex-grow: unset;
+		max-width: unset;
+	}
+}
+.gameSpaceRow {
+	margin: auto;
+	&:nth-child(12) .gameSpace {
+		border-bottom: 1px dashed var(--space-border);
+	}
+}
+
+
+// Game piece and tile faces
+.gamePiece,
+.tileFace {
+	width: 36px;
+	height: 45px;
+	display: block;
+	top: 0;
+	left: 2px;
+	background-repeat: no-repeat;
+	@include below_res($lg) {
+		width: 29px;
+		height: 36px;
+		top: 3px;
+		left: 2px;
+	}
+}
+.tileFace {
+	background-position-x: -2px;
+	background-image: url('/img/stratego-pieces.png');
+	left: -1px;
+	top: 1px;
+	position: absolute;
+	background-size: contain;
+	background-repeat: no-repeat;
+	&.rank-B {
+		background-image: url('/img/facebomb.png');
+	}
+	&.rank-9 {
+		background-image: url('/img/face9.png');
+	}
+	&.rank-8 {
+		background-image: url('/img/face8.png');
+	}
+	&.rank-7 {
+		background-image: url('/img/face7.png');
+	}
+	&.rank-6 {
+		background-image: url('/img/face6.png');
+	}
+	&.rank-5 {
+		background-image: url('/img/face5.png');
+	}
+	&.rank-4 {
+		background-image: url('/img/face4.png');
+	}
+	&.rank-3 {
+		background-image: url('/img/face3.png');
+	}
+	&.rank-2 {
+		background-image: url('/img/face2.png');
+	}
+	&.rank-1 {
+		background-image: url('/img/face1.png');
+	}
+	&.rank-S {
+		background-image: url('/img/facespy.png');
+	}
+	&.rank-F {
+		background-image: url('/img/faceflag.png');
+	}
+	// Faces of tiles that have been placed on the board
+	.gameBoard & {
+		@include below_res($lg) {
+			left: 1px;
+		}
+	}
+}
+.gamePiece {
+	position: relative;
+	background-image: url('/img/stratego-piece-red.svg');
+	background-size: contain;
+	.gameBoard & {
+		// Pieces that have been placed on the board
+		@include atleast_res($lg) {
+			top: 5px;
+			left: -2px;
+		}
+		@include below_res($lg) {
+			top: 3px;
+			left: 2px;
+		}
+		@include below_res($md) {
+			top: 3px;
+			left: 2px;
+		}
+		@include below_res($sm) {
+			left: 4px;
+			top: 5px;
+		}
+	}
+	&.blue {
+		background-image: url('/img/stratego-piece-blue.svg');
+	}
+}
+@include atmost_res(320px) {
+	.gameSpace-wrapper, .gameSpace {
+		height: 1.5rem;
+	}
+	.gamePiece,
+	.tileFace {
+		width: 1.5rem;
+		height: 1.5rem;
+	}
+	.gameBoard .gamePiece {
+		left: .25rem;
+	}
+}
+.gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square, .gameSpace {
+	@include below_res($sm) {
+		height: var(--square-size-portrait);
+		width: var(--square-size-portrait);
+	}
+	@include between_res($sm, $md - 1) {
+		height: var(--square-size-landscape);
+		width: var(--square-size-landscape);
+	}
+	@include between_res($md, $lg - 1) {
+		height: var(--square-size-tablet);
+		width: var(--square-size-tablet);
+	}
+}
+.gameBoard {
+	.gamePiece, .tileFace {
+		@include below_res($sm) {
+			height: var(--square-size-portrait);
+			width: var(--square-size-portrait);
+		}
+		@include between_res($sm, $md - 1) {
+			height: var(--square-size-landscape);
+			width: var(--square-size-landscape);
+		}
+		@include between_res($md, $lg - 1) {
+			height: calc(var(--square-size-tablet) *.9) !important;
+			width: calc(var(--square-size-tablet) *.9) !important;
+		}
+	}
+	.gamePiece {
+		@include below_res($sm) {
+			top: 0;
+		}
+		@include between_res($md, $lg - 1) {
+			top: calc(var(--square-size-tablet) * .05) !important;
+			left: 12.5% !important;
+		}
+	}
+	.tileFace {
+		@include between_res($md, $lg - 1) {
+			left: -1px;
+		}
+	}
+}
+.gameSpaceRow, #presetSelector {
+	@include below_res($sm) {
+		width: calc((var(--square-size-portrait) * 10));
+	}
+	@include atleast_res($sm) {
+		width: calc((var(--square-size-landscape) * 10));
+	}
+	@include atleast_res($md) {
+		width: calc((var(--square-size-tablet) * 10));
+	}
+	@include atleast_res($lg) {
+		width: calc((var(--square-size-desktop) * 10));
+	}
+}
+#presetSelector {
+	@include below_res($lg) {
+		margin: auto;
+	}
+}
+.gamePiece-wrapper {
+	position: relative;
+	z-index: 0;
+	transform: translate(0px,0px);
+	transition: transform 1s;
+}
+.gameSpace-wrapper {
+	overflow: visible;
+}

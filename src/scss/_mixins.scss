@@ -1,0 +1,18 @@
+// Mixins
+@mixin atmost_res($res) {
+  @media (max-width: $res) { @content; }
+}
+@mixin atleast_res($res) {
+  @media (min-width: $res) { @content; }
+}
+@mixin below_res($res) {
+	@include atmost_res($res - 1) { @content; }
+}
+@mixin above_res($res) {
+	@include atleast_res($res + 1) { @content; }
+}
+@mixin between_res($from,$to) {
+    @include atleast_res($from) { 
+        @include atmost_res($to) { @content; } 
+    }
+}

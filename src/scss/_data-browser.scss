@@ -1,0 +1,30 @@
+// Data Browsers
+.link-list {
+	list-style-type: none;
+	display: inline-block;
+	li {
+		display: inline-block;
+		&:after {
+			content: ", ";
+			display: inline-block;
+			margin-right: .5em;
+		}
+		&:last-child:after {
+			content: "";
+			display: none;
+		}
+	}
+}
+ul.item-buttons {
+	padding: 0;
+	li {
+		display: inline-block;
+		a.button {
+			font-size: .8rem;
+			min-width: unset;
+			display: block;
+			text-align: center;
+			width: 5rem;
+		}
+	}
+}

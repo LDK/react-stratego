@@ -1,0 +1,118 @@
+// Info Panel
+div.captured-tiles {
+	label {
+		position: relative;
+		font-size: .85rem;
+		top: 0rem;
+		left: 0rem;
+		color: black;
+		display: inline;
+	}
+}
+.tileRack {
+	height: 100%;
+	background: var(--dark);
+	label {
+		display: block;
+		margin-bottom: .5rem;
+		margin-left: auto;
+		margin-right: auto;
+		text-align: center;
+	}
+}
+.tileRack-col, .gameStatus-col {
+	height: 10rem;
+}
+.tileRack-col {
+	@include below_res($lg) {
+		position: absolute;
+		height: 60px;
+		top: unset;
+		left: 0px;
+		bottom: 0px;
+		overflow: hidden;
+	}
+	@include below_res($md) {
+		height: 65px;
+		position: fixed;
+		background: var(--dark);
+		width: 100%;
+		.player-blue & {
+			bottom: 72px;
+			top: unset;
+		}
+		.player-red & {
+			top: 32px;
+			bottom: unset;
+		}
+	}
+	@include below_res($sm) {
+		height: 130px;
+		left: 0px;
+		overflow: hidden;
+		background: var(--dark);
+		.player-blue & {
+			bottom: 56px;
+			top: unset;
+		}
+		.player-red & {
+			top: 56px;
+			bottom: unset;
+		}
+	}
+}
+.gameStatus-col {
+	height: 100%;
+	background-image: url(img/parchment.jpg);
+	background-size: cover;
+	background-blend-mode: overlay;
+	background-color: rgba(125,111,0,.5) !important;
+	@include atleast_res($lg) {
+		padding-bottom: 2rem;
+		height: 100%;
+	}
+}
+.selected-rank {
+	.gamePiece {
+		box-shadow: 0 0 50px #fff;
+	}
+	.tileFace {
+		box-shadow: 0 0 50px rgba(167,197,12,.9);
+	}
+}
+@include atleast_res($md) {
+	.tileRack-col > .row,
+	.gameStatus-col {
+		-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+		-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+		box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
+		border: 1px solid #333;
+	}
+	.tileRack-col, .gameStatus-col {
+		height: 27rem;
+	}
+	#placementMode {
+		height: 8rem;
+	}
+}
+
+
+.preview-square {
+	width: 10%;
+	display: inline-block;
+	background: forestgreen;
+	height: 3.5rem;
+	background: var(--grass);
+	border: 1px dashed var(--space-border);
+}
+
+.gameBoard, .game-bg {
+	background-color: var(--water);
+}
+
+.game-bg {
+	height: 100%;
+	@include below_res($lg) {
+		background-color: var(--grass);
+	}	
+}

@@ -1,0 +1,26 @@
+// Animation
+
+@keyframes border-glow {
+	0% {
+		border:1px solid rgba(255, 255, 255, .9);
+		-webkit-box-shadow: 0px 0px 45px 24px var(--glow-high);
+-moz-box-shadow: 0px 0px 45px 24px var(--glow-high);
+box-shadow: 0px 0px 45px 24px var(--glow-high);
+	}
+	50% {
+		border:1px solid rgba(255, 255, 255, .6);
+		-webkit-box-shadow: 0px 0px 45px 24px var(--glow-low);
+-moz-box-shadow: 0px 0px 45px 24px var(--glow-low);
+box-shadow: 0px 0px 45px 24px var(--glow-low);
+	}
+	100% {
+		border:1px solid rgba(255, 255, 255, .9);
+		-webkit-box-shadow: 0px 0px 45px 24px var(--glow-high);
+-moz-box-shadow: 0px 0px 45px 24px var(--glow-high);
+box-shadow: 0px 0px 45px 24px var(--glow-high);
+	}
+}
+
+.glowing {
+	animation: border-glow 2s linear infinite;
+}

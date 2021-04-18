@@ -784,19 +784,22 @@ span.notification-counter {
   }
 }
 @media (max-width: 575px) {
-  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square, .gameSpace {
+  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
+.gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-portrait);
     width: var(--square-size-portrait);
   }
 }
 @media (min-width: 576px) and (max-width: 767px) {
-  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square, .gameSpace {
+  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
+.gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-landscape);
     width: var(--square-size-landscape);
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
-  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square, .gameSpace {
+  .gameSpace-wrapper.col, .gameSpace-wrapper, .preview-square,
+.gameSpace, .gameBoard .gamePiece, .gameBoard .tileFace {
     height: var(--square-size-tablet);
     width: var(--square-size-tablet);
   }
@@ -804,36 +807,7 @@ span.notification-counter {
 
 @media (max-width: 575px) {
   .gameBoard .gamePiece, .gameBoard .tileFace {
-    height: var(--square-size-portrait);
-    width: var(--square-size-portrait);
-  }
-}
-@media (min-width: 576px) and (max-width: 767px) {
-  .gameBoard .gamePiece, .gameBoard .tileFace {
-    height: var(--square-size-landscape);
-    width: var(--square-size-landscape);
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .gameBoard .gamePiece, .gameBoard .tileFace {
-    height: calc(var(--square-size-tablet) *.9) !important;
-    width: calc(var(--square-size-tablet) *.9) !important;
-  }
-}
-@media (max-width: 575px) {
-  .gameBoard .gamePiece {
     top: 0;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .gameBoard .gamePiece {
-    top: calc(var(--square-size-tablet) * .05) !important;
-    left: 12.5% !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .gameBoard .tileFace {
-    left: -1px;
   }
 }
 
@@ -1527,4 +1501,4 @@ ul.suggestions li:hover {
   animation: border-glow 2s linear infinite;
 }
 
-/*# sourceMappingURL=game.css.map */
+/*# sourceMappingURL=main.css.map */

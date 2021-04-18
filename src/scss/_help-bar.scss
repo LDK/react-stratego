@@ -1,0 +1,108 @@
+// Help Bar
+
+#help-bar {
+	background-color: var(--water);
+	margin-top: 1rem;
+	padding: 1rem .5rem;
+	opacity: 1;
+	transition: opacity .25s;
+	height: 8rem;
+	span {
+		bottom: 0;
+		left: 0;
+		height: 48px;
+		font-size: 1.25rem;
+		background-color: tranparent;
+		vertical-align: middle;
+		color: white;
+		font-weight: 500;
+	}
+	.placement & {
+		margin-top: unset;
+		height:56px;
+		background-color: rgba(0, 0, 0, 0.75);
+		bottom: 0;
+		left: 0;
+		padding: 0;
+		position: fixed;
+		span {
+			font-size: 24px;
+			background-color: rgba(0,0,0,.75);
+		}
+		@include atleast_res($lg) {
+			background-color: rgba(0, 0, 0, 0.25);
+			z-index: 3;
+			border-radius: 8px;
+			position: relative;
+			height: 6rem;
+			width: 32rem;
+			position: absolute;
+			left: 4.25rem;
+			top: 17.25rem;
+			span {
+				border-radius: 8px;
+			}
+		}
+	}
+	.help-bar-minimized & {
+		display: none !important;
+	}
+	@include atleast_res($lg) {
+		.tileFace {
+			height: 2rem;
+			margin-left: .25rem;
+		}
+		p.subtext {
+			font-size: 1rem;
+			font-weight: 300;
+		}
+	}
+}
+#help-bar-close {
+	display: none;
+	text-decoration: none !important;
+	.placement & {
+		display: block;
+		position: absolute;
+		top: .5rem;
+		right: 1rem;
+		font-weight: 700;
+	}
+	@include atleast_res($lg) {
+		cursor: pointer;
+	}
+}
+#help-bar-open {
+	display: none;
+	.help-bar-minimized & {
+		display: table;
+	}
+}
+.circle-link {
+	@include atleast_res($lg) {
+		cursor: pointer;
+		color: white;
+		font-size: 2rem;
+		position: fixed;
+		bottom: 3rem;
+		left: 1.5rem;
+		border: 3px solid white;
+		width: 3.5rem;
+		height: 3rem;
+		text-align: center;
+		vertical-align: middle;
+		border-radius: 50%;
+		margin: 0;
+		padding: 0;
+		display: table;
+		background-color: rgba(0, 0, 0, 0.33);
+		backdrop-filter: hue-rotate(45deg);
+		-webkit-backdrop-filter: hue-rotate(45deg);
+		z-index: 3;
+		span {
+			display: table-cell;
+			vertical-align: middle;
+			font-weight: 700;
+		}
+	}
+}

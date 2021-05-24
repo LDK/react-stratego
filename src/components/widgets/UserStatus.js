@@ -147,7 +147,20 @@ class UserStatus extends React.Component {
 			});
 		});
 	}
-	notificationButton(action,type,data) {
+	notificationButton(event) {
+		var id = parseInt(event.target.attributes['data-id'].value);
+		var type = event.target.attributes['data-type'].value;
+		var action = event.target.attributes['data-mode'].value;
+		if (this.props.app.debugNotifications) {
+			console.log('notification button',action,type,id);
+		}
+		if (!this.notificationRows || !this.notificationLookup[id]) {
+			return;
+		}
+		var data = this.notificationLookup[id].data;
+		if (this.props.app.debugNotifications) {
+			console.log('notification data',data);
+		}
 		if (type == 'game' && data.game_id) {
 			switch (action) {
 				case 'accept': 
@@ -171,6 +184,9 @@ class UserStatus extends React.Component {
 		this.close();
 	}
 	notificationAction(data) {
+		if (this.props.app.debugNotifications) {
+			console.log('notification action',data);
+		}
 		if (!data.link_type) {
 			this.close();
 			return;
@@ -194,7 +210,8 @@ class UserStatus extends React.Component {
 		this.close();
 	}
 	processNotifications() {
-		var notificationRows = [];
+		this.notificationRows = [];
+		this.notificationLookup = {};
 		if (this.state.notifications.notifications) {
 			for (var i in this.state.notifications.notifications) {
 				var notification = this.state.notifications.notifications[i];
@@ -209,31 +226,34 @@ class UserStatus extends React.Component {
 				var browserItem = { 
 					value: 'notification-'+notification.id, 
 					name: text, 
-					onSelect: () => this.notificationAction(additional),
-					className: classes 
+					className: classes,
+					id: notification.id,
+					data: additional
 				};
+				browserItem.onSelect = (() => this.notificationAction(browserItem));
+				var notificationId = parseInt(notification.id);
+				this.notificationRows.push(browserItem); 
+				this.notificationLookup[notification.id] = browserItem;
 				if (notification.category == 'invite-sent' && additional.game_id) {
 					browserItem.buttons = [
-						{ action: () => this.notificationButton('accept','game',additional), label: 'Accept' },
-						{ action: () => this.notificationButton('decline','game',additional), label: 'Decline' },
-						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+						{ action: this.notificationButton, mode: 'accept', type: 'game', label: 'Accept', id: parseInt(notification.id) },
+						{ action: this.notificationButton, mode: 'decline', type: 'game', id: parseInt(notification.id), label: 'Decline' },
+						{ action: this.notificationButton, mode: 'view', type: 'user', label: 'User Profile', id: parseInt(notification.id) }
 					];
 				}
 				else if (notification.category == 'open-joined' || notification.category == 'invite-accepted') {
 					browserItem.buttons = [
-						{ action: () => this.notificationButton('view','game',additional), label: 'Open Game' },
-						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+						{ action: this.notificationButton, mode: 'view', type: 'game', id: parseInt(notification.id), label: 'Open Game' },
+						{ action: this.notificationButton, mode: 'view', type: 'user', id: parseInt(notification.id), label: 'User Profile' }
 					];
 				}
 				else if (notification.category == 'invite-declined') {
 					browserItem.buttons = [
-						{ action: () => this.notificationButton('view','user',additional), label: 'User Profile' }
+						{ action: this.notificationButton, mode: 'view', type: 'user', id: parseInt(notification.id), label: 'User Profile' }
 					];
-				} 
-				notificationRows.push(browserItem);
+				}
 			}
 		}
-		return notificationRows;
 	}
 	render() {
 		var props = this.props;
@@ -246,8 +266,8 @@ class UserStatus extends React.Component {
 			{ value: 'logout', name: 'Log out', onSelect: this.logUserOut }
 		];
 		var notificationCounter = null;
-		var notificationRows = this.processNotifications();
-		dropdownItems = notificationRows.concat(dropdownItems);
+		this.processNotifications();
+		dropdownItems = this.notificationRows.concat(dropdownItems);
 		if (this.state.notifications.unseen) {
 			notificationCounter = (<span className="notification-counter">{this.state.notifications.unseen}</span>)
 		}

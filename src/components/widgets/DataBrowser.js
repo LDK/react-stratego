@@ -122,7 +122,7 @@ class DataBrowser extends React.Component {
 				if (opt.buttons) {
 					var buttons = opt.buttons.map((btn,i) => 
 						<li key={i} className="mr-3 py-2">
-							<a className="button" onClick={btn.action}>{btn.label}</a>
+							<a className="button" data-type={btn.type || "undefined"} data-mode={btn.mode || "undefined"} data-id={btn.id || "null"} onClick={btn.action}>{btn.label}</a>
 						</li>
 					);
 					content = (

@@ -659,6 +659,20 @@ var declineInvite = function(uid, gameId) {
 	});
 }
 
+var markOpenGameViewed = function(uid,gameId) {
+	return new Promise((resolve,reject) => {
+		var deleteSql = "delete from notification where user_id = " + uid + " and category = 'open-joined' and additional LIKE '%game_id\":" + gameId + "%';";
+		db.run(deleteSql, [], function(error){
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve(true);
+			}
+		});
+	});
+}
+
 var acceptInvite = function(uid, gameId) {
 	return new Promise((resolve, reject) => {
 		getGameData(gameId, false).then(function(gameData) {
@@ -1142,6 +1156,8 @@ restapi.post('/game', function(req, res) {
 			getGameData(req.body.id,uid).then(function(result) {
 				result.id = req.body.id;
 				res.json(result);
+				console.log('mark viewed',uid,req.body.id);
+				markOpenGameViewed(uid,req.body.id);
 			});
 		},
 		function(err) {

@@ -17,6 +17,7 @@
 	}
 	@include below_res($lg) {
 		background-color: var(--grass) !important;
+		height: 45vh;
 	}
 	&.zoom {
 		@include below_res($lg) {
@@ -39,6 +40,7 @@
 		@include below_res($sm) {
 			position: absolute;
 			top: 135px;
+			width: 125px;
 		}
 	}
 	@include below_res($lg) {

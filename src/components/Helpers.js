@@ -1,7 +1,7 @@
 //Helpers.js
 
 export const sanitizeBooleans = (value) => {
-	if (typeof value == 'object' || typeof value=='array') {
+	if (typeof value === 'object') {
 		for (var i in value) {
 			value[i] = sanitizeBooleans(value[i]);
 		}
@@ -107,9 +107,6 @@ export const time2TimeAgo = function(ts) {
 		if (days > 1) {
 			return days + " days ago";
 		}
-		else {
-			return "yesterday";
-		}
        return "yesterday";
     }
 
@@ -118,10 +115,7 @@ export const time2TimeAgo = function(ts) {
 		if (hrs > 1) {
 			return hrs + " hours ago";
 		}
-		else {
-			return "an hour ago";
-		}
-       return "a few hours ago";
+		return "an hour ago";
     }
     if (seconds >= 60) {
 		var mins = Math.floor(seconds/60);

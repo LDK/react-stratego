@@ -1,6 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 class UserLink extends React.Component {
+	static get propTypes() {
+		return {
+			user: PropTypes.object,
+			app: PropTypes.object,
+			id: PropTypes.number,
+			className: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 	}

@@ -1,8 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 
 class JoinGameMenu extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -26,7 +32,6 @@ class JoinGameMenu extends React.Component {
 		var app = this.props.app;
 		var uid = app.state.currentUser.user_id;
 		var userKey = app.state.currentUser.userKey;
-		var opponentId = this.state.opponentId;
 		if (!uid || !userKey) {
 			return [];
 		}
@@ -64,10 +69,6 @@ class JoinGameMenu extends React.Component {
 			return null;
 		}
 		var app = this.props.app;
-		var opponentIndicator = null;
-		if (this.state.opponentFound) {
-			opponentIndicator = (<p className="opponentFound">Opponent Found!</p>);
-		}
 		var JoinGameForm = (
 			<form action={app.gameServer+"new_game"} onSubmit={this.handleSubmit}>
 				<h3 className="mb-2 text-white">Select a game to join!</h3>

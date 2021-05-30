@@ -1,8 +1,20 @@
 // Autosuggest component adapted from https://alligator.io/react/react-autocomplete/
 
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 class Autosuggest extends React.Component {
+	static get propTypes() {
+		return {
+			parentObj: PropTypes.object,
+			refName: PropTypes.string,
+			onSelect: PropTypes.func,
+			onChange: PropTypes.func,
+			suggestions: PropTypes.array,
+			inputName: PropTypes.string,
+			placeholder: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -20,7 +32,7 @@ class Autosuggest extends React.Component {
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.selectOption = this.selectOption.bind(this);
 		if (props.parentObj && props.refName) {
-			props.parentObj[refName] = this;
+			props.parentObj[props.refName] = this;
 		}
 		else if (props.parentObj) {
 			props.parentObj.autoSuggest = this;
@@ -59,7 +71,7 @@ class Autosuggest extends React.Component {
 		if (this.props.onChange && typeof this.props.onChange == 'function') {
 			this.props.onChange(e.currentTarget.value)
 		}
-	};
+	}
 	// Event fired when the user clicks on a suggestion
 	onClick(e) {
 		// Update the user input and reset the rest of the state
@@ -72,7 +84,7 @@ class Autosuggest extends React.Component {
 		if (this.props.onSelect && typeof this.props.onSelect == 'function') {
 			this.props.onSelect(e.currentTarget.innerText)
 		}
-	};
+	}
 	// Event fired when the user presses a key down
 	onKeyDown (e) {
 		const { activeSuggestion, filteredSuggestions } = this.state;
@@ -101,7 +113,7 @@ class Autosuggest extends React.Component {
 
 			this.setState({ activeSuggestion: activeSuggestion + 1 });
 		}
-	};
+	}
 	render() {
 		const {
 			onChange,

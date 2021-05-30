@@ -1,29 +1,23 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path");
 
 module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
-        }
+        test: /\.scss$/,
+        use: ["style-loader", "css-loader?url=false", "sass-loader"]
       },
       {
-        test: /\.html$/,
-        use: [
-          {
-            loader: "html-loader"
-          }
-        ]
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ["babel-loader"]
       }
     ]
   },
   plugins: [
-    new HtmlWebPackPlugin({
-      template: "./src/stratego.html",
-      filename: "./index.html"
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "src", "stratego.html")
     })
   ]
 };

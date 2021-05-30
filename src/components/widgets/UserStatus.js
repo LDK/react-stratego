@@ -1,13 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Icon from '../widgets/Icon.js';
 import cloneDeep from 'lodash/cloneDeep';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Cookies from 'universal-cookie';
 import LoginMenu from '../menus/Login.js';
-import {time2TimeAgo} from '../Helpers.js';
-import {time2Date} from '../Helpers.js';
 
 class UserStatus extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			open: PropTypes.bool,
+			loginCallback: PropTypes.func,
+			wrapperClass: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -78,6 +85,7 @@ class UserStatus extends React.Component {
 		.then(function(data) {
 			data.text().then(function(text) {
 				var res = JSON.parse(text);
+				return res;
 			});
 		}).catch(function(error) {
 			console.log('Request failed', error);
@@ -125,7 +133,6 @@ class UserStatus extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var nav = app.nav;
 		var userMenu = this;
 		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(app.gameServer+'notifications', {
@@ -140,9 +147,6 @@ class UserStatus extends React.Component {
 				var notifications = JSON.parse(text);
 				if (notifications.newest_ts > userMenu.state.newest_notification_ts) {
 					userMenu.setState({ notifications: notifications });
-				}
-				else {
-
 				}
 			});
 		});
@@ -231,7 +235,6 @@ class UserStatus extends React.Component {
 					data: additional
 				};
 				browserItem.onSelect = (() => this.notificationAction(browserItem));
-				var notificationId = parseInt(notification.id);
 				this.notificationRows.push(browserItem); 
 				this.notificationLookup[notification.id] = browserItem;
 				if (notification.category == 'invite-sent' && additional.game_id) {

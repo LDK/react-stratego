@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "webpack serve --open --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "lint": "eslint src/**/*.js src/**/**/*.js"
   },
   "keywords": [],
   "author": "Daniel Swinney",
@@ -22,6 +23,8 @@
     "braces": "^3.0.2",
     "core-js": "^3.6.5",
     "css-loader": "^5.2.4",
+    "eslint": "^7.27.0",
+    "eslint-plugin-react": "^7.24.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^5.3.1",
     "lodash": "^4.17.20",

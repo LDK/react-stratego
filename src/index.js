@@ -12,6 +12,7 @@ import DataBrowser from './components/widgets/DataBrowser.js';
 import {PIECES} from './components/Helpers.js';
 import {keyCodes} from './components/Helpers.js';
 import {time2TimeAgo} from './components/Helpers.js';
+import "./scss/main.scss";
 
 class App extends React.Component {
 	constructor(props) {

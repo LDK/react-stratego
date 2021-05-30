@@ -11,7 +11,7 @@ function InfoPanel({ game, app, playerColor }) {
 		panel = (
 			<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-md-white mt-lg-3 mr-xl-auto">
 				<div className="row no-gutters pt-1 pt-md-3">
-					<OptionIndicator id="placementMode" className="col-12 px-0 lg-up mb-3" layout="horizontal" 
+					<OptionIndicator id="placementMode" className="col-12 px-0 mb-3" layout="horizontal" 
 						value={game.state.placementMode}
 						disableArrows={true}
 						ulClass="text-center px-0"
@@ -62,7 +62,7 @@ function InfoPanel({ game, app, playerColor }) {
 			}
 		}
 		panel = (
-			<div className="sm-up col-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
+			<div className="col-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
 				<div className="row no-gutters">
 					{winLabel}
 					{turnLabel}
@@ -71,7 +71,7 @@ function InfoPanel({ game, app, playerColor }) {
 						<span className="text-red">
 							<UserLink app={app} user={game.state.players.red} className="anchor" />
 						</span>
-						<div className="captured-tiles player-red mt-3">
+						<div className="captured-tiles player-red mt-3 md-up">
 							{captured.red.length ? captured.red : 'None'}
 						</div>
 					</div>
@@ -79,7 +79,7 @@ function InfoPanel({ game, app, playerColor }) {
 						<span className="text-blue">
 							<UserLink app={app} user={game.state.players.blue} className="anchor" />
 						</span>
-						<div className="captured-tiles player-blue mt-3">
+						<div className="captured-tiles player-blue mt-3 md-up">
 							{captured.blue.length ? captured.blue : 'None'}
 						</div>
 					</div>

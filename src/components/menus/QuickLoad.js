@@ -53,7 +53,7 @@ class QuickLoadMenu extends React.Component {
 		if (!this.state.formOpen) {
 			return null;
 		}
-		var app = this.props.app;
+		var { app, game } = this.props;
 		var tilerack = app.tileRack;
 		var layoutPreview = '';
 		if (this.layoutLookup[this.state.selected]) {
@@ -83,7 +83,7 @@ class QuickLoadMenu extends React.Component {
 			}
 			const squares = layoutTiles.map((rank,i) => 
 				<div className="preview-square" key={i}>
-					<DragPiece color={tilerack.playerColor} rank={rank} placed={true} className="" />
+					<DragPiece app={app} game={game} color={tilerack.playerColor} rank={rank} placed={true} className="" />
 				</div>
 			)
 			var grid;

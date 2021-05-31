@@ -1,8 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import cloneDeep from 'lodash/cloneDeep';
 
 class UserOptionsMenu extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object
+		};
+	}
 	constructor(props) {
 		super(props);
 		var currentUser = props.app.state.currentUser;
@@ -42,10 +48,10 @@ class UserOptionsMenu extends React.Component {
 	updateNewPass2Input(event) {
 		this.setState({newPass2Input: event.target.value});
 	}
-	toggleInvitesAvailable(event) {
+	toggleInvitesAvailable() {
 		this.setState({invitesAvailable: !this.state.invitesAvailable});
 	}
-	toggleRandomAvailable(event) {
+	toggleRandomAvailable() {
 		this.setState({randomAvailable: !this.state.randomAvailable});
 	}
 	saveOptions(event) {
@@ -86,15 +92,15 @@ class UserOptionsMenu extends React.Component {
 			var changes = false;
 			data.text().then(function(text) {
 				var res = JSON.parse(text);
-				if (res.error) {
-					if (res.error == 'username-taken') {
-
-					}
-					if (res.error == 'email-taken') {
-
-					}
-				}
-				else {
+				// if (res.error) {
+				// 	if (res.error == 'username-taken') {
+				//
+				// 	}
+				// 	if (res.error == 'email-taken') {
+				//
+				// 	}
+				// }
+				if (!res.error) {
 					// DRY this up when you have nothing else to do.
 					if (res.username) {
 						changes = true;

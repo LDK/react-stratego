@@ -12,6 +12,7 @@ import DataBrowser from './components/widgets/DataBrowser.js';
 import {PIECES} from './components/Helpers.js';
 import {keyCodes} from './components/Helpers.js';
 import {time2TimeAgo} from './components/Helpers.js';
+import {debug} from './components/Helpers.js';
 import "./scss/main.scss";
 
 class App extends React.Component {
@@ -276,7 +277,7 @@ class App extends React.Component {
 		});
 	}
 	setCurrentUser(user) {
-		if (user.hasOwnProperty('error')) {
+		if (Object.prototype.hasOwnProperty.call(user,'error')) {
 			return;
 		}
 		const cookies = new Cookies();
@@ -291,10 +292,10 @@ class App extends React.Component {
 	setActiveGame(game) {
 		this.setState({activeGame: game});
 	}
-	newGame(event){
+	newGame(){
 	}
 	openNewGameMenu(){
-		if (!!this.newGameMenu) {
+		if (this.newGameMenu) {
 			this.newGameMenu.openMenu({ formOpen: true });
 		}
 	}
@@ -320,11 +321,12 @@ class App extends React.Component {
 						var listName = gameLists[listIndex];
 						for (var gameIndex in info[listName]) {
 							var game = info[listName][gameIndex];
+							let winner_name;
 							if (game.winner == game.starter_uid) {
-								var winner_name = game.starter_name;
+								winner_name = game.starter_name;
 							}
 							else if (game.winner == game.opponent_uid) {
-								var winner_name = game.opponent_name;
+								winner_name = game.opponent_name;
 							}
 							info[listName][gameIndex].winner = winner_name;
 						}
@@ -391,14 +393,15 @@ class App extends React.Component {
 				var attacks = gameData.attacks;
 				var winnerUid = gameData.winner_uid || false;
 				var players = {
-					blue: { id: starterUid, ready: !!starterReady, name: starterName },
-					red: { id: opponentUid, ready: !!starterReady, name: opponentName }
+					blue: { id: starterUid, ready: starterReady, name: starterName },
+					red: { id: opponentUid, ready: starterReady, name: opponentName }
 				}
 				
 				var last_attack = JSON.parse(gameData.last_attack);
 				var captured = JSON.parse(gameData.captured);
 				spaces = JSON.parse(gameData.spaces);
 				var gm = <Game app={app} id={id} starter={starterUid} opponent={opponentUid} starterName={starterName} opponentName={opponentName} spaces={spaces} starterReady={starterReady} opponentReady={opponentReady} turn={turn} started={started} attacks={attacks} last_attack={last_attack} captured={captured} status={gameStatus} winner_uid={winnerUid} />;
+				let i;
 				if (app.gameRef) {
 					app.gameRef.setState({
 						id: id,
@@ -408,7 +411,7 @@ class App extends React.Component {
 						status: gameStatus,
 						captured: { blue: {}, red: {} }
 					});
-					for (var i in captured) {
+					for (i in captured) {
 						var pieceId = captured[i];
 						var pieceColor = pieceId.split('-')[0];
 						var pieceRank = pieceId.split('-')[1];
@@ -424,7 +427,7 @@ class App extends React.Component {
 					}
 				}
 				if (app.gameBoard) {
-					for (var i in spaces) {
+					for (i in spaces) {
 						var space = spaces[i];
 						var piece = { rank: space.rank, color: space.color, tileSpace: app.tileSpaces[space.rank] };
 						app.gameBoard.placePiece(piece, space.id, true);
@@ -521,8 +524,9 @@ class App extends React.Component {
 		else {
 			var spaces = this.gameBoard.state.spaces;
 			var saveSpaces = {};
-			for (var i in spaces) {
-				var space = {};
+			let space, i;
+			for (i in spaces) {
+				space = {};
 				if (spaces[i].props.occupied) {
 					space.id = spaces[i].props.id;
 					space.rank = spaces[i].props.children.props.rank;
@@ -530,8 +534,8 @@ class App extends React.Component {
 					saveSpaces[space.id] = space;
 				}
 			}
-			for (var i in saveSpaces) {
-				var space = saveSpaces[i];
+			for (i in saveSpaces) {
+				space = saveSpaces[i];
 				if (!space || !space.id || !space.rank) {
 					delete saveSpaces[i];
 				}
@@ -620,6 +624,7 @@ class App extends React.Component {
 	}
 	onKeyDown (e) {
 		if (!e.keyCode) { return; }
+		let game;
 		switch (e.keyCode) {
 			// Arrow Keys
 			case 37:
@@ -627,7 +632,7 @@ class App extends React.Component {
 			case 39:
 			case 40:
 				if (this.gameRef) {
-					var game = this.gameRef;
+					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
 						this.gameBoard.placementArrowMove(e.keyCode);
 					}
@@ -646,7 +651,7 @@ class App extends React.Component {
 			case keyCodes['b']:
 			case keyCodes['f']:
 				if (this.gameRef) {
-					var game = this.gameRef;
+					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
 						this.gameBoard.placeByKeyboard(this.keyCodeLookup[e.keyCode]);
 					}
@@ -654,7 +659,7 @@ class App extends React.Component {
 			break;
 			case keyCodes['x']:
 				if (this.gameRef) {
-					var game = this.gameRef;
+					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
 						this.gameBoard.removeByKeyboard();
 					}
@@ -667,7 +672,7 @@ class App extends React.Component {
 			break;
 			case keyCodes['space']:
 				if (this.gameRef) {
-					var game = this.gameRef;
+					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
 						if (this.gameBoard.state.highlighted) {
 							this.gameBoard.swapByKeyboard(this.gameBoard.state.highlighted);
@@ -682,7 +687,7 @@ class App extends React.Component {
 	}
 	render() {
 		const body = this.getBody();
-		if (this.reportRenders) { console.log('app rendering'); }
+		debug('app rendering');
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />

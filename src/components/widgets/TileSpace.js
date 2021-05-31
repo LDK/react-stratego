@@ -1,5 +1,5 @@
 import React from 'react';
-import DragPiece from './GamePiece.js';
+import DragPiece from './DragPiece.js';
 import {PIECES} from '../Helpers.js';
 import PropTypes from 'prop-types';
 
@@ -13,7 +13,7 @@ class TileSpace extends React.Component {
 			occupied: PropTypes.bool,
 			onClick: PropTypes.func,
 			name: PropTypes.string,
-			rank: PropTypes.string
+			rank: PropTypes.any
 		};
 	}
 	constructor(props) {

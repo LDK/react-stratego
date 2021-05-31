@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import {layouts} from '../Helpers.js';
-import DragPiece from '../widgets/GamePiece.js';
+import DragPiece from '../widgets/DragPiece.js';
 
 class QuickLoadMenu extends React.Component {
 	static get propTypes() {

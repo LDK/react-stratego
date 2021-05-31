@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DropSpace from '../widgets/GameSpace.js';
-import DragPiece from '../widgets/GamePiece.js';
+import DragPiece from '../widgets/DragPiece.js';
 import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
 import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';

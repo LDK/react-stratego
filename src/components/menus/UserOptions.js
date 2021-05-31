@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import cloneDeep from 'lodash/cloneDeep';
+import { debug } from '../Helpers.js';
 
 class UserOptionsMenu extends React.Component {
 	static get propTypes() {
@@ -129,7 +130,7 @@ class UserOptionsMenu extends React.Component {
 				}
 			});
 		}).catch(function(error) {
-			console.log('Request failed', error);
+			debug('Request failed', error);
 		});
 	}
 	render() {

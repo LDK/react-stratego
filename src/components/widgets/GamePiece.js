@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {PIECES} from '../Helpers.js';
 import { CSSTransition } from 'react-transition-group';
 import { isMobile } from "react-device-detect";
 
@@ -29,7 +28,7 @@ class GamePiece extends React.Component {
 			placed: props.placed || false,
 		};
 		if (props.rank) {
-			const { name, rackOrder, move, capture, defuse } = PIECES[props.rank];
+			const { name, rackOrder, move, capture, defuse } = props.game.props.app.Config.Pieces[props.rank];
 			this.name = name;
 			this.rackOrder = rackOrder;
 			this.move = move;

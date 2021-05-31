@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {keyCodes} from '../Helpers.js';
 import Modal from './Modal.js';
 
 class ModalMenu extends React.Component {
@@ -29,7 +28,7 @@ class ModalMenu extends React.Component {
 	onKeyDown (e) {
 		if (!e.keyCode) { return; }
 		switch (e.keyCode) {
-			case keyCodes['esc']:
+			case this.props.parentMenu.props.app.Config.KeyCodes['esc']:
 				this.closeForm();
 			break;
 		}

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
-import {layouts} from '../Helpers.js';
 import DragPiece from '../widgets/DragPiece.js';
 
 class QuickLoadMenu extends React.Component {
@@ -24,6 +23,7 @@ class QuickLoadMenu extends React.Component {
 		this.layoutLookup = {};
 		this.previousMode = 'drag';
 		this.id="quickLoad-modal";
+		const layouts = props.app.Config.Layouts;
 		for (var i in layouts) {
 			this.layoutLookup[layouts[i].id] = i;
 		}
@@ -58,7 +58,7 @@ class QuickLoadMenu extends React.Component {
 		var layoutPreview = '';
 		if (this.layoutLookup[this.state.selected]) {
 			var layoutIdx = this.layoutLookup[this.state.selected];
-			var layoutTiles =  JSON.parse(layouts[layoutIdx].value);
+			var layoutTiles =  JSON.parse(app.Config.Layouts[layoutIdx].value);
 			if (tilerack.playerColor == 'blue') {
 				// The presets were compiled from the perspective of the red player in this game.
 				// For the blue player, we have to invert the rows.
@@ -105,7 +105,7 @@ class QuickLoadMenu extends React.Component {
 				<DataBrowser 
 					label="Select from Preset Layouts:" 
 					// items={app.tilePresets}
-					items={[{id: null, name: '', value: '[]'}].concat(layouts)}
+					items={[{id: null, name: '', value: '[]'}].concat(this.props.app.Config.Layouts)}
 					view="select" 
 					id="presetList" 
 					callback={this.selectPreset} 

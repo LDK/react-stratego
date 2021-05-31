@@ -9,8 +9,6 @@ import Navigation from './components/sections/Navigation.js';
 import Game from './game.js';
 import Cookies from 'universal-cookie';
 import DataBrowser from './components/widgets/DataBrowser.js';
-import {PIECES} from './components/Helpers.js';
-import {keyCodes} from './components/Helpers.js';
 import {time2TimeAgo} from './components/Helpers.js';
 import {debug} from './components/Helpers.js';
 import "./scss/main.scss";
@@ -45,7 +43,7 @@ class App extends React.Component {
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
 		this.getUsernames = this.getUsernames.bind(this);
-		this.getIcons = this.getIcons.bind(this);
+		this.getConfig = this.getConfig.bind(this);
 		this.pollGames = this.pollGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
@@ -56,15 +54,11 @@ class App extends React.Component {
 		// this.reportRenders = true;
 
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.keyCodeLookup = {};
-		for (var key in keyCodes) {
-			this.keyCodeLookup[keyCodes[key]] = key;
-		}
 
 		this.usernames = {};
 		this.usernameLookup = {};
 		
-		this.getIcons();
+		this.getConfig();
 		this.getGames();
 		this.getInvites();
 		this.getRequests();
@@ -357,7 +351,7 @@ class App extends React.Component {
 		if (app.tileSpaces) {
 			for (var rank in this.tileSpaces) {
 				var space = this.tileSpaces[rank];
-				var initCount = PIECES[rank].count;
+				var initCount = app.Config.Pieces[rank].count;
 				space.remaining = initCount;
 				space.setState({ remaining: space.remaining });
 			}
@@ -591,9 +585,9 @@ class App extends React.Component {
 			});
 		});
 	}
-	getIcons() {
+	getConfig() {
 		var app = this;
-		window.fetch(this.gameServer+'icons', {
+		window.fetch(this.gameServer+'config', {
 			method: 'GET', 
 			headers: { "Accept": "application/json", 'Content-Type': 'application/json' }
 		}).then(function(data){
@@ -601,8 +595,11 @@ class App extends React.Component {
 				if (!text.length) {
 					return;
 				}
-				var icons = JSON.parse(text);
-				app.icons = icons;
+				app.Config = JSON.parse(text);
+				app.keyCodeLookup = {};
+				for (var key in app.Config.KeyCodes) {
+					app.keyCodeLookup[app.Config.KeyCodes[key]] = key;
+				}
 				app.render();
 			});
 		});
@@ -656,18 +653,18 @@ class App extends React.Component {
 					}
 				}
 			break;
-			case keyCodes['1']:
-			case keyCodes['2']:
-			case keyCodes['3']:
-			case keyCodes['4']:
-			case keyCodes['5']:
-			case keyCodes['6']:
-			case keyCodes['7']:
-			case keyCodes['8']:
-			case keyCodes['9']:
-			case keyCodes['s']:
-			case keyCodes['b']:
-			case keyCodes['f']:
+			case this.Config.KeyCodes['1']:
+			case this.Config.KeyCodes['2']:
+			case this.Config.KeyCodes['3']:
+			case this.Config.KeyCodes['4']:
+			case this.Config.KeyCodes['5']:
+			case this.Config.KeyCodes['6']:
+			case this.Config.KeyCodes['7']:
+			case this.Config.KeyCodes['8']:
+			case this.Config.KeyCodes['9']:
+			case this.Config.KeyCodes['s']:
+			case this.Config.KeyCodes['b']:
+			case this.Config.KeyCodes['f']:
 				if (this.gameRef) {
 					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
@@ -675,7 +672,7 @@ class App extends React.Component {
 					}
 				}
 			break;
-			case keyCodes['x']:
+			case this.Config.KeyCodes['x']:
 				if (this.gameRef) {
 					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {
@@ -683,12 +680,12 @@ class App extends React.Component {
 					}
 				}
 			break;
-			case keyCodes['esc']:
+			case this.Config.KeyCodes['esc']:
 				if (this.activeModal && this.activeModal.props.onKeyDown) {
 					this.activeModal.props.onKeyDown(e);
 				}
 			break;
-			case keyCodes['space']:
+			case this.Config.KeyCodes['space']:
 				if (this.gameRef) {
 					game = this.gameRef;
 					if (!game.state.started && game.state.placementMode == 'keyboard') {

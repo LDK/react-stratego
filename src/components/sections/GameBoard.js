@@ -4,7 +4,7 @@ import DropSpace from '../widgets/DropSpace.js';
 import DragPiece from '../widgets/DragPiece.js';
 import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
-import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
+import { xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 import { isMobile } from "react-device-detect";
 import HelpBar from '../widgets/HelpBar.js';
@@ -197,8 +197,8 @@ class GameBoard extends React.Component {
 		}
 		var app = this.props.app;
 		var game = this.props.game;
-		var attackRank = PIECES[result.attack_rank].name;
-		var defendRank = PIECES[result.defend_rank].name;
+		var attackRank = app.Config.Pieces[result.attack_rank].name;
+		var defendRank = app.Config.Pieces[result.defend_rank].name;
 		var playerColor = app.tileRack.playerColor;
 		var attacking = result.attack_color == playerColor;
 		var playerRank = attacking ? attackRank : defendRank;
@@ -433,8 +433,8 @@ class GameBoard extends React.Component {
 				}
 			}
 		}
-		for (var rank in PIECES) {
-			var defaultCount = PIECES[rank].count;
+		for (var rank in app.Config.Pieces) {
+			var defaultCount = app.Config.Pieces[rank].count;
 			remaining[rank] = defaultCount - (placedRanks[rank] || 0);
 			remaining.total = remaining.total - (placedRanks[rank] || 0);
 		}

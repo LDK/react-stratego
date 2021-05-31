@@ -5,7 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var cloneDeep = require('lodash/cloneDeep');
-const Icons =  require('../src/components/Icons.js');
+const Config =  require('../src/Config.js');
 
 var restapi = express();
 restapi.use(express.static('public'));
@@ -1157,7 +1157,6 @@ restapi.post('/game', function(req, res) {
 			getGameData(req.body.id,uid).then(function(result) {
 				result.id = req.body.id;
 				res.json(result);
-				console.log('mark viewed',uid,req.body.id);
 				markOpenGameViewed(uid,req.body.id);
 			});
 		},
@@ -1562,8 +1561,8 @@ restapi.post('/usernames',function(req, res){
 	);
 });
 
-restapi.get('/icons',function(req, res){
-	res.status(200).json(Icons);
+restapi.get('/config',function(req, res){
+	res.status(200).json(Config);
 });
 
 restapi.post('/battle', function(req, res) {

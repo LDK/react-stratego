@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PIECES } from '../Helpers.js';
 import { xyToId } from '../Helpers.js';
 import { useDrop } from 'react-dnd';
 import GameSpace from './GameSpace.js';
@@ -91,7 +90,7 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 		}
 	}
 	const isDroppable = function(x,y,territory,item,game) {
-		// var pieceInfo = PIECES[item.rank];
+		// var pieceInfo = game.props.app.Config.Pieces[item.rank];
 		if (!item || !game || !game.state) {
 			return false;
 		}
@@ -105,7 +104,7 @@ function DropSpace({ id, x, y, passable, board, game, children, occupied }) {
 		}
 		else {
 			// Game started situation
-			var piece = PIECES[item.rank];
+			var piece = game.props.app.Config.Pieces[item.rank];
 			var validSpaces = board.getValidMoveSpaces(item.fromX,item.fromY,item.color,piece,game);
 			var spaceId = xyToId(x,y);
 			var droppable = (spaceId && validSpaces.indexOf(spaceId) != -1);

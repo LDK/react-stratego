@@ -28,11 +28,11 @@ class Icon extends React.Component {
 		return output;
 	}
 	svgSource(options) {
-		if (!options || !options.icon) {
+		if (!options || !options.icon || !this.props.app.Config) {
 			return null;
 		}
 		const icon = options.icon;
-		const iconInfo = this.props.app.icons ? this.props.app.icons[icon] : null;
+		const iconInfo = this.props.app.Config.Icons ? this.props.app.Config.Icons[icon] : null;
 		if (!iconInfo) { return null; }
 		const width = options.width || iconInfo.width;
 		const height = options.height || iconInfo.height;

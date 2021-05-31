@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import GamePiece from './GamePiece.js';
-import {PIECES} from '../Helpers.js';
 import { useDrag } from 'react-dnd';
 
 let DragPiece = (props) => {
@@ -38,7 +37,7 @@ let DragPiece = (props) => {
 		// Game Started situation
 		if (game.state.started) {
 			// If the piece is immovable, it's not draggable.
-			if (!PIECES[rank].move) {
+			if (!game.props.app.Config.Pieces[rank].move) {
 				return false;
 			}
 			// Once game starts, piece is draggable only when it's the current user's turn.
@@ -74,7 +73,7 @@ let DragPiece = (props) => {
 	}
 	var piece = false;
 	if (props.rank) {
-		piece = PIECES[props.rank]
+		piece = props.game.props.app.Config.Pieces[props.rank];
 	}
 	if (piece && !piece.move && props.game && props.game.state.started) {
 		styles['cursor'] = 'not-allowed';

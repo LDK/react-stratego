@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TileSpace from '../widgets/TileSpace.js';
-import {PIECES} from '../Helpers.js';
 import { debug } from '../Helpers.js';
 
 class TileRack extends React.Component {
@@ -50,9 +49,9 @@ class TileRack extends React.Component {
 		if (!remaining || typeof remaining == 'undefined') { 
 			this.remaining = 40;
 			this.setState({allPlaced: false});
-			for (rank in PIECES) {
-				app.tileSpaces[rank].remaining = PIECES[rank].count;
-				app.tileSpaces[rank].setState({remaining: PIECES[rank].count});
+			for (rank in app.Config.Pieces) {
+				app.tileSpaces[rank].remaining = app.Config.Pieces[rank].count;
+				app.tileSpaces[rank].setState({remaining: app.Config.Pieces[rank].count});
 			}
 		}
 		else {
@@ -71,7 +70,7 @@ class TileRack extends React.Component {
 	}
 	tileSpaces() {
 		var spaces = [];
-		for (var rank in PIECES) {
+		for (var rank in this.props.app.Config.Pieces) {
 			spaces.push(this.renderTileSpace(rank));
 		}
 		this.spaces = spaces;

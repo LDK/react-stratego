@@ -1,10 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Autosuggest from '../widgets/Autosuggest.js';
 import UserLink from '../widgets/UserLink.js';
 
 class NewGameMenu extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -201,24 +207,28 @@ class NewGameMenu extends React.Component {
 		});
 	}
 	getModeHelpText() {
+		let rv;
 		switch (this.state.opponentSelectMode) {
 			case 'past':
-				return "Choose from a list of your past opponents.  Avenge a past loss or reassert your dominance!";
+				rv = "Choose from a list of your past opponents.  Avenge a past loss or reassert your dominance!";
 			break;
 			case 'join':
-				return "Join a random open game someone else has started.";
+				rv = "Join a random open game someone else has started.";
 			break;
 			case 'open':
-				return "Start a game anyone can join.  You can arrange your tiles while you wait for an opponent.";
+				rv = "Start a game anyone can join.  You can arrange your tiles while you wait for an opponent.";
 			break;
 			case 'name':
-				return "Search a list of available players to find your next opponent!";
+				rv = "Search a list of available players to find your next opponent!";
 			break;
 			case 'random':
-				return "Feeling lucky?  Challenge a random opponent!";
+				rv = "Feeling lucky?  Challenge a random opponent!";
+			break;
+			default:
+				rv = '';
 			break;
 		}
-		return '';
+		return rv;
 	}
 	render() {
 		if (!this.state.formOpen) {

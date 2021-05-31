@@ -98,6 +98,8 @@ export const getVector = function(fromId,toId) {
 const monthNames = ["","January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
+/* eslint-disable */
+// This is the only place we're allowed to call console.log
 export const debug = (app,thing1,thing2,thing3,thing4,thing5) => {
 	let things = 0;
 	if (typeof thing1 != 'undefined') { things++; }
@@ -129,6 +131,7 @@ export const debug = (app,thing1,thing2,thing3,thing4,thing5) => {
 	}
 	return;
 };
+/* eslint-enable */
 export const time2TimeAgo = function(ts) {
     var seconds = (Date.now() - ts) / 1000;
     // a day

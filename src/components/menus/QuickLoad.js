@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import {layouts} from '../Helpers.js';
-import { DndProvider } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import DragPiece from '../widgets/GamePiece.js';
 
 class QuickLoadMenu extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			game: PropTypes.object
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -49,9 +54,7 @@ class QuickLoadMenu extends React.Component {
 			return null;
 		}
 		var app = this.props.app;
-		var game = this.props.game;
 		var tilerack = app.tileRack;
-		var layout = [];
 		var layoutPreview = '';
 		if (this.layoutLookup[this.state.selected]) {
 			var layoutIdx = this.layoutLookup[this.state.selected];

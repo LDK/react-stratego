@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import DataBrowser from '../widgets/DataBrowser.js';
 import RegistrationMenu from '../menus/Registration.js';
 import UserStatus from '../widgets/UserStatus.js';
@@ -6,6 +7,11 @@ import Icon from '../widgets/Icon.js';
 import { isMobile } from "react-device-detect";
 
 class Navigation extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {

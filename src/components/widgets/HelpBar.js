@@ -1,8 +1,6 @@
 import React from 'react';
 
-function HelpBar({ app, game, textClass, wrapperClass, textStyles, wrapperStyles }) {
-	var tileRack = app.tileRack;
-	var board = app.gameBoard;
+function HelpBar({ game, textClass, wrapperClass, textStyles, wrapperStyles }) {
 	var hbar = '';
 	var helpText = false;
 	var helpSubtext = '';

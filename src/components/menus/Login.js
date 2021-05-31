@@ -1,7 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
+import { debug } from '../Helpers.js';
 
 class LoginMenu extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			loginCallback: PropTypes.func
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -49,7 +57,7 @@ class LoginMenu extends React.Component {
 				}
 			});
 		}).catch(function(error) {
-			console.log('Request failed', error);
+			debug('Request failed', error);
 		});
 	}
 	render() {
@@ -57,7 +65,6 @@ class LoginMenu extends React.Component {
 			return null;
 		}
 		var state = this.state;
-		var app = this.props.app;
 		const loginForm = (
 			<form onSubmit={this.sendLogin} className="h-100">
 				<h3 className="mt-0">LOGIN</h3>

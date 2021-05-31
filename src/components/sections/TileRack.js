@@ -1,9 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import TileSpace from '../widgets/TileSpace.js';
 import {PIECES} from '../Helpers.js';
-import { isMobile } from "react-device-detect";
+import { debug } from '../Helpers.js';
 
 class TileRack extends React.Component {
+	static get propTypes() {
+		return {
+			remaining: PropTypes.number,
+			app: PropTypes.object,
+			game: PropTypes.object,
+			onChange: PropTypes.func,
+			suggestions: PropTypes.array,
+			inputName: PropTypes.string,
+			placeholder: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.remaining = props.remaining || 40;
@@ -34,16 +46,17 @@ class TileRack extends React.Component {
 	}
 	resetCounts(remaining) {
 		var app = this.props.app;
+		let rank;
 		if (!remaining || typeof remaining == 'undefined') { 
 			this.remaining = 40;
 			this.setState({allPlaced: false});
-			for (var rank in PIECES) {
+			for (rank in PIECES) {
 				app.tileSpaces[rank].remaining = PIECES[rank].count;
 				app.tileSpaces[rank].setState({remaining: PIECES[rank].count});
 			}
 		}
 		else {
-			for (var rank in remaining) {
+			for (rank in remaining) {
 				if (rank == 'total') {
 					continue;
 				}
@@ -69,7 +82,6 @@ class TileRack extends React.Component {
 		var game = this.props.game;
 		var players = game.state.players;
 		players[this.playerColor].ready = isReady;
-		var oppColor = (this.playerColor == 'red') ? 'blue' : 'red';
 		game.setState({players: players});
 		app.saveActiveGame();
 	}
@@ -98,7 +110,7 @@ class TileRack extends React.Component {
 		this.setState({ allPlaced: false });
 		app.saveActiveGame();
 	}
-	handleClick(event) {
+	handleClick() {
 		// var game = this.props.game;
 		// var app = this.props.app;
 		// if (game.state.placementMode == 'click' && !!app.gameBoard.state.selectedSpace) {
@@ -110,7 +122,7 @@ class TileRack extends React.Component {
 		var readyButton = '';
 		var startButton = '';
 		var game = this.props.game;
-		if (this.app.reportRenders) { console.log('TileRack rendering'); }
+		debug('TileRack rendering');
 		if (!game.state.started) {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (

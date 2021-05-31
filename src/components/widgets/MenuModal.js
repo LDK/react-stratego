@@ -1,8 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {keyCodes} from '../Helpers.js';
 import Modal from './Modal.js';
 
 class ModalMenu extends React.Component {
+	static get propTypes() {
+		return {
+			parentMenu: PropTypes.object,
+			content: PropTypes.any,
+			styles: PropTypes.object,
+			height: PropTypes.string,
+			width: PropTypes.string,
+			additionalClasses: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.onKeyDown = this.onKeyDown.bind(this);

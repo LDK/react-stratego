@@ -43,7 +43,7 @@ function InfoPanel({ game, app, playerColor }) {
 		}
 		else if (game.state.status && game.state.status == 'done') {
 			var winnerName, winnerClass;
-			if (game.state.winner_uid == starterUid) {
+			if (game.state.winner_uid == game.props.starter) {
 				winnerName = game.props.starterName;
 				winnerClass = 'text-blue';
 			}

@@ -1,6 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 class Modal extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			open: PropTypes.bool,
+			onKeyDown: PropTypes.func,
+			closeButton: PropTypes.any,
+			content: PropTypes.element,
+			closeCallback: PropTypes.func,
+			styles: PropTypes.object,
+			height: PropTypes.string,
+			width: PropTypes.string,
+			additionalClasses: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -14,14 +29,13 @@ class Modal extends React.Component {
 		return this.props.onKeyDown(event);
 	}
 	componentDidMount(){
-		 this.modalContainer.focus();
+		this.modalContainer.focus();
 	}
 	componentWillUnmount(){
 		this.props.app.activeModal = null;
 	}
 	render() {
 		const content = this.props.content;
-		var parentObj = this.props.parentObj;
 		var props = this.props;
 		var wrapperClass =  props.additionalClasses + " modal-wrapper";
 		if (props.height) {

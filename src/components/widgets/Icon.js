@@ -1,7 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {Icons} from '../Icons.js';
 
 class Icon extends React.Component {
+	static get propTypes() {
+		return {
+			id: PropTypes.string,
+			height: PropTypes.string,
+			width: PropTypes.string,
+			stroke: PropTypes.string,
+			fill: PropTypes.string,
+			icon: PropTypes.string,
+			additionalClasses: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.svgSource = this.svgSource.bind(this);
@@ -31,8 +43,7 @@ class Icon extends React.Component {
 		const group = (<g {...options}>{paths}</g>);
 		return (
 			<svg version="1.1" id={"icon-"+icon} xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-				 width={width} height={height} viewBox={viewBox}
-				 xmlSpace="preserve">
+				width={width} height={height} viewBox={viewBox} xmlSpace="preserve">
 				{group}
 			</svg>
 		);

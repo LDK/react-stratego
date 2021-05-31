@@ -1,7 +1,7 @@
 //Helpers.js
 
 export const sanitizeBooleans = (value) => {
-	if (typeof value == 'object' || typeof value=='array') {
+	if (typeof value === 'object') {
 		for (var i in value) {
 			value[i] = sanitizeBooleans(value[i]);
 		}
@@ -98,7 +98,40 @@ export const getVector = function(fromId,toId) {
 const monthNames = ["","January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
-
+/* eslint-disable */
+// This is the only place we're allowed to call console.log
+export const debug = (app,thing1,thing2,thing3,thing4,thing5) => {
+	let things = 0;
+	if (typeof thing1 != 'undefined') { things++; }
+	if (typeof thing2 != 'undefined') { things++; }
+	if (typeof thing3 != 'undefined') { things++; }
+	if (typeof thing4 != 'undefined') { things++; }
+	if (typeof thing5 != 'undefined') { things++; }
+	if (things == 0) {
+		return;
+	}
+	if (app && (app.debug || app.reportRenders)) {
+		switch (things) {
+			case 1:
+				console.log(thing1);
+			break;
+			case 2:
+				console.log(thing1,thing2);
+			break;
+			case 3:
+				console.log(thing1,thing2,thing3);
+			break;
+			case 4:
+				console.log(thing1,thing2,thing3,thing4);
+			break;
+			case 5:
+				console.log(thing1,thing2,thing3,thing4,thing5);
+			break;
+		}
+	}
+	return;
+};
+/* eslint-enable */
 export const time2TimeAgo = function(ts) {
     var seconds = (Date.now() - ts) / 1000;
     // a day
@@ -106,9 +139,6 @@ export const time2TimeAgo = function(ts) {
 		var days = Math.floor(seconds/(24*3600));
 		if (days > 1) {
 			return days + " days ago";
-		}
-		else {
-			return "yesterday";
 		}
        return "yesterday";
     }
@@ -118,10 +148,7 @@ export const time2TimeAgo = function(ts) {
 		if (hrs > 1) {
 			return hrs + " hours ago";
 		}
-		else {
-			return "an hour ago";
-		}
-       return "a few hours ago";
+		return "an hour ago";
     }
     if (seconds >= 60) {
 		var mins = Math.floor(seconds/60);

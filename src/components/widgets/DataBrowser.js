@@ -1,7 +1,38 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import cloneDeep from 'lodash/cloneDeep';
 
 class DataBrowser extends React.Component {
+	static get propTypes() {
+		return {
+			value: PropTypes.any,
+			id: PropTypes.string,
+			view: PropTypes.string,
+			label: PropTypes.string,
+			labelClass: PropTypes.string,
+			className: PropTypes.string,
+			items: PropTypes.array,
+			links: PropTypes.array,
+			parentObj: PropTypes.object,
+			refName: PropTypes.string,
+			beforeText: PropTypes.string,
+			callback: PropTypes.func,
+			afterCallback: PropTypes.func,
+			afterArgKey: PropTypes.any,
+			onSelect: PropTypes.func,
+			emptyOption: PropTypes.string,
+			deleteEmpty: PropTypes.bool,
+			afterLinks: PropTypes.array,
+			afterKeys: PropTypes.object,
+			afterKeysSep: PropTypes.string,
+			afterParentheses: PropTypes.bool,
+			beforeLinks: PropTypes.bool,
+			hideIfEmpty: PropTypes.bool,
+			disabled: PropTypes.bool,
+			emptyVal: PropTypes.any,
+			additionalClasses: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.callback = this.callback.bind(this);
@@ -22,11 +53,12 @@ class DataBrowser extends React.Component {
 		}
 	}
 	callback(event) {
+		let val;
 		if (event.target.hasAttribute('data-key')) {
-			var val = event.target.getAttribute('data-key');
+			val = event.target.getAttribute('data-key');
 		}
 		else {
-			var val = event.target.value;
+			val = event.target.value;
 		}
 		this.setState({value: val});
 		if (this.props.callback) {
@@ -34,7 +66,7 @@ class DataBrowser extends React.Component {
 		}
 		this.render();
 	}
-	afterCallback(event) {
+	afterCallback() {
 		// if (event.target.hasAttribute('data-key')) {
 		// 	var val = event.target.getAttribute('data-key');
 		// }
@@ -69,7 +101,6 @@ class DataBrowser extends React.Component {
 		)
 	}
 	linkList(property, refVal, items, itemIndex) {
-		var links = [];
 		const linkItems = this.props[property].map((link,i) => 
 			<li key={i} className={link.className}>
 				<a className="anchor underline" onClick={() => link.action(link.argKey ? items[itemIndex][link.argKey] : refVal)}>{link.label}</a>
@@ -92,7 +123,7 @@ class DataBrowser extends React.Component {
 			}
 		}
 		// @SOMEDAY: Make afterLinks, beforeLinks, afterText, beforeText all combinable.
-		var dataItems = null;
+		let dataItems;
 		if (this.props.afterLinks) {
 			dataItems = items.map((opt,i) => 
 				<li key={i}>
@@ -116,12 +147,12 @@ class DataBrowser extends React.Component {
 		}
 		else {
 			var content = null;
-			var dataItems=[];
-			for (var i in items) {
-				var opt = items[i];
+			dataItems=[];
+			for (var j in items) {
+				var opt = items[j];
 				if (opt.buttons) {
-					var buttons = opt.buttons.map((btn,i) => 
-						<li key={i} className="mr-3 py-2">
+					var buttons = opt.buttons.map((btn,j) => 
+						<li key={j} className="mr-3 py-2">
 							<a className="button" data-type={btn.type || "undefined"} data-mode={btn.mode || "undefined"} data-id={btn.id || "null"} onClick={btn.action}>{btn.label}</a>
 						</li>
 					);
@@ -164,7 +195,7 @@ class DataBrowser extends React.Component {
 					}
 				}
 				dataItems.push(
-					<li key={i} className={opt.className}>
+					<li key={j} className={opt.className}>
 					{content}{afterText}
 					</li>
 				);
@@ -186,15 +217,17 @@ class DataBrowser extends React.Component {
 		if (this.props.hideIfEmpty && (!this.props.items || !this.props.items.length)) {
 			return null;
 		}
+		let rv;
 		switch(view) {
 			case 'select':
-				return this.renderSelect(elId,wrapperClass);
+				rv = this.renderSelect(elId,wrapperClass);
 				break;
 			case 'list':
 			default:
-				return this.renderList(elId,wrapperClass);
+				rv = this.renderList(elId,wrapperClass);
 				break;
 		}
+		return rv;
 	}
 }
 

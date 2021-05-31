@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import 'whatwg-fetch';
 import GameBoard from './components/sections/GameBoard.js';
 import GamePiece from './components/widgets/GamePiece.js';
@@ -9,10 +9,31 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import { isMobile } from "react-device-detect";
+import {debug} from './components/Helpers.js';
 
 const placementAction = isMobile ? 'Tap' : 'Click';
 
 class Game extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			id: PropTypes.number,
+			starter: PropTypes.number,
+			starterReady: PropTypes.bool,
+			starterName: PropTypes.string,
+			opponent: PropTypes.number,
+			opponentReady: PropTypes.bool,
+			opponentName: PropTypes.string,
+			turn: PropTypes.string,
+			started: PropTypes.bool,
+			status: PropTypes.string,
+			attacks: PropTypes.number,
+			winner_uid: PropTypes.number,
+			last_move_ts: PropTypes.number,
+			last_attack: PropTypes.object,
+			captured: PropTypes.array
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -28,7 +49,7 @@ class Game extends React.Component {
 			},
 			turn: props.turn || null,
 			placementMode: 'click',
-			started: !!props.started,
+			started: props.started,
 			status: props.status || 'pending',
 			attacks: props.attacks || 0,
 			winner_uid: props.winner_uid || false,
@@ -60,23 +81,25 @@ class Game extends React.Component {
 		}
 	}
 	setHelpText(text) {
-		if (typeof text == 'object' && !!text) {
-			if (!!text.$$typeof) {
+		let headline, subtext;
+		if (typeof text == 'object' && text) {
+			if (text.$$typeof) {
 				// If we are passed JSX markup, just pass that through as the headline text with no subtext
-				var headline = text;
-				var subtext = false;
+				headline = text;
+				subtext = false;
 			}
 			else {
-				var { headline, subtext } = text;
+				headline = text.headline || false;
+				subtext = text.subtext || false;
 			}
 		}
 		else if (typeof text == 'string') {
-			var headline = text;
-			var subtext = false;
+			headline = text;
+			subtext = false;
 		}
 		else if (!text) {
-			var headline = false;
-			var subtext = false;
+			headline = false;
+			subtext = false;
 		}
 		else {
 			// hey get out 
@@ -118,6 +141,7 @@ class Game extends React.Component {
 				if (gameData.game_id && gameData.game_id != gameId) {
 					return;
 				}
+				let players;
 				var opponentReady = gameData.opponent_ready;
 				spaces = JSON.parse(gameData.opponent_spaces);
 				var started = gameData.started;
@@ -125,7 +149,7 @@ class Game extends React.Component {
 				var attacks = gameData.attacks;
 				var last_move = gameData.last_move ? JSON.parse(gameData.last_move) : {};
 				var gameChanges = {};
-				if (last_move && !!app.tileRack && (app.tileRack.playerColor != last_move.color) && (!game.state.last_move || (last_move.ts != game.state.last_move.ts))) {
+				if (last_move && app.tileRack && (app.tileRack.playerColor != last_move.color) && (!game.state.last_move || (last_move.ts != game.state.last_move.ts))) {
 					gameChanges.last_move = last_move;
 				}
 				var opponentColor;
@@ -136,7 +160,7 @@ class Game extends React.Component {
 					opponentColor = 'blue';
 				}
 				if (opponentReady != game.state.players[opponentColor].ready) {
-					var players = game.state.players;
+					players = game.state.players;
 					players[opponentColor].ready = opponentReady;
 					gameChanges.players = players;
 				}
@@ -148,7 +172,7 @@ class Game extends React.Component {
 				}
 				var remaining = game.state.players[opponentColor].soldiers;
 				if (remaining === undefined || remaining != gameData['soldiers_remaining']) {
-					var players = game.state.players;
+					players = game.state.players;
 					players[opponentColor].soldiers = gameData['soldiers_remaining'];
 					gameChanges.players = players;
 				}
@@ -168,10 +192,11 @@ class Game extends React.Component {
 				}
 				var newSpaceIds = [];
 				var oldSpaceIds = [];
-				for (var i in spaces) {
+				let i, id;
+				for (i in spaces) {
 					newSpaceIds.push(spaces[i].id);
 				}
-				for (var i in app.gameBoard.state.spaces) {
+				for (i in app.gameBoard.state.spaces) {
 					if (!app.gameBoard.state.spaces[i].props.children) {
 						continue;
 					}
@@ -180,15 +205,15 @@ class Game extends React.Component {
 							oldSpaceIds.push(app.gameBoard.state.spaces[i].props.id);
 						}
 				}
-				for (var i in newSpaceIds) {
-					var id = newSpaceIds[i];
+				for (i in newSpaceIds) {
+					id = newSpaceIds[i];
 					if (!oldSpaceIds.includes(id)) {
 						var piece = { rank: null, color: opponentColor, tileSpace: null };
 						app.gameBoard.placePiece(piece, id, true);
 					}
 				}
-				for (var i in oldSpaceIds) {
-					var id = oldSpaceIds[i];
+				for (i in oldSpaceIds) {
+					id = oldSpaceIds[i];
 					if (!newSpaceIds.includes(id)) {
 						app.gameBoard.emptySpace(id);
 					}
@@ -197,20 +222,21 @@ class Game extends React.Component {
 		});
 	}
 	resetHelpText() {
-		if (!this.state.started && this.state.placementMode == 'click' && !!this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
+		if (!this.state.started && this.state.placementMode == 'click' && this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
 			this.setHelpText(this.HelpMessages.clickSelected);
 		}
-		else if (this.state.started && !!this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
+		else if (this.state.started && this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
+			let headline;
 			if (isMobile) {
 				if (!this.props.app.gameBoard.selectedRank) {
-					var headline = 'Tap a ' + this.props.app.tileRack.playerColor + ' tile to select it.';
+					headline = 'Tap a ' + this.props.app.tileRack.playerColor + ' tile to select it.';
 				}
 				else {
-					var headline = 'Tap a highlighted square to move the selected piece there';
+					headline = 'Tap a highlighted square to move the selected piece there';
 				}
 			}
 			else {
-				var headline = 'Drag & drop a ' + this.props.app.tileRack.playerColor + ' tile to make your move.';
+				headline = 'Drag & drop a ' + this.props.app.tileRack.playerColor + ' tile to make your move.';
 			}
 			this.setHelpText(headline);
 		} 
@@ -240,7 +266,8 @@ class Game extends React.Component {
 		this.resetHelpText();
 	}
 	clearCaptured() {
-		this.state.captured = { blue: {}, red: {} };
+		var captured = { blue: {}, red: {} };
+		this.setState({ captured: captured });
 	}
 	addCaptured(pieceInfo,loading) {
 		var captured = this.state.captured;
@@ -314,7 +341,7 @@ class Game extends React.Component {
 	}
 	render() {
 		var app = this.props.app;
-		if (app.reportRenders) { console.log('Game rendering'); }
+		debug('Game rendering');
 		if (this.props.id) {
 			app.gameStates[this.props.id] = this.state;
 		}

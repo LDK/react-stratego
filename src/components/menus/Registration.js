@@ -1,7 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
+import { debug } from '../Helpers.js';
 
 class RegistrationMenu extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -52,22 +59,22 @@ class RegistrationMenu extends React.Component {
 		.then(function(data) {
 			data.text().then(function(text) {
 				var res = JSON.parse(text);
-				if (res.error) {
-					if (res.error == 'username-taken') {
-
-					}
-					if (res.error == 'email-taken') {
-
-					}
-				}
-				else {
+				// if (res.error) {
+				// 	if (res.error == 'username-taken') {
+				//
+				// 	}
+				// 	if (res.error == 'email-taken') {
+				//
+				// 	}
+				// }
+				if (!res.error) {
 					Reg.setState({formOpen: false});
 					res.user_id = res.id;
 					app.setCurrentUser(res);
 				}
 			});
 		}).catch(function(error) {
-			console.log('Request failed', error);
+			debug('Request failed', error);
 		});
 	}
 	render() {
@@ -75,7 +82,6 @@ class RegistrationMenu extends React.Component {
 			return null;
 		}
 		var state = this.state;
-		var app = this.props.app;
 		const RegForm = (
 			<form onSubmit={this.sendRegistration} className="h-100">
 				<h3 className="mt-0">USER REGISTRATION</h3>

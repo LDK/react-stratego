@@ -1,8 +1,21 @@
-import React, { Component } from 'react';
-import DragPiece from './GamePiece.js';
+import React from 'react';
+import DragPiece from './DragPiece.js';
 import {PIECES} from '../Helpers.js';
+import PropTypes from 'prop-types';
 
 class TileSpace extends React.Component {
+	static get propTypes() {
+		return {
+			rack: PropTypes.object,
+			game: PropTypes.object,
+			count: PropTypes.number,
+			passable: PropTypes.bool,
+			occupied: PropTypes.bool,
+			onClick: PropTypes.func,
+			name: PropTypes.string,
+			rank: PropTypes.any
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -27,7 +40,7 @@ class TileSpace extends React.Component {
 		this.setState({ occupant: null });
 	}
 	render() {
-		const { name, rackOrder } = PIECES[this.props.rank];
+		const { rackOrder } = PIECES[this.props.rank];
 		var orderClass = rackOrder ? ' order-'+rackOrder : '';
 		var unavailable = !this.remaining;
 		var selectedClass = (this.props.game.selectedRank && this.props.game.selectedRank == this.props.rank) ? ' selected-rank' : '';

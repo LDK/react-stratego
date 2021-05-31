@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
-import DropSpace from '../widgets/GameSpace.js';
-import DragPiece from '../widgets/GamePiece.js';
+import React from 'react';
+import PropTypes from 'prop-types';
+import DropSpace from '../widgets/DropSpace.js';
+import DragPiece from '../widgets/DragPiece.js';
 import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
 import { PIECES, xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
@@ -9,6 +10,18 @@ import { isMobile } from "react-device-detect";
 import HelpBar from '../widgets/HelpBar.js';
 
 class GameBoard extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			game: PropTypes.object,
+			refName: PropTypes.string,
+			onSelect: PropTypes.func,
+			onChange: PropTypes.func,
+			suggestions: PropTypes.array,
+			inputName: PropTypes.string,
+			placeholder: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -48,8 +61,7 @@ class GameBoard extends React.Component {
 		var app = this.props.app;
 		app.gameBoard = this;
 		var spaces = this.props.game.props.spaces;
-		var uid = app.state.currentUser.user_id;
-		if (!!spaces && !!app.tileSpaces) {
+		if (spaces && app.tileSpaces) {
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;
@@ -115,7 +127,7 @@ class GameBoard extends React.Component {
 	highlightSpace(id) {
 		if (typeof id == 'object') {
 			if (id == null) {
-				if (!!this.state.highlighted) {
+				if (this.state.highlighted) {
 					if (typeof this.state.highlighted == 'object') {
 						for (var n in this.state.highlighted) {
 							this.resetSpace(this.state.highlighted[n]);
@@ -161,13 +173,7 @@ class GameBoard extends React.Component {
 		var minId = xyToId(1,placementMinY);
 		var maxId = xyToId(10,placementMaxY);
 		var oldSelected = parseInt(this.state.selectedSpace || 1);
-		if (id == null) {
-			
-		}
-		else if (this.props.game.state.started) {
-			
-		}
-		else if (id < minId) {
+		if (!this.props.game.state.started && id && id < minId) {
 			id = Math.max(oldSelected,minId);
 		}
 		else if (id > maxId) {
@@ -204,12 +210,11 @@ class GameBoard extends React.Component {
 		var oppName = (starterId == uid) ? game.props.opponentName : game.props.starterName;
 		var outcome = '';
 		var resultText = '';
-		var spaces = this.state.spaces;
-		var remaining = result.remaining[playerColor];
 		var players = cloneDeep(game.state.players);
 		players.blue.soldiers = result.remaining.blue;
 		players.red.soldiers = result.remaining.red;
 		var afterText = '';
+		let action;
 		
 		if (defeated == 'both') {
 			game.addCaptured({ color: result.attack_color, rank: result.attack_rank });
@@ -225,9 +230,7 @@ class GameBoard extends React.Component {
 			}
 			game.addCaptured({ color: defeated, rank: defeatedRank });
 		}
-		for (var i in spaces) {
-			var space = spaces[i];
-		}
+
 		if (defendRank == 'Bomb') {
 			this.emptySpace(result.space_id);
 			this.emptySpace(result.from_space_id);
@@ -241,7 +244,7 @@ class GameBoard extends React.Component {
 		}
 		else if (defeated == playerColor) {
 			outcome = 'Defeat!';
-			var action = 'defeated';
+			action = 'defeated';
 			game.setState({ players: players });
 			if (defendRank == 'Bomb' && attacking) {
 				outcome = 'Catastrophe!';
@@ -267,7 +270,7 @@ class GameBoard extends React.Component {
 		else {
 			outcome = 'Victory!';
 			game.setState({ players: players });
-			var action = 'defeated';
+			action = 'defeated';
 			if (defendRank == 'Bomb' && attacking) {
 				outcome = 'Success!';
 				action = 'defused';
@@ -310,8 +313,8 @@ class GameBoard extends React.Component {
 		this.setState({ battleContent: content });
 	}
 	renderGameSpace(row,col,key,piece) {
-		var occupied = (piece !== undefined && !!piece);
-		var selected = (this.selectedSpace !== undefined && !!this.selectedSpace && this.selectedSpace == key);
+		var occupied = (piece !== undefined && piece);
+		var selected = (this.selectedSpace !== undefined && this.selectedSpace && this.selectedSpace == key);
 		var passable = !(this.obscuredSpaces[key] || false);
 		return <DropSpace id={key} selected={selected} board={this} y={row} x={col} occupied={occupied} key={key} passable={passable} game={this.props.game}>
 				{piece}
@@ -364,8 +367,6 @@ class GameBoard extends React.Component {
 	}
 	emptySpace(id) {
 		var spaces = this.state.spaces;
-		var app = this.props.app;
-		var playerColor = app.tileRack.playerColor;
 		var space = spaces[id];
 		var newSpace = this.renderGameSpace(space.props.y,space.props.x,id);
 		spaces[id] = newSpace;
@@ -405,7 +406,7 @@ class GameBoard extends React.Component {
 
 		var fromPiece =  (<DragPiece color={fromInfo.color} rank={fromInfo.rank} fromX={fromX} fromY={fromY} fromId={toId} placed={true} game={this.props.game} />);
 		var toPiece = null;
-		if (!!toInfo) {
+		if (toInfo) {
 			toPiece =  (<DragPiece color={toInfo.color} rank={toInfo.rank} fromX={fromInfo.fromX} fromY={fromInfo.fromY} fromId={fromId} placed={true} game={this.props.game} />);
 		}
 		
@@ -423,7 +424,7 @@ class GameBoard extends React.Component {
 		var remaining = { total: 40 };
 		for (var i in spaces) {
 			var space = spaces[i];
-			if (!!space.props.children && playerColor == space.props.children.props.color) {
+			if (space.props.children && playerColor == space.props.children.props.color) {
 				if (!placedRanks[space.props.children.props.rank]) {
 					placedRanks[space.props.children.props.rank] = 1;
 				}
@@ -446,7 +447,7 @@ class GameBoard extends React.Component {
 		var game = this.props.game;
 		var battle = false;
 		var playerColor = app.tileRack.playerColor;
-		var { x, y, territory } = spaces[id].props;
+		var { x, y } = spaces[id].props;
 		var { rank, color, tileSpace } = pieceInfo;
 		var moveInfo = null;
 		if (x == pieceInfo.fromX && y == pieceInfo.fromY) {
@@ -485,7 +486,6 @@ class GameBoard extends React.Component {
 						return [];
 					}
 					var gameId = app.state.activeGame.props.id;
-					var app = this.props.app;
 					spaces[pieceInfo.fromId] = this.renderGameSpace(pieceInfo.fromY,pieceInfo.fromX,pieceInfo.fromId);
 					var saveSpaces = {};
 					for (var i in spaces) {
@@ -620,6 +620,9 @@ class GameBoard extends React.Component {
 					<div className="gameSpace borderSpace left-border" id={"left-border-"+row}></div>
 				</div>
 		);
+		// This part needs to be rethought soon.  It mutates state directly, but declaring a states object and setting state
+		// at the end breaks the functionality.  Spaces may need to be moved out of state and directly onto the board object.
+		// Once this is resolved, the "react/no-direct-mutation-state" rule in eslint should be changed from warning to error.
 		for (var i = start; i <= end; i++) {
 			var newSpace = null;
 			if (!this.state.spaces[offset+i]) {
@@ -646,7 +649,7 @@ class GameBoard extends React.Component {
 		var rows = [];
 		rows.push(this.borderRow('top-border'));
 		for (var i = start; i <= end; i++) {
-			rows.push(this.gameSpaceRow(i,1,10,10));
+			rows.push(this.gameSpaceRow(i,1,cols,10));
 		}
 		rows.push(this.borderRow('bottom-border'));
 		return rows;

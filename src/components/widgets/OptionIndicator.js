@@ -1,7 +1,28 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactTooltip from 'react-tooltip';
+import PropTypes from 'prop-types';
 
 class OptionIndicator extends React.Component {
+	static get propTypes() {
+		return {
+			value: PropTypes.any,
+			game: PropTypes.object,
+			disableArrows: PropTypes.bool,
+			disabled: PropTypes.bool,
+			hidden: PropTypes.bool,
+			callback: PropTypes.func,
+			layout: PropTypes.string,
+			label: PropTypes.string,
+			ulClass: PropTypes.string,
+			liClass: PropTypes.string,
+			labelClass: PropTypes.string,
+			listLabelClass: PropTypes.string,
+			name: PropTypes.string,
+			options: PropTypes.array,
+			className: PropTypes.string,
+			id: PropTypes.any
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.callback = this.callback.bind(this);
@@ -32,7 +53,7 @@ class OptionIndicator extends React.Component {
 		var cb = this.callback;
 		var layout = state.layout;
 		const radios = this.props.options.map((opt,i) => 
-			!!opt.exclude ? null : (
+			opt.exclude ? null : (
 				<li className={props.liClass+" "+opt.className} key={i} onClick={opt.onSelect} data-tip={opt.tooltip}>
 					<label className={props.labelClass}>
 						<p className="mt-3">{opt.key}</p>

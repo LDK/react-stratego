@@ -1,13 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Icon from '../widgets/Icon.js';
 import cloneDeep from 'lodash/cloneDeep';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Cookies from 'universal-cookie';
 import LoginMenu from '../menus/Login.js';
-import {time2TimeAgo} from '../Helpers.js';
-import {time2Date} from '../Helpers.js';
+import { debug } from '../Helpers.js';
 
 class UserStatus extends React.Component {
+	static get propTypes() {
+		return {
+			app: PropTypes.object,
+			open: PropTypes.bool,
+			loginCallback: PropTypes.func,
+			wrapperClass: PropTypes.string
+		};
+	}
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -78,9 +86,10 @@ class UserStatus extends React.Component {
 		.then(function(data) {
 			data.text().then(function(text) {
 				var res = JSON.parse(text);
+				return res;
 			});
 		}).catch(function(error) {
-			console.log('Request failed', error);
+			debug('Request failed', error);
 		});
 	}
 	logUserOut() {
@@ -125,7 +134,6 @@ class UserStatus extends React.Component {
 		if (!uid || !userKey) {
 			return [];
 		}
-		var nav = app.nav;
 		var userMenu = this;
 		var payload = { user_id: uid, userKey: userKey };
 		window.fetch(app.gameServer+'notifications', {
@@ -141,9 +149,6 @@ class UserStatus extends React.Component {
 				if (notifications.newest_ts > userMenu.state.newest_notification_ts) {
 					userMenu.setState({ notifications: notifications });
 				}
-				else {
-
-				}
 			});
 		});
 	}
@@ -152,14 +157,14 @@ class UserStatus extends React.Component {
 		var type = event.target.attributes['data-type'].value;
 		var action = event.target.attributes['data-mode'].value;
 		if (this.props.app.debugNotifications) {
-			console.log('notification button',action,type,id);
+			debug('notification button',action,type,id);
 		}
 		if (!this.notificationRows || !this.notificationLookup[id]) {
 			return;
 		}
 		var data = this.notificationLookup[id].data;
 		if (this.props.app.debugNotifications) {
-			console.log('notification data',data);
+			debug('notification data',data);
 		}
 		if (type == 'game' && data.game_id) {
 			switch (action) {
@@ -185,7 +190,7 @@ class UserStatus extends React.Component {
 	}
 	notificationAction(data) {
 		if (this.props.app.debugNotifications) {
-			console.log('notification action',data);
+			debug('notification action',data);
 		}
 		if (!data.link_type) {
 			this.close();
@@ -231,7 +236,6 @@ class UserStatus extends React.Component {
 					data: additional
 				};
 				browserItem.onSelect = (() => this.notificationAction(browserItem));
-				var notificationId = parseInt(notification.id);
 				this.notificationRows.push(browserItem); 
 				this.notificationLookup[notification.id] = browserItem;
 				if (notification.category == 'invite-sent' && additional.game_id) {

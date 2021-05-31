@@ -98,7 +98,37 @@ export const getVector = function(fromId,toId) {
 const monthNames = ["","January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
-
+export const debug = (app,thing1,thing2,thing3,thing4,thing5) => {
+	let things = 0;
+	if (typeof thing1 != 'undefined') { things++; }
+	if (typeof thing2 != 'undefined') { things++; }
+	if (typeof thing3 != 'undefined') { things++; }
+	if (typeof thing4 != 'undefined') { things++; }
+	if (typeof thing5 != 'undefined') { things++; }
+	if (things == 0) {
+		return;
+	}
+	if (app && (app.debug || app.reportRenders)) {
+		switch (things) {
+			case 1:
+				console.log(thing1);
+			break;
+			case 2:
+				console.log(thing1,thing2);
+			break;
+			case 3:
+				console.log(thing1,thing2,thing3);
+			break;
+			case 4:
+				console.log(thing1,thing2,thing3,thing4);
+			break;
+			case 5:
+				console.log(thing1,thing2,thing3,thing4,thing5);
+			break;
+		}
+	}
+	return;
+};
 export const time2TimeAgo = function(ts) {
     var seconds = (Date.now() - ts) / 1000;
     // a day

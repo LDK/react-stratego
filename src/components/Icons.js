@@ -1,6 +1,12 @@
 //Icons.js
 
-export const Icons = {
+// TODO: Load icons through server rather than compiling this into react app.
+// What should probably happen is:
+// 1. the server loads this file, returns this array as JSON
+// 2. <App /> hits the /icons endpoint on the server and stores the result as App.Icons
+// 3. All references to Icons object replaced with reference to App.Icons
+
+const Icons = {
 	'home': {
 		viewBox: '0 0 460.298 460.297',
 		width: '460.298px',
@@ -50,3 +56,5 @@ export const Icons = {
 		]
 	}
 };
+
+module.exports = Icons;

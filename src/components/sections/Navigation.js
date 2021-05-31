@@ -65,7 +65,7 @@ class Navigation extends React.Component {
 						<div className="row no-gutters">
 							<div className="d-inline-block pr-3 pt-1">
 								<a className="anchor no-underline" onClick={this.goHome}>
-									<Icon icon="home" fill="white" width="1rem" height="1rem" />
+									<Icon app={app} icon="home" fill="white" width="1rem" height="1rem" />
 								</a>
 							</div>
 							{gameBrowser}

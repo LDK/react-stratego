@@ -45,6 +45,7 @@ class App extends React.Component {
 		this.getInvites = this.getInvites.bind(this);
 		this.getRequests = this.getRequests.bind(this);
 		this.getUsernames = this.getUsernames.bind(this);
+		this.getIcons = this.getIcons.bind(this);
 		this.pollGames = this.pollGames.bind(this);
 		this.newGame = this.newGame.bind(this);
 		this.loadGame = this.loadGame.bind(this);
@@ -62,7 +63,8 @@ class App extends React.Component {
 
 		this.usernames = {};
 		this.usernameLookup = {};
-
+		
+		this.getIcons();
 		this.getGames();
 		this.getInvites();
 		this.getRequests();
@@ -586,6 +588,22 @@ class App extends React.Component {
 					usernameLookup[users[userId]] = userId;
 				}
 				app.usernameLookup = usernameLookup;
+			});
+		});
+	}
+	getIcons() {
+		var app = this;
+		window.fetch(this.gameServer+'icons', {
+			method: 'GET', 
+			headers: { "Accept": "application/json", 'Content-Type': 'application/json' }
+		}).then(function(data){
+			data.text().then(function(text) {
+				if (!text.length) {
+					return;
+				}
+				var icons = JSON.parse(text);
+				app.icons = icons;
+				app.render();
 			});
 		});
 	}

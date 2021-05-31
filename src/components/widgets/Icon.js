@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Icons} from '../Icons.js';
 
 class Icon extends React.Component {
 	static get propTypes() {
@@ -10,8 +9,9 @@ class Icon extends React.Component {
 			width: PropTypes.string,
 			stroke: PropTypes.string,
 			fill: PropTypes.string,
-			icon: PropTypes.string,
-			additionalClasses: PropTypes.string
+			icon: PropTypes.string.isRequired,
+			additionalClasses: PropTypes.string,
+			app: PropTypes.object.isRequired
 		};
 	}
 	constructor(props) {
@@ -32,7 +32,8 @@ class Icon extends React.Component {
 			return null;
 		}
 		const icon = options.icon;
-		const iconInfo = Icons[icon];
+		const iconInfo = this.props.app.icons ? this.props.app.icons[icon] : null;
+		if (!iconInfo) { return null; }
 		const width = options.width || iconInfo.width;
 		const height = options.height || iconInfo.height;
 		const viewBox = options.viewBox || iconInfo.viewBox;

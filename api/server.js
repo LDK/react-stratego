@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var cloneDeep = require('lodash/cloneDeep');
+const Icons =  require('../src/components/Icons.js');
 
 var restapi = express();
 restapi.use(express.static('public'));
@@ -1559,6 +1560,10 @@ restapi.post('/usernames',function(req, res){
 			});
 		}
 	);
+});
+
+restapi.get('/icons',function(req, res){
+	res.status(200).json(Icons);
 });
 
 restapi.post('/battle', function(req, res) {

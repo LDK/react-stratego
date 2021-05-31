@@ -313,7 +313,7 @@ class GameBoard extends React.Component {
 		this.setState({ battleContent: content });
 	}
 	renderGameSpace(row,col,key,piece) {
-		var occupied = (piece !== undefined && piece);
+		var occupied = Boolean(piece);
 		var selected = (this.selectedSpace !== undefined && this.selectedSpace && this.selectedSpace == key);
 		var passable = !(this.obscuredSpaces[key] || false);
 		return <DropSpace id={key} selected={selected} board={this} y={row} x={col} occupied={occupied} key={key} passable={passable} game={this.props.game}>

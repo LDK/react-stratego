@@ -17,7 +17,7 @@ class Game extends React.Component {
 	static get propTypes() {
 		return {
 			app: PropTypes.object,
-			id: PropTypes.number,
+			id: PropTypes.string,
 			starter: PropTypes.number,
 			starterReady: PropTypes.bool,
 			starterName: PropTypes.string,
@@ -49,11 +49,11 @@ class Game extends React.Component {
 			},
 			turn: props.turn || null,
 			placementMode: 'click',
-			started: props.started,
+			started: props.started || false,
 			status: props.status || 'pending',
 			attacks: props.attacks || 0,
-			winner_uid: props.winner_uid || false,
-			last_move_ts: props.last_move_ts || false,
+			winner_uid: props.winner_uid || 0,
+			last_move_ts: props.last_move_ts || 0,
 			last_attack: props.last_attack || {}
 		};
 		if (isMobile) {
@@ -144,7 +144,7 @@ class Game extends React.Component {
 				let players;
 				var opponentReady = gameData.opponent_ready;
 				spaces = JSON.parse(gameData.opponent_spaces);
-				var started = gameData.started;
+				var started = gameData.started ? true : false;
 				var turn = gameData.turn;
 				var attacks = gameData.attacks;
 				var last_move = gameData.last_move ? JSON.parse(gameData.last_move) : {};

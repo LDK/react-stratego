@@ -382,16 +382,16 @@ class App extends React.Component {
 				}
 				var gameData = JSON.parse(text);
 				var gameStatus = gameData.status;
-				var starterReady = gameData.starter_ready;
-				var opponentReady = gameData.opponent_ready;
+				var starterReady = gameData.starter_ready ? true : false;
+				var opponentReady = gameData.opponent_ready ? true : false;
 				var opponentName = gameData.opponent_name;
 				var starterName = gameData.starter_name;
 				var starterUid = gameData.starter_uid;
 				var opponentUid = gameData.opponent_uid;
-				var started = gameData.started;
+				var started = gameData.started ? true : false;
 				var turn = gameData.turn;
 				var attacks = gameData.attacks;
-				var winnerUid = gameData.winner_uid || false;
+				var winnerUid = gameData.winner_uid || 0;
 				var players = {
 					blue: { id: starterUid, ready: starterReady, name: starterName },
 					red: { id: opponentUid, ready: starterReady, name: opponentName }
@@ -497,7 +497,7 @@ class App extends React.Component {
 		}
 		var captured = [];
 		var players = [];
-		var started = 0;
+		var started = false;
 		var turn = null;
 		if (this.gameStates[id]) {
 			captured = this.gameStates[id].captured;

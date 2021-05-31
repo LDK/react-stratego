@@ -9,7 +9,7 @@ class GamePiece extends React.Component {
 		return {
 			captured: PropTypes.bool,
 			placed: PropTypes.bool,
-			rank: PropTypes.string,
+			rank: PropTypes.any,
 			game: PropTypes.object,
 			gameSpaceId: PropTypes.number,
 			x: PropTypes.number,

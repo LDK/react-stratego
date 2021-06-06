@@ -82,3 +82,71 @@ body, html {
 	}
 }
 
+$opacity: (
+  '0': 0,
+  '25': .25,
+  '50': .5,
+  '75': .75,
+  '100': 1,
+);
+
+@each $name, $value in $opacity {
+  .opacity-#{$name} {
+    opacity: #{$value};
+  }
+}
+
+.h-auto {
+	height: auto !important;
+}
+.w-auto {
+	width: auto !important;
+}
+
+$percentages: [0,25,50,75,100];
+@each $inc in $percentages {
+	.h-#{$inc} {
+		@if ($inc > 0) {
+			height: calc(100% / (100/#{$inc})) !important;
+		}
+		@else {
+			height: 0 !important;
+		}
+	}
+	.w-#{$inc} {
+		@if ($inc > 0) {
+			width: calc(100% / (100/#{$inc})) !important;
+		}
+		@else {
+			width: 0 !important;
+		}
+	}
+}
+@each $bp, $value in $breakpoints {
+	@include atleast_res($value) {
+		.h-#{$bp}-auto {
+			height: auto !important;
+		}
+		.w-#{$bp}-auto {
+			width: auto !important;
+		}
+		@each $inc in $percentages {
+			.h-#{$bp}-#{$inc} {
+				@if ($inc > 0) {
+					height: calc(100% / (100/#{$inc})) !important;
+				}
+				@else {
+					height: 0 !important;
+				}
+			}
+			.w-#{$bp}-#{$inc} {
+				@if ($inc > 0) {
+					width: calc(100% / (100/#{$inc})) !important;
+				}
+				@else {
+					width: 0 !important;
+				}
+			}
+		}
+	}
+}

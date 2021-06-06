@@ -62,7 +62,7 @@ function InfoPanel({ game, app, playerColor }) {
 			}
 		}
 		panel = (
-			<div className="col-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto">
+			<div className="col-12 col-sm-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto h-25 h-sm-auto">
 				<div className="row no-gutters">
 					{winLabel}
 					{turnLabel}

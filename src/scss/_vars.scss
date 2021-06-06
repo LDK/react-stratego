@@ -6,6 +6,15 @@ $lg: 992px;
 $xl: 1200px;
 $hd: 1800px;
 
+$breakpoints: (
+	'xs': $xs,
+	'sm': $sm,
+	'md': $md,
+	'lg': $lg,
+	'xl': $xl,
+	'hd': $hd
+);
+
 body {
 	--blue-button: #3777c7;
 	--blue-shadow: #275797;

@@ -27,7 +27,7 @@ class GamePiece extends React.Component {
 			captured: props.captured || false,
 			placed: props.placed || false,
 		};
-		if (props.rank) {
+		if (props.rank && props.game) {
 			const { name, rackOrder, move, capture, defuse } = props.game.props.app.Config.Pieces[props.rank];
 			this.name = name;
 			this.rackOrder = rackOrder;

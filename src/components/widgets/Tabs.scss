@@ -1,0 +1,35 @@
+// Tabs
+.tabs {
+	position: relative;
+	.tab-list {
+		display: flex;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		border-radius: 5px;
+		background: #fff;
+		list-style: none;
+		height: 56px;
+		margin: 0;
+		li {
+			flex: 1;
+			padding: 12px;
+			text-align: center;
+			cursor: pointer;
+			opacity: 0.5;
+			background-color: rgb(177,195,230);
+			transition: opacity 180ms ease-out;
+			outline: 0; // add focus state for better accessibility
+
+			&:hover,
+			&.active {
+				opacity: 1;
+			}
+		}
+	}
+	.content.row {
+		margin: 0 0 56px 0;
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+}

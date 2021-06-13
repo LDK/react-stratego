@@ -11,6 +11,7 @@ import Cookies from 'universal-cookie';
 import DataBrowser from './components/widgets/DataBrowser.js';
 import {time2TimeAgo} from './components/Helpers.js';
 import {debug} from './components/Helpers.js';
+import RulesModal from './components/widgets/RulesModal.js';
 import "./scss/main.scss";
 
 class App extends React.Component {
@@ -49,10 +50,11 @@ class App extends React.Component {
 		this.loadGame = this.loadGame.bind(this);
 		this.openNewGameMenu = this.openNewGameMenu.bind(this);
 		this.openUserProfile = this.openUserProfile.bind(this);
+		this.openRulesModal = this.openRulesModal.bind(this);
 
 		// FOR DEBUG ONLY
 		// this.reportRenders = true;
-
+		
 		this.onKeyDown = this.onKeyDown.bind(this);
 
 		this.usernames = {};
@@ -700,12 +702,16 @@ class App extends React.Component {
 			break;
 		}
 	}
+	openRulesModal() {
+		this.RulesModal.setState({ modalOpen: true });
+	}
 	render() {
 		const body = this.getBody();
 		debug('app rendering');
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />
+					<RulesModal app={this} />
 					{body}
 					<NewGameMenu app={this} />
 					<UserProfile app={this} />

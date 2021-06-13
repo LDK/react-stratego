@@ -32,6 +32,7 @@
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
     "react-hot-keys": "^2.6.0",
+    "react-string-replace": "^0.4.4",
     "react-tooltip": "^4.2.9",
     "sass": "^1.32.12",
     "sass-loader": "^11.0.1",

@@ -13,7 +13,8 @@ class Modal extends React.Component {
 			styles: PropTypes.object,
 			height: PropTypes.string,
 			width: PropTypes.string,
-			additionalClasses: PropTypes.string
+			additionalClasses: PropTypes.string,
+			id: PropTypes.any
 		};
 	}
 	constructor(props) {
@@ -53,7 +54,7 @@ class Modal extends React.Component {
 			styles = props.styles;
 		}
 		return (
-			<section ref={(section) => { this.modalContainer = section; }} className={"modal-container " + (props.open ? ' open' : '')} onKeyDown={this.onKeyDown}>
+			<section id={props.id || null} ref={(section) => { this.modalContainer = section; }} className={"modal-container " + (props.open ? ' open' : '')} onKeyDown={this.onKeyDown}>
 				<div className="modal-overlay" />
 				<div className={wrapperClass} style={styles}>
 					{closeButton}

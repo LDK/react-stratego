@@ -1,6 +1,95 @@
 // Stratego Config
 
 const Config = { 
+	Text: {
+		Rules: {
+			pages: [
+				{
+					id: 'introduction',
+					label: 'Introduction',
+					heading: "Introduction to Stratego",
+					paragraphs: [
+						{
+							type: 'paragraph',
+							text: "The goal of Stratego is to capture the other player's **Flag**, or eliminate their entire army. A player also must concede if they can make no legal move."
+						},
+						{
+							type: 'paragraph',
+							text: "Each player begins the game with 40 tiles.  The tiles consist of:"
+						},
+						{
+							type: 'list',
+							itemClass: 'col-6 mb-2 px-0',
+							items: [
+								'1 **Flag** [piece:rank-f]',
+								'6 **Bombs** [piece:rank-b]',
+								'1 **Spy** [piece:rank-s]',
+								'1 **Marshal** (Rank: 1) [piece:rank-1]',
+								'1 **General** (Rank: 2) [piece:rank-2]',
+								'2 **Colonels** (Rank: 3) [piece:rank-3]',
+								'3 **Majors** (Rank: 4) [piece:rank-4]',
+								'4 **Captains** (Rank: 5) [piece:rank-5]',
+								'4 **Lieutenants** (Rank: 6) [piece:rank-6]',
+								'5 **Sergeants** (Rank: 7) [piece:rank-7]',
+								'5 **Miners** (Rank: 8) [piece:rank-8]',
+								'6 **Scouts** (Rank: 9) [piece:rank-9]',
+							]
+						}
+					],
+				},
+				{
+					id: 'setup',
+					label: 'Setup',
+					heading: "Setup",
+					paragraphs: [
+						{
+							type: 'paragraph',
+							text: "The board consists of 100 squares, in 10 rows of 10.  Only one tile may occupy a space."
+						},
+						{
+							type: 'paragraph',
+							text: "Each player is assigned a side of the board on which to place their tiles."
+						},
+						{
+							type: 'paragraph',
+							text: "In the middle of the board are 2 rows of neutral territory squares.  No tiles can be placed there initially."
+						},
+						{
+							type: 'paragraph',
+							text: "There are 8 squares in the neutral territory that are blocked.  No tiles can ever occupy or move through these squares."
+						},
+						{
+							type: 'paragraph',
+							text: "Play can begin when each player has placed all 40 tiles.  Players will not be able to see their opponents' tiles' faces."
+						}
+					],
+				},
+				{
+					id: 'game-play',
+					label: 'Game Play',
+					heading: "Game Play",
+					paragraphs: [
+						{
+							type: 'paragraph',
+							text: "**Flags** and **Bombs** cannot be moved once the game has begun."
+						},
+						{
+							type: 'paragraph',
+							text: "**Scouts** may move as many spaces as the player wishes, until the **Scout** encounters a blocked or occupied tile, or the edge of the board."
+						},
+						{
+							type: 'paragraph',
+							text: "All other pieces may move one space in a turn."
+						},
+						{
+							type: 'paragraph',
+							text: "Pieces may not move diagonally."
+						}
+					],
+				},
+			]
+		}
+	},
 	Icons: {
 		'home': {
 			viewBox: '0 0 460.298 460.297',

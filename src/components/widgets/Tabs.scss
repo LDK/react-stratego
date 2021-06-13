@@ -31,5 +31,7 @@
 		margin: 0 0 56px 0;
 		padding-left: 1rem;
 		padding-right: 1rem;
+		overflow: scroll;
+		max-height: calc(100% - 56px - 1rem);
 	}
 }

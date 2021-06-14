@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
 import JoinGameMenu from './components/menus/JoinGame.js';
+import MobileMenu from './components/menus/Mobile.js';
 import UserOptionsMenu from './components/menus/UserOptions.js';
 import UserProfile from './components/menus/UserProfile.js';
 import Navigation from './components/sections/Navigation.js';
@@ -610,10 +611,10 @@ class App extends React.Component {
 		return (
 			<div className="userMenu py-3">
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} className="md-up" afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
 				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
-				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />
+				<input type="submit" value="New Game" className="md-up" onClick={this.openNewGameMenu} />
 			</div>
 		);
 	}
@@ -712,6 +713,7 @@ class App extends React.Component {
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />
 					<RulesModal app={this} />
+					<MobileMenu app={this} />
 					{body}
 					<NewGameMenu app={this} />
 					<UserProfile app={this} />

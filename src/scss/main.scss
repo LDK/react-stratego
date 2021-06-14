@@ -17,3 +17,9 @@
 @import "_animation.scss";
 @import "_moves.scss";
 
+@media screen and (orientation: landscape){
+  .doesnt-exist { background:red; }
+}
+@media screen and (orientation: portrait){
+  .doesnt-exist { background:blue; }
+}

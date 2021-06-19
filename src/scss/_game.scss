@@ -51,6 +51,14 @@
 			top: -75px;
 		}
 	}
+	@include below_res($sm) {
+		.player-blue &.placement {
+			top: -120px;
+		}
+		.player-red &.placement {
+			top: 75px;
+		}
+	}
 	@include below_res($md) {
 		.player-blue &.zoom.placement {
 			top: -155px;

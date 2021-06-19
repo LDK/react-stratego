@@ -11,13 +11,22 @@ div.captured-tiles {
 }
 .tileRack {
 	height: 100%;
-	background: var(--dark);
+	@include atleast_res($md) {
+		background: var(--dark);
+	}
 	label {
 		display: block;
 		margin-bottom: .5rem;
 		margin-left: auto;
 		margin-right: auto;
 		text-align: center;
+	}
+	@include below_res($md) {
+		.go-button {
+		    position: fixed;
+		    top: 4rem;
+		    left: calc(50% - 86px);
+		}
 	}
 }
 .tileRack-col, .gameStatus-col {
@@ -35,8 +44,9 @@ div.captured-tiles {
 	@include below_res($md) {
 		height: 65px;
 		position: fixed;
-		background: var(--dark);
 		width: 100%;
+	    z-index: 1;
+	    background-color: unset;
 		.player-blue & {
 			bottom: 72px;
 			top: unset;
@@ -50,7 +60,6 @@ div.captured-tiles {
 		height: 130px;
 		left: 0px;
 		overflow: hidden;
-		background: var(--dark);
 		.player-blue & {
 			bottom: 56px;
 			top: unset;

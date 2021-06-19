@@ -11,11 +11,11 @@ function InfoPanel({ game, app, playerColor }) {
 		panel = (
 			<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-md-white mt-lg-3 mr-xl-auto">
 				<div className="row no-gutters pt-1 pt-md-3">
-					<OptionIndicator id="placementMode" className="col-12 px-0 mb-3" layout="horizontal" 
+					<OptionIndicator id="placementMode" className="col-12 px-0 mb-md-3" layout="horizontal" 
 						value={game.state.placementMode}
 						disableArrows={true}
 						ulClass="text-center px-0 pt-3 pt-md-0 mb-2 mb-md-0"
-						liClass="col-6 col-sm-4 col-md-6 p-0 mx-auto h-50"
+						liClass="col-4 col-md-6 p-0 mx-auto h-50"
 						disabled={game.state.players[playerColor].ready}
 						labelClass="px-2 px-md-3"
 						listLabelClass="pb-2 md-up"

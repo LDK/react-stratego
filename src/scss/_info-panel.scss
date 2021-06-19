@@ -22,6 +22,11 @@ div.captured-tiles {
 		text-align: center;
 	}
 	@include below_res($md) {
+	    position: fixed;
+	    width: 100%;
+	    height: 120px;
+	    bottom: 173px;
+	    background: var(--midtone1);
 		.go-button {
 		    position: fixed;
 		    top: 4rem;

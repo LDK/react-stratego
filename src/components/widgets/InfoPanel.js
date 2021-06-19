@@ -6,7 +6,13 @@ import HelpBar from './HelpBar.js';
 import { isMobile } from "react-device-detect";
 
 function InfoPanel({ game, app, playerColor }) {
-	var panel = '';
+	let panel = '';
+	let mobileTileRack = '';
+	let tileRack = <TileRack game={game} app={app} />;
+	if (isMobile) {
+		mobileTileRack = <TileRack game={game} app={app} />;
+		tileRack = '';
+	}
 	if (!game.state.started) {
 		panel = (
 			<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-md-white mt-lg-3 mr-xl-auto">
@@ -29,8 +35,9 @@ function InfoPanel({ game, app, playerColor }) {
 						label="Placement Mode"
 						callback={game.modeChange} 
 					/>
+					{mobileTileRack}
 					<div className="col-12 mx-auto">
-						<TileRack game={game} app={app} />
+						{tileRack}
 					</div>
 				</div>
 			</div>

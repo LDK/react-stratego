@@ -289,9 +289,10 @@ class UserStatus extends React.Component {
 				<a className="anchor mr-3 md-up" onClick={app.openRulesModal}>
 					Rules
 				</a>
-			<span className="username mr-2 sm-up">
-				<p className="md-up d-md-inline">| &nbsp;</p>
-				<a className="anchor" onClick={() => app.openUserProfile(app.state.currentUser.user_id)}>{username}</a> is playing.</span>
+				<span className="username mr-2 sm-up">
+					<p className="md-up d-md-inline">|&nbsp; </p>
+					<a className="anchor" onClick={() => app.openUserProfile(app.state.currentUser.user_id)}>{username}</a> is playing.
+				</span>
 				<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown} id="user-anchor">
 					<Icon app={app} icon="user" fill="white" stroke="white" height="1rem" width="1rem" id="user-icon" />
 					{notificationCounter}

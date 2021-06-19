@@ -364,7 +364,7 @@ class Game extends React.Component {
 				<DndProvider backend={MultiBackend} options={backendOpts}>
 					<div className="row no-gutters">
 						<InfoPanel game={this} app={app} playerColor={playerColor} />
-						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 ml-xl-auto px-0 order-2 order-lg-1 scroll">
+						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 mx-auto px-0 order-2 order-lg-1 scroll">
 							<GameBoard game={this} app={app} />
 						</div>
 					</div>

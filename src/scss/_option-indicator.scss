@@ -60,8 +60,17 @@
 			}
 		}
 		&.horizontal {
-			height: 6rem;
+			@include atleast_res($md) {
+				height: 6rem;
+			}
 		}
+	}
+	@include below_res($md) {
+	    position: fixed;
+	    bottom: 90px;
+	    background: white;
+	    z-index: 1;
+	    height: auto;
 	}
 }
 

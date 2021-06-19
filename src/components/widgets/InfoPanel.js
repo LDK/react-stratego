@@ -14,19 +14,19 @@ function InfoPanel({ game, app, playerColor }) {
 					<OptionIndicator id="placementMode" className="col-12 px-0 mb-3" layout="horizontal" 
 						value={game.state.placementMode}
 						disableArrows={true}
-						ulClass="text-center px-0"
+						ulClass="text-center px-0 pt-3 pt-md-0 mb-2 mb-md-0"
 						liClass="col-6 col-sm-4 col-md-6 p-0 mx-auto h-50"
 						disabled={game.state.players[playerColor].ready}
 						labelClass="px-2 px-md-3"
-						listLabelClass="pb-2"
+						listLabelClass="pb-2 md-up"
 						options={[
-							// {key: 'Drag & Drop', value: 'drag', exclude: isMobile },
 							{key: 'Click & Place', value: 'click' },
 							{key: 'Keyboard', value: 'keyboard', exclude: isMobile },
 							{key: 'Quick Load', value: 'quick', onSelect: game.openQuickLoadModal},
 							{key: 'Erase', value: 'erase' }
 						]} 
-						name="placementMode" label="Placement Mode"
+						name="placementMode" 
+						label="Placement Mode"
 						callback={game.modeChange} 
 					/>
 					<div className="col-12 mx-auto">

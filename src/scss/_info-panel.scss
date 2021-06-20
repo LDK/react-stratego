@@ -24,7 +24,7 @@ div.captured-tiles {
 	@include below_res($md) {
 	    position: fixed;
 	    width: 100%;
-	    height: 120px;
+	    height: 150px;
 	    bottom: 173px;
 	    background: var(--midtone1);
 		.go-button {

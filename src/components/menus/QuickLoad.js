@@ -124,7 +124,7 @@ class QuickLoadMenu extends React.Component {
 				height="auto"
 				content={presetSelector}
 				styles={{ backgroundColor: 'var(--sand)' }}
-				additionalClasses={"text-black"}
+				additionalClasses={"text-black py-5 px-1"}
 			/>
 		);
 	}

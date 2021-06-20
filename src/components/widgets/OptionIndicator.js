@@ -54,7 +54,7 @@ class OptionIndicator extends React.Component {
 		var layout = state.layout;
 		const radios = this.props.options.map((opt,i) => 
 			opt.exclude ? null : (
-				<li className={props.liClass+" "+opt.className} key={i} onClick={opt.onSelect} data-tip={opt.tooltip}>
+				<li className={props.liClass+" "+opt.className || ''} key={i} onClick={opt.onSelect} data-tip={opt.tooltip}>
 					<label className={props.labelClass}>
 						<p className="mt-3 mb-0">{opt.key}</p>
 						<input type="radio" defaultChecked={opt.value === state.value}

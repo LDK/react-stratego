@@ -225,6 +225,12 @@ class Game extends React.Component {
 		if (!this.state.started && this.state.placementMode == 'click' && this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
 			this.setHelpText(this.HelpMessages.clickSelected);
 		}
+		else if (!this.state.started && this.state.placementMode == 'erase' && this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
+			this.setHelpText(this.HelpMessages.eraseSelected);
+		}
+		else if (!this.state.started && this.state.placementMode == 'quick' && this.props.app.tileRack && typeof this.HelpMessages != 'undefined') {
+			this.setHelpText(this.HelpMessages.quickSelected);
+		}
 		else if (this.state.started && this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
 			let headline;
 			if (isMobile) {

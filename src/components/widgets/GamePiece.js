@@ -108,8 +108,11 @@ class GamePiece extends React.Component {
 			if (!moves.length) {
 				game.setHelpText('No valid moves.  Try selecting another piece.');
 			}
-			else if (moves.length == 1) {
+			else if (moves.length == 2) {
 				game.setHelpText('Tap the highlighted square to move there.');
+			}
+			else if (moves.length == 1) {
+				game.setHelpText({ headline: 'No moves are available', subtext: 'Please choose another piece.' });
 			}
 			else {
 				game.setHelpText('Tap any of the highlighted squares to move there.')

@@ -46,7 +46,7 @@ function InfoPanel({ game, app, playerColor }) {
 	else {
 		var turnLabel, winLabel;
 		if (game.state.turn && game.state.status && game.state.status != 'done') {
-			turnLabel = (<h6 className="text-center mx-auto my-3">Current Turn: <br className="sm-down" /><span className={"text-"+game.state.turn}>{game.state.players[game.state.turn].name}</span></h6>);
+			turnLabel = (<h6 className="text-center mx-auto my-3 col-12 pt-3">Current Turn: <br className="sm-down" /><span className={"text-"+game.state.turn}>{game.state.players[game.state.turn].name}</span></h6>);
 		}
 		else if (game.state.status && game.state.status == 'done') {
 			var winnerName, winnerClass;
@@ -69,29 +69,41 @@ function InfoPanel({ game, app, playerColor }) {
 			}
 		}
 		panel = (
-			<div className="col-12 col-sm-4 col-lg-3 px-0 gameStatus-col text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto h-25 h-sm-auto">
+			<div className="col-12 col-sm-4 col-lg-3 px-0 info-panel text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto h-sm-auto">
 				<div className="row no-gutters">
-					{winLabel}
-					{turnLabel}
-					<h4 className="mx-auto d-block my-3 col-12">Captured</h4>
-					<div className="col-6 px-3">
-						<span className="text-red">
-							<UserLink app={app} user={game.state.players.red} className="anchor" />
-						</span>
-						<div className="captured-tiles player-red mt-3 md-up">
-							{captured.red.length ? captured.red : 'None'}
-						</div>
+					<div className="col-4 col-sm-12">
+						{winLabel}
+						{turnLabel}
 					</div>
-					<div className="col-6 px-3">
-						<span className="text-blue">
-							<UserLink app={app} user={game.state.players.blue} className="anchor" />
-						</span>
-						<div className="captured-tiles player-blue mt-3 md-up">
-							{captured.blue.length ? captured.blue : 'None'}
+					<div className="col-8 col-sm-12">
+						<div className="row no-gutters">
+							<h4 className="mx-auto d-sm-block my-3 col-12">Captured</h4>
+							<div className="col-6 px-3">
+								<span className="text-red">
+									<UserLink app={app} user={game.state.players.red} className="anchor" />
+								</span>
+								<div className="captured-tiles player-red mt-3 md-up">
+									{captured.red.length ? captured.red : 'None'}
+								</div>
+								<span className="captured-tiles player-red mt-3 sm-down">
+									{captured.red.length}
+								</span>
+							</div>
+							<div className="col-6 px-3">
+								<span className="text-blue">
+									<UserLink app={app} user={game.state.players.blue} className="anchor" />
+								</span>
+								<div className="captured-tiles player-blue mt-3 md-up">
+									{captured.blue.length ? captured.blue : 'None'}
+								</div>
+								<span className="captured-tiles player-blue mt-3 sm-down">
+									{captured.blue.length}
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
-				<HelpBar game={game} app={app} wrapperClass={"d-none d-md-table w-100"} wrapperStyles={{ height: '8rem' }} />
+				<HelpBar game={game} app={app} wrapperClass={"d-none d-sm-table w-100"} wrapperStyles={{ height: '8rem' }} />
 				<div className="d-none">
 					<TileRack game={game} app={app} />
 				</div>

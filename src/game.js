@@ -246,6 +246,11 @@ class Game extends React.Component {
 			}
 			this.setHelpText(headline);
 		} 
+		else if (this.state.started && this.props.app.tileRack && (this.state.turn != this.props.app.tileRack.playerColor)) {
+			let oppName = (this.state.turn == 'red') ? this.props.opponentName : this.props.starterName;
+			let headline = 'Waiting for ' + oppName + ' to make a move.';
+			this.setHelpText(headline);
+		} 
 		else {
 			this.setHelpText(null);
 		}

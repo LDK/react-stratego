@@ -64,6 +64,11 @@
 			font-weight: 300;
 		}
 	}
+	@include below_res($sm) {
+		width: 100%;
+		background-color: rgba(0,0,0,.75);
+		height: 56px;
+	}
 }
 #help-bar-close {
 	display: none;

@@ -88,7 +88,7 @@ div.captured-tiles {
 		padding-bottom: 2rem;
 	}
 	@include below_res($sm) {
-		height: 116px !important;
+		height: 90px !important;
 	}
 	@include atleast_res($sm) {
 		border: 1px solid #333;

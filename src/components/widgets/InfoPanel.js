@@ -77,7 +77,7 @@ function InfoPanel({ game, app, playerColor }) {
 					</div>
 					<div className="col-8 col-sm-12">
 						<div className="row no-gutters">
-							<h4 className="mx-auto d-sm-block my-3 col-12">Captured</h4>
+							<h4 className="mx-auto d-sm-block mt-3 my-sm-3 col-12">Captured</h4>
 							<div className="col-6 px-3">
 								<span className="text-red">
 									<UserLink app={app} user={game.state.players.red} className="anchor" />

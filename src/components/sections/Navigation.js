@@ -59,7 +59,7 @@ class Navigation extends React.Component {
 			);
 		}
 		return (
-			<div id="top-row">
+			<div id="top-row" className="md-up">
 				<div className="navigation py-3 py-sm-1 py-md-3">
 					<div className={containerClass + " mx-auto"}>
 						<div className="row no-gutters">

@@ -11,7 +11,9 @@ div.captured-tiles {
 }
 .tileRack {
 	height: 100%;
-	background: var(--dark);
+	@include atleast_res($md) {
+		background: var(--dark);
+	}
 	label {
 		display: block;
 		margin-bottom: .5rem;
@@ -19,8 +21,23 @@ div.captured-tiles {
 		margin-right: auto;
 		text-align: center;
 	}
+	@include below_res($md) {
+	    position: fixed;
+	    width: 100%;
+	    height: 150px;
+	    bottom: 173px;
+	    background: var(--midtone1);
+		.go-button {
+		    position: fixed;
+		    top: 4rem;
+		    left: calc(50% - 86px);
+		}
+	}
+	@include below_res($sm) {
+	    height: 140px;
+	}
 }
-.tileRack-col, .gameStatus-col {
+.tileRack-col, .info-panel {
 	height: 10rem;
 }
 .tileRack-col {
@@ -35,8 +52,9 @@ div.captured-tiles {
 	@include below_res($md) {
 		height: 65px;
 		position: fixed;
-		background: var(--dark);
 		width: 100%;
+	    z-index: 1;
+	    background-color: unset;
 		.player-blue & {
 			bottom: 72px;
 			top: unset;
@@ -50,7 +68,6 @@ div.captured-tiles {
 		height: 130px;
 		left: 0px;
 		overflow: hidden;
-		background: var(--dark);
 		.player-blue & {
 			bottom: 56px;
 			top: unset;
@@ -61,15 +78,23 @@ div.captured-tiles {
 		}
 	}
 }
-.gameStatus-col {
+.info-panel {
 	height: 100%;
 	background-image: url(img/parchment.jpg);
 	background-size: cover;
 	background-blend-mode: overlay;
 	background-color: rgba(125,111,0,.5) !important;
+	a.userLink.anchor:after {
+	    content: ': ';
+	}
 	@include atleast_res($lg) {
 		padding-bottom: 2rem;
-		height: 100%;
+	}
+	@include below_res($sm) {
+		height: 90px !important;
+	}
+	@include atleast_res($sm) {
+		border: 1px solid #333;
 	}
 }
 .selected-rank {
@@ -82,13 +107,13 @@ div.captured-tiles {
 }
 @include atleast_res($md) {
 	.tileRack-col > .row,
-	.gameStatus-col {
+	.info-panel {
 		-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 		-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 		box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.2);
 		border: 1px solid #333;
 	}
-	.tileRack-col, .gameStatus-col {
+	.tileRack-col, .info-panel {
 		height: 27rem;
 	}
 	#placementMode {

@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import Icon from '../widgets/Icon.js';
 import cloneDeep from 'lodash/cloneDeep';
 import DataBrowser from '../widgets/DataBrowser.js';
-import Cookies from 'universal-cookie';
-import LoginMenu from '../menus/Login.js';
 import { debug } from '../Helpers.js';
 
 class UserStatus extends React.Component {
@@ -26,13 +24,10 @@ class UserStatus extends React.Component {
 			newest_notification_ts: null
 		};
 
-		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
-		this.openLoginMenu = this.openLoginMenu.bind(this);
 		this.openUserOptions = this.openUserOptions.bind(this);
 		this.toggleUserDropdown = this.toggleUserDropdown.bind(this);
 		this.openUserDropdown = this.openUserDropdown.bind(this);
 		this.closeUserDropdown = this.closeUserDropdown.bind(this);
-		this.logUserOut = this.logUserOut.bind(this);
 		this.markVisibleSeen = this.markVisibleSeen.bind(this);
 		this.processNotifications = this.processNotifications.bind(this);
 		this.notificationAction = this.notificationAction.bind(this);
@@ -92,12 +87,6 @@ class UserStatus extends React.Component {
 			debug('Request failed', error);
 		});
 	}
-	logUserOut() {
-		const cookies = new Cookies();
-		cookies.remove("stratego-user");
-		this.props.app.setState({currentUser: false, activeGame: null, games: []});
-		this.closeUserDropdown();
-	}
 	openUserOptions() {
 		var app = this.props.app;
 		app.nav.closeAll();
@@ -120,12 +109,6 @@ class UserStatus extends React.Component {
 		this.markVisibleSeen();
 		this.setState({ userDropdownOpen: false });
 		this.props.app.nav.setState({ dropdownOpen: false });
-	}
-	openRegistrationMenu() {
-		this.props.app.RegistrationMenu.setState({ formOpen: true });
-	}
-	openLoginMenu() {
-		this.props.app.LoginMenu.setState({ formOpen: true });
 	}
 	getNotifications() {
 		var app = this.props.app;
@@ -262,7 +245,6 @@ class UserStatus extends React.Component {
 	render() {
 		var props = this.props;
 		var app = props.app;
-		var formClass = app.state.currentUser ? 'd-none' : '';
 		var userClass = !app.state.currentUser ? 'd-none' : '';
 		var username = app.state.currentUser.username;
 		var dropdownItems = [
@@ -275,21 +257,21 @@ class UserStatus extends React.Component {
 		if (this.state.notifications.unseen) {
 			notificationCounter = (<span className="notification-counter">{this.state.notifications.unseen}</span>)
 		}
-		var loginForm = (
-			<form onSubmit={this.sendLogin} className={formClass}>
-				<span className="mr-2">
-					[<a className="text-white anchor no-underline" onClick={this.openRegistrationMenu}>Register</a>/
-					<a className="text-white anchor no-underline" onClick={this.openLoginMenu}>Login</a>]
-				</span>
-			</form>
+		var loginLinks = (
+			<span className="mr-2">
+				[<a className="text-white anchor no-underline" onClick={app.openRegistrationMenu}>Register</a>/
+				<a className="text-white anchor no-underline" onClick={app.openLoginMenu}>Login</a>]
+			</span>
 		);
-		var loginModal = <LoginMenu app={app} loginCallback={props.loginCallback} />;
 		var userMenu = (
-			<div className={userClass} id="nav-user-menu">
-				<a className="anchor mr-3" onClick={app.openRulesModal}>
+			<span className={userClass} id="nav-user-menu">
+				<a className="anchor mr-3 md-up" onClick={app.openRulesModal}>
 					Rules
 				</a>
-				<span className="username mr-2"><a className="anchor" onClick={() => app.openUserProfile(app.state.currentUser.user_id)}>{username}</a> is playing.</span>
+				<span className="username mr-2 sm-up">
+					<p className="md-up d-md-inline">|&nbsp; </p>
+					<a className="anchor" onClick={() => app.openUserProfile(app.state.currentUser.user_id)}>{username}</a> is playing.
+				</span>
 				<a className="text-white anchor no-underline" onClick={this.toggleUserDropdown} id="user-anchor">
 					<Icon app={app} icon="user" fill="white" stroke="white" height="1rem" width="1rem" id="user-icon" />
 					{notificationCounter}
@@ -297,12 +279,11 @@ class UserStatus extends React.Component {
 				<div id="user-dropdown-wrapper" className={this.state.userDropdownOpen ? '' : 'd-none'}>
 					<DataBrowser label={null} items={dropdownItems} view="list" id="user-dropdown" />
 				</div>
-			</div>
+			</span>
 		);
 		return (
 			<div className={props.wrapperClass}>
-				{loginModal}
-				{loginForm}
+				{loginLinks}
 				{userMenu}
 			</div>
 		);

@@ -32,7 +32,7 @@ function HelpBar({ game, textClass, wrapperClass, textStyles, wrapperStyles }) {
 					{helpText}
 					{helpSubtext}
 				</span>
-				<a className="text-white" id="help-bar-close" onClick={game.closeHelpBar}>X</a>
+				<a className="text-white md-up" id="help-bar-close" onClick={game.closeHelpBar}>X</a>
 			</div>
 			<a className="circle-link text-white" id="help-bar-open" onClick={game.openHelpBar}>?</a>
 		</div>

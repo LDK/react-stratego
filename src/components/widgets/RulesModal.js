@@ -56,35 +56,36 @@ class RulesModal extends React.Component {
 					let newPar = page.paragraphs[idx].text;
 					for (rank in app.Config.Pieces) {
 						rankKey = String(rank).toLowerCase();
-						newPar = reactStringReplace(newPar, '**'+app.Config.Pieces[rank].name+'**', () => ( <strong>{app.Config.Pieces[rank].name}</strong> ));
-						newPar = reactStringReplace(newPar, '**'+app.Config.Pieces[rank].name+'s**', () => ( <strong>{app.Config.Pieces[rank].name+'s'}</strong> ));
+						newPar = reactStringReplace(newPar, '**'+app.Config.Pieces[rank].name+'**', () => ( <strong key={"single-"+app.Config.Pieces[rank].name}>{app.Config.Pieces[rank].name}</strong> ));
+						newPar = reactStringReplace(newPar, '**'+app.Config.Pieces[rank].name+'s**', () => ( <strong key={"plural-"+app.Config.Pieces[rank].name}>{app.Config.Pieces[rank].name+'s'}</strong> ));
 						newPar = reactStringReplace(newPar, '[piece:rank-'+rankKey+']', () => ( 
-							<GamePiece color="blue" rank={rank} wrapperClass="d-inline-block float-right mr-md-5" />
+							<GamePiece color="blue" key={rank+'-par'} rank={rank} wrapperClass="d-inline-block float-right mr-md-5" />
 						));
 					}
-					pars.push(<div className="mb-3">{newPar}</div>);
+					pars.push(<div className="mb-3" key={idx}>{newPar}</div>);
 				}
 				else if (page.paragraphs[idx].type == 'list') {
 					let item;
 					let items = [];
 					for (var i in page.paragraphs[idx].items) {
 						item = page.paragraphs[idx].items[i];
-						item = reactStringReplace(item, '**Bombs**', () => ( <strong>Bombs</strong> ));
-						item = reactStringReplace(item, '**Majors**', () => ( <strong>Majors</strong> ));
+						item = reactStringReplace(item, '**Bombs**', () => ( <strong key="bomb">Bombs</strong> ));
+						// item = reactStringReplace(item, '**Majors**', () => ( <strong key="majors">Majors</strong> ));
 						for (rank in app.Config.Pieces) {
 							rankKey = String(rank).toLowerCase();
-							item = reactStringReplace(item, '**'+app.Config.Pieces[rank].name+'**', () => ( <strong>{app.Config.Pieces[rank].name}</strong> ));
-							item = reactStringReplace(item, '**'+app.Config.Pieces[rank].name+'s**', () => ( <strong>{app.Config.Pieces[rank].name+'s'}</strong> ));
+							item = reactStringReplace(item, '**'+app.Config.Pieces[rank].name+'**', () => ( <strong key={idx+'-1-'+i}>{app.Config.Pieces[rank].name}</strong> ));
+							item = reactStringReplace(item, '**'+app.Config.Pieces[rank].name+'s**', () => ( <strong key={idx+'-2-'+i}>{app.Config.Pieces[rank].name+'s'}</strong> ));
 							item = reactStringReplace(item, '[piece:rank-'+rankKey+']', () => ( 
-								<GamePiece color="blue" rank={rank} wrapperClass="d-inline-block float-right mr-md-5" />
+								<GamePiece color="blue" rank={rank} key={rank+'-list'} wrapperClass="d-inline-block float-right mr-md-5" />
 							));
 						}
-						items.push(<li className={page.paragraphs[idx].itemClass}>{item}</li>)
+						items.push(<li key={idx+'-'+i} className={page.paragraphs[idx].itemClass}>{item}</li>)
 					}
-					pars.push(<ul className="row px-3">{items}</ul>);				
+					pars.push(<ul className="row px-3" key={idx}>{items}</ul>);				
 				}
 			}
 			contentPages.push({
+				key: page.id,
 				id: page.id,
 				label: page.label,
 				content: (<article><h2 className="mb-3">{page.heading}</h2>{ pars }</article>)

@@ -119,6 +119,7 @@
 		}
 	}
 	&.open {
+		z-index: 4;
 		transition: all .25s;
 		pointer-events: auto;
 		.modal-wrapper {
@@ -131,6 +132,7 @@
 			pointer-events: auto;
 		}
 		a.close-button {
+			z-index: 2;
 			position: absolute !important;
 			right: 1rem;
 			background: none !important;

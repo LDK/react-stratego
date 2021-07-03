@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import NewGameMenu from './components/menus/NewGame.js';
 import JoinGameMenu from './components/menus/JoinGame.js';
+import MobileMenu from './components/menus/Mobile.js';
 import UserOptionsMenu from './components/menus/UserOptions.js';
 import UserProfile from './components/menus/UserProfile.js';
 import Navigation from './components/sections/Navigation.js';
@@ -12,7 +13,9 @@ import DataBrowser from './components/widgets/DataBrowser.js';
 import {time2TimeAgo} from './components/Helpers.js';
 import {debug} from './components/Helpers.js';
 import RulesModal from './components/widgets/RulesModal.js';
+import LoginMenu from './components/menus/Login.js';
 import "./scss/main.scss";
+import { isMobile } from "react-device-detect";
 
 class App extends React.Component {
 	constructor(props) {
@@ -35,7 +38,12 @@ class App extends React.Component {
 			requests: [],
 			invites: []
 		};
+		this.isMobile = isMobile;
+		// this.isMobile = true;
 		this.pastOpponents = [];
+		this.logUserOut = this.logUserOut.bind(this);
+		this.openLoginMenu = this.openLoginMenu.bind(this);
+		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.acceptInvite = this.acceptInvite.bind(this);
 		this.declineInvite = this.declineInvite.bind(this);
@@ -68,6 +76,18 @@ class App extends React.Component {
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.gamesPoll = setInterval( this.pollGames, 15000 );
+	}
+	logUserOut() {
+		const cookies = new Cookies();
+		cookies.remove("stratego-user");
+		this.setState({currentUser: false, activeGame: null, games: []});
+		this.UserStatus.closeUserDropdown();
+	}
+	openRegistrationMenu() {
+		this.RegistrationMenu.setState({ formOpen: true });
+	}
+	openLoginMenu() {
+		this.LoginMenu.setState({ formOpen: true });
 	}
 	acceptInvite(id,notificationId){
 		var uid = this.state.currentUser.user_id;
@@ -556,7 +576,8 @@ class App extends React.Component {
 	preLoginBody() {
 		return (
 			<div className="preLogin py-3">
-				<h2>Welcome to Stratego!  Please register or login above.</h2>
+				<h2>Welcome to Stratego!</h2>
+				<p className="md-up">Please register or login above.</p>
 			</div>
 		);
 	}
@@ -609,11 +630,12 @@ class App extends React.Component {
 	userMenuBody() {
 		return (
 			<div className="userMenu py-3">
+				<h2>Welcome to Stratego!</h2>
 				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
+				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} className="md-up" afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
 				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
 				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
-				<input type="submit" value="New Game" onClick={this.openNewGameMenu} />
+				<input type="submit" value="New Game" className="md-up" onClick={this.openNewGameMenu} />
 			</div>
 		);
 	}
@@ -712,6 +734,8 @@ class App extends React.Component {
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />
 					<RulesModal app={this} />
+					<LoginMenu app={this} loginCallback={this.setCurrentUser} />
+					<MobileMenu app={this} />
 					{body}
 					<NewGameMenu app={this} />
 					<UserProfile app={this} />

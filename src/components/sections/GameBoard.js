@@ -6,7 +6,6 @@ import Modal from '../widgets/Modal.js';
 import cloneDeep from 'lodash/cloneDeep';
 import { xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
-import { isMobile } from "react-device-detect";
 import HelpBar from '../widgets/HelpBar.js';
 
 class GameBoard extends React.Component {
@@ -466,7 +465,7 @@ class GameBoard extends React.Component {
 				}
 			}
 			else {
-				if (isMobile) {
+				if (app.isMobile) {
 					this.clearDroppables();
 				}
 				if (!spaces[id].props.occupied) {
@@ -658,7 +657,7 @@ class GameBoard extends React.Component {
 		var game = this.props.game;
 		var app = this.props.app;
 		var classes = 'gameBoard';
-		var helpBar = game.state.started ? null : (<HelpBar game={game} app={app} />);
+		var helpBar = game.state.started && !app.isMobile ? null : (<HelpBar game={game} app={app} wrapperClass={"xs-only w-100 d-table mt-1"} />);
 		if (!game.state.started) {
 			classes += ' placement mode-'+game.state.placementMode;
 		}

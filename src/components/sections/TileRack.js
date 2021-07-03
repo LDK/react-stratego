@@ -147,7 +147,7 @@ class TileRack extends React.Component {
 		}
 		return (
 			<div className="container-fluid px-0" onClick={this.handleClick}>
-			<div className="tileRack row no-gutters px-3 px-md-0 pt-3">
+			<div className="tileRack row no-gutters px-3 px-md-0 pt-2 pt-sm-3">
 					{startButton}
 					{readyButton}
 					{this.tileSpaces()}

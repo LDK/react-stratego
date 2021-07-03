@@ -16,6 +16,9 @@
 		vertical-align: middle;
 		color: white;
 		font-weight: 500;
+		@include below_res($sm) {
+			height: 28px;
+		}
 	}
 	.placement & {
 		margin-top: unset;
@@ -43,6 +46,13 @@
 				border-radius: 8px;
 			}
 		}
+		@include below_res($md) {
+			width: 100%;
+			bottom: 50px;
+			span {
+				font-size: 12px;
+			}
+		}
 	}
 	.help-bar-minimized & {
 		display: none !important;
@@ -56,6 +66,11 @@
 			font-size: 1rem;
 			font-weight: 300;
 		}
+	}
+	@include below_res($sm) {
+		width: 100%;
+		background-color: rgba(0,0,0,.75);
+		height: 56px;
 	}
 }
 #help-bar-close {

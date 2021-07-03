@@ -53,7 +53,7 @@ class ModalMenu extends React.Component {
 				closeCallback={this.closeForm}
 				onKeyDown={this.onKeyDown} 
 				styles={styles}
-				additionalClasses={"p-5 "+props.additionalClasses}
+				additionalClasses={"p-md-5 "+props.additionalClasses || 'py-5 px-1'}
 			/>
 		)
 	}

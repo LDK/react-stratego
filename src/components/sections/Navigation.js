@@ -4,7 +4,6 @@ import DataBrowser from '../widgets/DataBrowser.js';
 import RegistrationMenu from '../menus/Registration.js';
 import UserStatus from '../widgets/UserStatus.js';
 import Icon from '../widgets/Icon.js';
-import { isMobile } from "react-device-detect";
 
 class Navigation extends React.Component {
 	static get propTypes() {
@@ -50,7 +49,7 @@ class Navigation extends React.Component {
 		var gameBrowser = '';
 		var dropdown = (<div className={"dropdown-overlay" + (this.state.dropdownOpen ? ' open' : '')} onMouseEnter={this.closeAll} />);
 		var games = app.state.games;
-		var containerClass = isMobile ? 'container-fluid' : 'container';
+		var containerClass = app.isMobile ? 'container-fluid' : 'container';
 		if (games.active && games.active.length) {
 			gameBrowser = (
 				<div className="col-4 col-lg-3">
@@ -59,8 +58,8 @@ class Navigation extends React.Component {
 			);
 		}
 		return (
-			<div id="top-row">
-				<div className="navigation py-3 py-sm-1 py-md-3">
+			<div id="top-row" className="md-up">
+				<div className="navigation py-3 py-sm-1 py-md-3 pb-lg-0 pt-lg-2">
 					<div className={containerClass + " mx-auto"}>
 						<div className="row no-gutters">
 							<div className="d-inline-block pr-3 pt-1">
@@ -69,7 +68,7 @@ class Navigation extends React.Component {
 								</a>
 							</div>
 							{gameBrowser}
-							<UserStatus wrapperClass="col px-0 text-right" loginCallback={app.setCurrentUser} app={app} />
+							<UserStatus wrapperClass="col px-0 text-right" app={app} />
 							<RegistrationMenu app={app} />
 						</div>
 					</div>

@@ -1,0 +1,26 @@
+@import "../../scss/_mixins.scss";
+@import "../../scss/_vars.scss";
+#mobile-menu {
+	position: fixed;
+	height: 50px;
+	width: 100%;
+	bottom: 0px;
+	left: 0px;
+	background-color: rgba(60,150,120,.5);
+	transition: all .25s;
+	z-index: 2;
+	padding: 1rem;
+	&.active {
+		background-color: rgba(60,150,120,1);
+		height: 100%;
+	}
+	& > div {
+		bottom: 1rem;
+		left: 1rem;
+		position: fixed !important;
+		cursor: pointer;
+	}
+	@include atleast_res($md) {
+		display: none !important;
+	}
+}

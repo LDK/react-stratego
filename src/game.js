@@ -8,10 +8,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
-import { isMobile } from "react-device-detect";
 import {debug} from './components/Helpers.js';
-
-const placementAction = isMobile ? 'Tap' : 'Click';
 
 class Game extends React.Component {
 	static get propTypes() {
@@ -56,8 +53,12 @@ class Game extends React.Component {
 			last_move_ts: props.last_move_ts || 0,
 			last_attack: props.last_attack || {}
 		};
-		if (isMobile) {
+		if (props.app.isMobile) {
 			this.state.placementMode = 'click';
+			this.placementAction = 'Tap';
+		}
+		else {
+			this.placementAction = 'Click';
 		}
 		this.selectedRank =  null;
 		this.setHelpText =  this.setHelpText.bind(this);
@@ -233,7 +234,7 @@ class Game extends React.Component {
 		}
 		else if (this.state.started && this.props.app.tileRack && (this.state.turn == this.props.app.tileRack.playerColor)) {
 			let headline;
-			if (isMobile) {
+			if (this.props.app.isMobile) {
 				if (!this.props.app.gameBoard.selectedRank) {
 					headline = 'Tap a ' + this.props.app.tileRack.playerColor + ' tile to select it.';
 				}
@@ -258,18 +259,18 @@ class Game extends React.Component {
 	componentDidMount() {
 		this.HelpMessages = {
 			'clickSelected': {
-				headline: placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',
-				subtext: isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
+				headline: this.placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',
+				subtext: this.props.app.isMobile ? false : 'You can also drag & drop tiles to rearrange them.'
 			},
 			'quickSelected': {
 				headline: 'Using a preset tile configuration.',
-				subtext: isMobile ? false : 'You can drag & drop tiles to rearrange them.'
+				subtext: this.props.app.isMobile ? false : 'You can drag & drop tiles to rearrange them.'
 			},
 			'keyboardSelected': {
 				headline: 'Use the arrow keys to choose a square.',
 				subtext: 'Type rank (1-9, S, F, B) to place a piece, or X to erase.'
 			},
-			'eraseSelected': placementAction + ' a ' + this.props.app.tileRack.playerColor + ' tile on the board to return it to the rack'
+			'eraseSelected': this.placementAction + ' a ' + this.props.app.tileRack.playerColor + ' tile on the board to return it to the rack'
 		};
 
 		this.props.app.gameRef = this;

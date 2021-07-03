@@ -33,6 +33,9 @@ div.captured-tiles {
 		    left: calc(50% - 86px);
 		}
 	}
+	@include below_res($sm) {
+	    height: 140px;
+	}
 }
 .tileRack-col, .info-panel {
 	height: 10rem;

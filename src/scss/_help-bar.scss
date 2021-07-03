@@ -16,6 +16,9 @@
 		vertical-align: middle;
 		color: white;
 		font-weight: 500;
+		@include below_res($sm) {
+			height: 28px;
+		}
 	}
 	.placement & {
 		margin-top: unset;

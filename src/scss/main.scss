@@ -17,6 +17,7 @@
 @import "_animation.scss";
 @import "_moves.scss";
 
+//I know this is weird but it fixes a glitch
 @media screen and (orientation: landscape){
   .doesnt-exist { background:red; }
 }

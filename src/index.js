@@ -14,6 +14,7 @@ import {time2TimeAgo} from './components/Helpers.js';
 import {debug} from './components/Helpers.js';
 import RulesModal from './components/widgets/RulesModal.js';
 import "./scss/main.scss";
+import { isMobile } from "react-device-detect";
 
 class App extends React.Component {
 	constructor(props) {
@@ -36,6 +37,8 @@ class App extends React.Component {
 			requests: [],
 			invites: []
 		};
+		this.isMobile = isMobile;
+		// this.isMobile = true;
 		this.pastOpponents = [];
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.acceptInvite = this.acceptInvite.bind(this);
@@ -557,7 +560,8 @@ class App extends React.Component {
 	preLoginBody() {
 		return (
 			<div className="preLogin py-3">
-				<h2>Welcome to Stratego!  Please register or login above.</h2>
+				<h2>Welcome to Stratego!</h2>
+				<p className="md-up">Please register or login above.</p>
 			</div>
 		);
 	}

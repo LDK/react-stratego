@@ -27,6 +27,11 @@ class MobileMenu extends React.Component {
 		var uid = app.state.currentUser.user_id || null;
 		let menuItems = [];
 		if (this.state.menuOpen) {
+			if (app.gameOpened) {
+				menuItems.push(
+					<a key="0" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.nav.goHome(); }}>Home</a>
+				);
+			}
 			menuItems.push(
 				<a key="1" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openRulesModal(); }}>View Rules</a>
 			);

@@ -3,13 +3,12 @@ import UserLink from './UserLink.js';
 import OptionIndicator from './OptionIndicator.js';
 import TileRack from '../sections/TileRack.js';
 import HelpBar from './HelpBar.js';
-import { isMobile } from "react-device-detect";
 
 function InfoPanel({ game, app, playerColor }) {
 	let panel = '';
 	let mobileTileRack = '';
 	let tileRack = <TileRack game={game} app={app} />;
-	if (isMobile) {
+	if (app.isMobile) {
 		mobileTileRack = <TileRack game={game} app={app} />;
 		tileRack = '';
 	}
@@ -27,7 +26,7 @@ function InfoPanel({ game, app, playerColor }) {
 						listLabelClass="pb-2 md-up"
 						options={[
 							{key: 'Click & Place', value: 'click' },
-							{key: 'Keyboard', value: 'keyboard', exclude: isMobile },
+							{key: 'Keyboard', value: 'keyboard', exclude: app.isMobile },
 							{key: 'Quick Load', value: 'quick', onSelect: game.openQuickLoadModal},
 							{key: 'Erase', value: 'erase' }
 						]} 

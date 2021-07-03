@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
-import { isMobile } from "react-device-detect";
 
 class GamePiece extends React.Component {
 	static get propTypes() {
@@ -69,7 +68,7 @@ class GamePiece extends React.Component {
 			// then make its rank the selected rank.  If its rank is already selected,
 			// unselect that rank and re-render the tilerack.
 			game.selectedRank = (game.selectedRank != this.props.rank) ? this.props.rank : null;
-			var placementAction = isMobile ? 'Tap' : 'Click';
+			var placementAction = app.isMobile ? 'Tap' : 'Click';
 			if (app.tileRack && app.tileRack.remaining && game.selectedRank) {
 				game.setHelpText((
 					<div>{ placementAction + ' a square to place a ' }
@@ -87,7 +86,7 @@ class GamePiece extends React.Component {
 			app.tileRack.returnTileToRack(game,app,this.props.gameSpaceId);
 			game.resetHelpText();
 		}
-		else if (isMobile && game && game.state.started && this.props.placed && (game.state.turn == app.tileRack.playerColor) && app.tileRack.playerColor == this.props.color) {
+		else if (app.isMobile && game && game.state.started && this.props.placed && (game.state.turn == app.tileRack.playerColor) && app.tileRack.playerColor == this.props.color) {
 			// On mobile, if player taps own piece during player's turn, select that piece to be moved
 			// and highlight its square.
 			gb.selectSpace(this.props.gameSpaceId);

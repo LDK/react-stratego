@@ -7,6 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { xyToId, idToXy, getVector, getSpaceId } from '../Helpers.js';
 import QuickLoadMenu from '../menus/QuickLoad.js';
 import HelpBar from '../widgets/HelpBar.js';
+import Row from "react-bootstrap/Row";
 
 class GameBoard extends React.Component {
 	static get propTypes() {
@@ -28,9 +29,9 @@ class GameBoard extends React.Component {
 			highlighted: null,
 			selectedSpace: null,
 			battleContent: (
-				<div className="row">
+				<Row>
 					<h3 className="col-12 text-center">Attacking...</h3>
-				</div>
+				</Row>
 			),
 			battleModalOpen: false
 		};
@@ -297,7 +298,7 @@ class GameBoard extends React.Component {
 			);
 		}
 		var content = (
-			<div className="row">
+			<Row>
 				<h3 className="col-12 text-center battle-heading">{outcome}</h3>
 				<p className="col-12 battle-text text-center">{resultText}</p>
 				{afterText}
@@ -307,7 +308,7 @@ class GameBoard extends React.Component {
 				<div className="col-6">
 					<DragPiece color={result.defend_color} rank={result.defend_rank} placed={true} className="" />
 				</div>
-			</div>
+			</Row>
 		);
 		this.setState({ battleContent: content });
 	}

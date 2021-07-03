@@ -16,6 +16,8 @@ import RulesModal from './components/widgets/RulesModal.js';
 import LoginMenu from './components/menus/Login.js';
 import "./scss/main.scss";
 import { isMobile } from "react-device-detect";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 
 class App extends React.Component {
 	constructor(props) {
@@ -640,12 +642,10 @@ class App extends React.Component {
 		);
 	}
 	getBody() {
-		var body = '', bodyClass = 'container mx-auto';
-		var rowClass = "row no-gutters";
+		var body = '', bodyClass = 'mx-auto';
 		if (this.state.activeGame) {
 			body = this.state.activeGame;
-			bodyClass = 'container-fluid game-bg px-0 pt-0';
-			rowClass = "row";
+			bodyClass = 'game-bg px-0 pt-0';
 		}
 		else if (this.state.currentUser) {
 			body = this.userMenuBody();
@@ -654,11 +654,11 @@ class App extends React.Component {
 			body = this.preLoginBody();
 		}
 		return (
-			<div className={bodyClass} id="app-body">
-				<div className={rowClass}>
+			<Container className={bodyClass} fluid={this.state.activeGame}>
+				<Row noGutters={!this.state.activeGame}>
 					{body}
-				</div>
-			</div>
+				</Row>
+			</Container>
 		);
 	}
 	onKeyDown (e) {

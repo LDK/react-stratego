@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import cloneDeep from 'lodash/cloneDeep';
 import { debug } from '../Helpers.js';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 class UserOptionsMenu extends React.Component {
 	static get propTypes() {
@@ -143,38 +146,38 @@ class UserOptionsMenu extends React.Component {
 				<h3 className="mt-0">USER OPTIONS</h3>
 				<p className="">Edit your user profile:</p>
 				<hr />
-				<div className="container-fluid px-0">
-					<div className="row no-gutters">
-						<div className="col-12 col-md-4">
+				<Container fluid={true} className="px-0">
+					<Row noGutters={true}>
+						<Col xs={12} md={4}>
 							<label className="mr-2 small">Username:</label>
-						</div>
-						<div className="col-12 col-md-8 mb-2">
+						</Col>
+						<Col xs={12} md={8} className="mb-2">
 							<input type="text" value={state.usernameInput} onChange={this.updateUsernameInput} size="24" className="small" name="username" placeholder="Username" />
-						</div>
-						<div className="col-12 col-md-4">
+						</Col>
+						<Col xs={12} md={4}>
 							<label className="mr-2 small">E-mail Address:</label>
-						</div>
-						<div className="col-12 col-md-8">
+						</Col>
+						<Col xs={12} md={8}>
 							<input type="text" value={state.emailInput} onChange={this.updateEmailInput} size="24" className="small" name="email" placeholder="E-mail Address" />
-						</div>
-						<div className="col-12 mt-4">
+						</Col>
+						<Col xs={12} className="mt-4">
 							<label className="small d-block">Current Password (Required if changing password):</label>
 							<input type="password" onChange={this.updatePassInput} name="current-password" size="24" className="small" placeholder="Current Password" />
-						</div>
-						<div className="col-12 mt-3">
+						</Col>
+						<Col xs={12} className="mt-3">
 							<label className="small d-block">New Password (Both fields must match):</label>
 							<input type="password" value={state.newPassInput} onChange={this.updateNewPassInput} name="new-password" size="24" className="small" /><br />
 							<input type="password" value={state.newPass2Input} onChange={this.updateNewPass2Input} name="new-password2" size="24" className="small" />
-						</div>
-						<div className="col-12 mt-4">
+						</Col>
+						<Col xs={12} className="mt-4">
 							<input type="checkbox" name="invite-available" checked={state.invitesAvailable} onChange={this.toggleInvitesAvailable} />
 							<label className="small ml-2">Available for Game Invites</label>
-						</div>
-						<div className="col-12">
+						</Col>
+						<Col xs={12}>
 							<input type="checkbox" name="random-available" checked={state.randomAvailable} onChange={this.toggleRandomAvailable} />
 							<label className="small ml-2">Available to Be Selected As Random Opponent</label>
-						</div>
-						<div className="col-12 mt-4">
+						</Col>
+						<Col xs={12} className="mt-4">
 							<input type="submit" value="Save Options" size="3" className="go-button text-white float-right" onClick={this.saveOptions} 
 								disabled={
 									!state.usernameInput ||
@@ -182,9 +185,9 @@ class UserOptionsMenu extends React.Component {
 									(state.newPassInput && state.newPassInput != state.newPass2Input)
 								}
 							/>
-						</div>
-					</div>
-				</div>
+						</Col>
+					</Row>
+				</Container>
 			</form>
 		);
 		return (

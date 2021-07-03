@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import "./Tabs.scss";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 class Tabs extends React.Component {
 	static get propTypes() {
@@ -43,16 +46,16 @@ class Tabs extends React.Component {
 			tabContents[activeContent.id] = activeContent.content;
 		}
 		return (
-			<div className="container-fluid tabs {wrapperClasses} h-100">
-				<div className="row no-gutters">
-					<ul className="tab-list col-12">
+			<Container fluid={true} className="tabs {wrapperClasses} h-100">
+				<Row noGutters={true}>
+					<Col xs={12} as="ul" className="tab-list">
 						{ tabLinks }
-					</ul>
-				</div>
-				<div className="content row no-gutters">
+					</Col>
+				</Row>
+				<Row className="content row no-gutters">
 					{ tabContents[this.state.openTab] }
-				</div>
-			</div>
+				</Row>
+			</Container>
 		);
 	}
 }

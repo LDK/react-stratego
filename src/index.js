@@ -13,6 +13,7 @@ import DataBrowser from './components/widgets/DataBrowser.js';
 import {time2TimeAgo} from './components/Helpers.js';
 import {debug} from './components/Helpers.js';
 import RulesModal from './components/widgets/RulesModal.js';
+import LoginMenu from './components/menus/Login.js';
 import "./scss/main.scss";
 import { isMobile } from "react-device-detect";
 
@@ -40,6 +41,9 @@ class App extends React.Component {
 		this.isMobile = isMobile;
 		// this.isMobile = true;
 		this.pastOpponents = [];
+		this.logUserOut = this.logUserOut.bind(this);
+		this.openLoginMenu = this.openLoginMenu.bind(this);
+		this.openRegistrationMenu = this.openRegistrationMenu.bind(this);
 		this.setCurrentUser = this.setCurrentUser.bind(this);
 		this.acceptInvite = this.acceptInvite.bind(this);
 		this.declineInvite = this.declineInvite.bind(this);
@@ -72,6 +76,18 @@ class App extends React.Component {
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.gamesPoll = setInterval( this.pollGames, 15000 );
+	}
+	logUserOut() {
+		const cookies = new Cookies();
+		cookies.remove("stratego-user");
+		this.setState({currentUser: false, activeGame: null, games: []});
+		this.UserStatus.closeUserDropdown();
+	}
+	openRegistrationMenu() {
+		this.RegistrationMenu.setState({ formOpen: true });
+	}
+	openLoginMenu() {
+		this.LoginMenu.setState({ formOpen: true });
 	}
 	acceptInvite(id,notificationId){
 		var uid = this.state.currentUser.user_id;
@@ -718,6 +734,7 @@ class App extends React.Component {
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
 					<Navigation app={this} />
 					<RulesModal app={this} />
+					<LoginMenu app={this} loginCallback={this.setCurrentUser} />
 					<MobileMenu app={this} />
 					{body}
 					<NewGameMenu app={this} />

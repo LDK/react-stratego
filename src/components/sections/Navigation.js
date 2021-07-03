@@ -68,7 +68,7 @@ class Navigation extends React.Component {
 								</a>
 							</div>
 							{gameBrowser}
-							<UserStatus wrapperClass="col px-0 text-right" loginCallback={app.setCurrentUser} app={app} />
+							<UserStatus wrapperClass="col px-0 text-right" app={app} />
 							<RegistrationMenu app={app} />
 						</div>
 					</div>

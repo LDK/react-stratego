@@ -30,12 +30,25 @@ class MobileMenu extends React.Component {
 			menuItems.push(
 				<a key="1" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openRulesModal(); }}>View Rules</a>
 			);
-			menuItems.push(
-				<a key="2" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openNewGameMenu(); }}>New Game</a>
-			);
-			menuItems.push(
-				<UserLink key="3" app={app} className="anchor underline text-white d-block" user={{ id: uid, name: 'My Profile' }} />
-			);
+			if (!uid) {
+				menuItems.push(
+					<a key="2" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openLoginMenu(); }}>Login</a>
+				);
+				menuItems.push(
+					<a key="3" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openRegistrationMenu(); }}>Register</a>
+				);
+			}
+			else {
+				menuItems.push(
+					<a key="4" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openNewGameMenu(); }}>New Game</a>
+				);
+				menuItems.push(
+					<UserLink key="5" app={app} className="anchor underline text-white d-block" user={{ id: uid, name: 'My Profile' }} />
+				);
+				menuItems.push(
+					<a key="6" className="anchor underline text-white d-block bottom-link" onClick={() => { this.toggleMenu(); app.logUserOut(); }}>Log Out</a>
+				);
+			}
 		}
 		var mobileMenu = (
 			<div id={this.id} className={this.state.menuOpen ? 'active' : null}>

@@ -3,6 +3,8 @@ import UserLink from './UserLink.js';
 import OptionIndicator from './OptionIndicator.js';
 import TileRack from '../sections/TileRack.js';
 import HelpBar from './HelpBar.js';
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function InfoPanel({ game, app, playerColor }) {
 	let panel = '';
@@ -14,8 +16,8 @@ function InfoPanel({ game, app, playerColor }) {
 	}
 	if (!game.state.started) {
 		panel = (
-			<div className="col-12 col-lg-3 px-0 tileRack-col order-3 order-lg-2 bg-md-white mt-lg-3 mr-xl-auto">
-				<div className="row no-gutters pt-1 pt-md-3">
+			<Col xs={{ span: 12, order: 3 }} lg={{ span: 3, order: 2 }} className="px-0 tileRack-col bg-md-white mt-lg-3 mr-xl-auto">
+				<Row noGutters={true} className="pt-1 pt-md-3">
 					<OptionIndicator id="placementMode" className="col-12 px-0 mb-md-3" layout="horizontal" 
 						value={game.state.placementMode}
 						disableArrows={true}
@@ -35,11 +37,11 @@ function InfoPanel({ game, app, playerColor }) {
 						callback={game.modeChange} 
 					/>
 					{mobileTileRack}
-					<div className="col-12 mx-auto">
+					<Col xs={12} className="mx-auto">
 						{tileRack}
-					</div>
-				</div>
-			</div>
+					</Col>
+				</Row>
+			</Col>
 		);
 	}
 	else {
@@ -68,16 +70,16 @@ function InfoPanel({ game, app, playerColor }) {
 			}
 		}
 		panel = (
-			<div className="col-12 col-sm-4 col-lg-3 px-0 info-panel text-center order-1 order-lg-2 mt-lg-3 mr-xl-auto h-sm-auto">
-				<div className="row no-gutters">
-					<div className="col-4 col-sm-12">
+			<Col xs={{ span: 12, order: 1 }} sm="4" lg={{ span: 3, order: 2 }} className="px-0 info-panel text-center mt-lg-3 mr-xl-auto h-sm-auto">
+				<Row noGutters={true}>
+					<Col xs={4} sm={12}>
 						{winLabel}
 						{turnLabel}
-					</div>
-					<div className="col-8 col-sm-12">
-						<div className="row no-gutters">
+					</Col>
+					<Col xs={8} sm={12}>
+						<Row noGutters={true}>
 							<h4 className="mx-auto d-sm-block mt-3 my-sm-3 col-12">Captured</h4>
-							<div className="col-6 px-3">
+							<Col xs={6} className="px-3">
 								<span className="text-red">
 									<UserLink app={app} user={game.state.players.red} className="anchor" />
 								</span>
@@ -87,8 +89,8 @@ function InfoPanel({ game, app, playerColor }) {
 								<span className="captured-tiles player-red mt-3 sm-down">
 									{captured.red.length}
 								</span>
-							</div>
-							<div className="col-6 px-3">
+							</Col>
+							<Col xs={6} className="px-3">
 								<span className="text-blue">
 									<UserLink app={app} user={game.state.players.blue} className="anchor" />
 								</span>
@@ -98,15 +100,15 @@ function InfoPanel({ game, app, playerColor }) {
 								<span className="captured-tiles player-blue mt-3 sm-down">
 									{captured.blue.length}
 								</span>
-							</div>
-						</div>
-					</div>
-				</div>
+							</Col>
+						</Row>
+					</Col>
+				</Row>
 				<HelpBar game={game} app={app} wrapperClass={"d-none d-sm-table w-100"} wrapperStyles={{ height: '8rem' }} />
 				<div className="d-none">
 					<TileRack game={game} app={app} />
 				</div>
-			</div>
+			</Col>
 		);
 	}
 	return panel;

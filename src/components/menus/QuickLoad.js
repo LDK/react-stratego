@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import DragPiece from '../widgets/DragPiece.js';
+import Row from "react-bootstrap/Row";
 
 class QuickLoadMenu extends React.Component {
 	static get propTypes() {
@@ -93,7 +94,7 @@ class QuickLoadMenu extends React.Component {
 			else {
 				grid = barrierSquares.concat(squares);
 			}
-			layoutPreview = (<div className="row no-gutters my-4">{grid}</div>);
+			layoutPreview = (<Row noGutters={true} className="my-4">{grid}</Row>);
 		}
 		var displayClass = ' d-inline-block';
 		if (!this.state.selected) {

@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TileSpace from '../widgets/TileSpace.js';
 import { debug } from '../Helpers.js';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 class TileRack extends React.Component {
 	static get propTypes() {
@@ -125,34 +128,34 @@ class TileRack extends React.Component {
 		if (!game.state.started) {
 			if (!this.remaining && this.state.allPlaced && !game.state.players[this.playerColor].ready) {
 				readyButton = (
-					<div className="col-12">
+					<Col xs={12}>
 						<a className="go-button d-block blue text-white text-center mx-auto my-md-3 glowing" tabIndex="-1" onClick={() => this.setReady(true)}>I&apos;m Ready!</a>
-					</div>
+					</Col>
 				);
 			}
 			else if (!this.remaining && this.state.allPlaced) {
 				readyButton = (
-					<div className="col-12">
+					<Col xs={12}>
 						<a className="go-button d-block red text-white text-center mx-auto my-md-3" tabIndex="-1" onClick={() => this.setReady(false)}>I&apos;m Not Ready!</a>
-					</div>
+					</Col>
 				);
 			}
 			if (game.state.players.blue.ready && game.state.players.red.ready) {
 				startButton = (
-					<div className="col-12">
+					<Col xs={12}>
 						<a className="go-button d-block text-white text-center mx-auto my-3 glowing" tabIndex="-1" onClick={game.startGame}>START GAME</a>
-					</div>
+					</Col>
 				);
 			}
 		}
 		return (
-			<div className="container-fluid px-0" onClick={this.handleClick}>
-			<div className="tileRack row no-gutters px-3 px-md-0 pt-2 pt-sm-3">
+			<Container fluid={true} className="px-0" onClick={this.handleClick}>
+				<Row noGutters={true} className="tileRack px-3 px-md-0 pt-2 pt-sm-3">
 					{startButton}
 					{readyButton}
 					{this.tileSpaces()}
-				</div>
-			</div>
+				</Row>
+			</Container>
 		)
 	}
 }

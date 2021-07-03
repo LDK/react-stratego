@@ -9,6 +9,9 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 import { DndProvider } from 'react-dnd';
 import MultiBackend from 'react-dnd-multi-backend';
 import {debug} from './components/Helpers.js';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 class Game extends React.Component {
 	static get propTypes() {
@@ -360,7 +363,7 @@ class Game extends React.Component {
 		var uid = parseInt(app.state.currentUser.user_id);
 		var starterUid = parseInt(this.props.starter);
 		var playerColor = (uid == starterUid) ? 'blue' : 'red';
-		var gameClass = "container mx-auto player-"+playerColor;
+		var gameClass = "mx-auto player-"+playerColor;
 		if (this.state.started) {
 			if (this.state.turn && this.state.status && this.state.status != 'done') {
 				gameClass += ' turn-' + this.state.turn;
@@ -372,16 +375,16 @@ class Game extends React.Component {
 		}
 		var backendOpts = { backends: [{ backend: HTML5Backend },{ backend: TouchBackend }] };
 		return (
-			<div className={gameClass}>
+			<Container className={gameClass}>
 				<DndProvider backend={MultiBackend} options={backendOpts}>
-					<div className="row no-gutters">
+					<Row noGutters={true}>
 						<InfoPanel game={this} app={app} playerColor={playerColor} />
-						<div className="col-12 col-sm-8 col-lg-9 col-xl-8 mx-auto px-0 order-2 order-lg-1 scroll">
+						<Col xs={{ span: 12, order: 2 }} sm={8} lg={{ span: 9, order: 1 }} xl={8} className="mx-auto px-0 scroll">
 							<GameBoard game={this} app={app} />
-						</div>
-					</div>
+						</Col>
+					</Row>
 				</DndProvider>
-			</div>
+			</Container>
 		);
 	}
 }

@@ -4,6 +4,9 @@ import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
 import Autosuggest from '../widgets/Autosuggest.js';
 import UserLink from '../widgets/UserLink.js';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 class NewGameMenu extends React.Component {
 	static get propTypes() {
@@ -254,13 +257,13 @@ class NewGameMenu extends React.Component {
 		var helpText = this.getModeHelpText();
 		var newGameForm = (
 			<form action={app.gameServer+"new_game"} onSubmit={this.handleSubmit}>
-				<div className="container-fluid p-0" id="new-game-menu">
-					<div className="row">
-						<div className="col-12 pl-3">
+				<Container fluid={true} className="p-0" id="new-game-menu">
+					<Row>
+						<Col xs={12} className="pl-3">
 							<h3 className="text-white mt-0">NEW GAME</h3>
 							<p className="text-white">Find an opponent:</p>
-						</div>
-						<div className="col-12 col-md-7 px-3">
+						</Col>
+						<Col xs={12} md={7} className="px-3">
 							<div className="w-100 game-mode-options bg-white p-3" style={{minHeight: '240px', border:'1px solid black'}}>
 								<div onClick={() => this.focusModeOption('past')} className="mb-3">
 									<input type="radio" name="selectMode" className="float-left mr-3 mt-1" 
@@ -325,16 +328,16 @@ class NewGameMenu extends React.Component {
 									/>
 								</div>
 							</div>
-						</div>
-						<div className="col-12 col-sm-5 pr-3">
+						</Col>
+						<Col xs={12} sm={5} className="pr-3">
 							<div className="w-100 game-mode-help-text md-up px-3 py-2" style={{backgroundColor:'#c2ab3a', minHeight:'148px', border: '1px solid black'}}>
 								<p>{helpText}</p>
 							</div>
-						</div>
-					</div>
-					<div className="row">
-						<div className="col-12 col-sm-6 text-left">{opponentIndicator}{viewProfile}</div>
-						<div className="col-12 col-sm-6 text-right" style={{textAlign: 'right'}}>
+						</Col>
+					</Row>
+					<Row>
+						<Col xs={12} sm={6} className="text-left">{opponentIndicator}{viewProfile}</Col>
+						<Col xs={12} sm={6} className="text-right">
 							<input className="mt-3 d-inline-block text-white text-center go-button" type="submit" value={startText} style={{}} 
 								disabled={
 									!this.state.opponentId &&
@@ -343,9 +346,9 @@ class NewGameMenu extends React.Component {
 									this.state.opponentSelectMode != 'random'
 								}
 							/>
-						</div>
-					</div>
-				</div>
+						</Col>
+					</Row>
+				</Container>
 			</form>
 		);
 		return (

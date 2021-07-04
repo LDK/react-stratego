@@ -1,23 +1,25 @@
 import React from 'react';
+import { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
-import NewGameMenu from './components/menus/NewGame.js';
-import JoinGameMenu from './components/menus/JoinGame.js';
-import MobileMenu from './components/menus/Mobile.js';
-import UserOptionsMenu from './components/menus/UserOptions.js';
-import UserProfile from './components/menus/UserProfile.js';
-import Navigation from './components/sections/Navigation.js';
-import Game from './game.js';
 import Cookies from 'universal-cookie';
-import DataBrowser from './components/widgets/DataBrowser.js';
 import {time2TimeAgo} from './components/Helpers.js';
 import {debug} from './components/Helpers.js';
-import RulesModal from './components/widgets/RulesModal.js';
-import LoginMenu from './components/menus/Login.js';
 import "./scss/main.scss";
 import { isMobile } from "react-device-detect";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+
+const JoinGameMenu = React.lazy(() => import(/* webpackChunkName: "JoinGameMenu" */ './components/menus/JoinGame.js'));
+const LoginMenu = React.lazy(() => import(/* webpackChunkName: "LoginMenu" */ './components/menus/Login.js'));
+const MobileMenu = React.lazy(() => import(/* webpackChunkName: "MobileMenu" */ './components/menus/Mobile.js'));
+const NewGameMenu = React.lazy(() => import(/* webpackChunkName: "NewGameMenu" */ './components/menus/NewGame.js'));
+const UserOptionsMenu = React.lazy(() => import(/* webpackChunkName: "UserOptionsMenu" */ './components/menus/UserOptions.js'));
+const UserProfile = React.lazy(() => import(/* webpackChunkName: "UserProfile" */ './components/menus/UserProfile.js'));
+const RulesModal = React.lazy(() => import(/* webpackChunkName: "RulesModal" */ './components/widgets/RulesModal.js'));
+const DataBrowser = React.lazy(() => import(/* webpackChunkName: "DataBrowser" */ './components/widgets/DataBrowser.js'));
+const Navigation = React.lazy(() => import(/* webpackChunkName: "Navigation" */ './components/sections/Navigation.js'));
+const Game = React.lazy(() => import(/* webpackChunkName: "Game" */ './game.js'));
 
 class App extends React.Component {
 	constructor(props) {
@@ -633,10 +635,18 @@ class App extends React.Component {
 		return (
 			<div className="userMenu py-3">
 				<h2>Welcome to Stratego!</h2>
-				<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} className="md-up" afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
-				<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
-				<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
+				<Suspense fallback={<div>Loading...</div>}>
+					<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
+				</Suspense>
+				<Suspense fallback={<div>Loading...</div>}>
+					<DataBrowser label="Recently Finished Games:" items={this.state.games.recent} className="md-up" afterKeys={{ winner: 'Winner: %this%' }} afterParentheses={true} view="list" callback={this.loadGame} afterCallback={this.openUserProfile} id="recentGameList" afterArgKey="winner_uid" deleteEmpty={true} hideIfEmpty={true} />
+				</Suspense>
+				<Suspense fallback={<div>Loading...</div>}>
+					<DataBrowser label="Invites:" items={this.state.invites} view="list" id="userInviteList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'accept', action: this.acceptInvite},{label: 'decline', action: this.declineInvite},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
+				</Suspense>
+				<Suspense fallback={<div>Loading...</div>}>
+					<DataBrowser label="Outgoing Requests:" items={this.state.requests} view="list" id="userRequestList" deleteEmpty={true} hideIfEmpty={true} afterLinks={[{label: 'cancel', action: this.cancelRequest},{label: 'view profile', action: this.openUserProfile, argKey: 'opponent_uid' }]} />
+				</Suspense>
 				<input type="submit" value="New Game" className="md-up" onClick={this.openNewGameMenu} />
 			</div>
 		);
@@ -644,7 +654,11 @@ class App extends React.Component {
 	getBody() {
 		var body = '', bodyClass = 'mx-auto';
 		if (this.state.activeGame) {
-			body = this.state.activeGame;
+			body = (
+				<Suspense fallback={<div>Loading...</div>}>
+					{this.state.activeGame}
+				</Suspense>
+			);
 			bodyClass = 'game-bg px-0 pt-0';
 		}
 		else if (this.state.currentUser) {
@@ -729,18 +743,33 @@ class App extends React.Component {
 	}
 	render() {
 		const body = this.getBody();
-		debug('app rendering');
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
-					<Navigation app={this} />
-					<RulesModal app={this} />
-					<LoginMenu app={this} loginCallback={this.setCurrentUser} />
-					<MobileMenu app={this} />
+					<Suspense fallback={<div>Loading...</div>}>
+						<Navigation app={this} />
+					</Suspense>
+					<Suspense fallback={<div>Loading...</div>}>
+						<RulesModal app={this} />
+					</Suspense>
+					<Suspense fallback={<div>Loading...</div>}>
+						<LoginMenu app={this} loginCallback={this.setCurrentUser} />
+					</Suspense>
+					<Suspense fallback={<div>Loading...</div>}>
+						<MobileMenu app={this} />
+					</Suspense>
 					{body}
-					<NewGameMenu app={this} />
-					<UserProfile app={this} />
-					<JoinGameMenu app={this} />
-					<UserOptionsMenu app={this} />
+					<Suspense fallback={<div>Loading...</div>}>
+						<NewGameMenu app={this} />
+					</Suspense>
+					<Suspense fallback={<div>Loading...</div>}>
+						<UserProfile app={this} />
+					</Suspense>
+					<Suspense fallback={<div>Loading...</div>}>
+						<JoinGameMenu app={this} />
+					</Suspense>
+					<Suspense fallback={<div>Loading...</div>}>
+						<UserOptionsMenu app={this} />
+					</Suspense>
 				</div>
 		);
 	}

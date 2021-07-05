@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MenuModal from '../widgets/MenuModal.js';
 import DataBrowser from '../widgets/DataBrowser.js';
+import "../../scss/game.scss";
 
 class JoinGameMenu extends React.Component {
 	static get propTypes() {

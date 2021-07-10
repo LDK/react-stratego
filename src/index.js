@@ -1,10 +1,9 @@
 import React from 'react';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import Cookies from 'universal-cookie';
 import {time2TimeAgo} from './components/Helpers.js';
-import {debug} from './components/Helpers.js';
 import "./scss/main.scss";
 import { isMobile } from "react-device-detect";
 import Container from "react-bootstrap/Container";
@@ -80,6 +79,8 @@ class App extends React.Component {
 		this.gameStates = {};
 		this.gameSpaces = [];
 		this.gamesPoll = setInterval( this.pollGames, 15000 );
+		this.InfoPanel = React.lazy(() => import(/* webpackChunkName: "InfoPanel" */ './components/widgets/InfoPanel.js'));
+		
 	}
 	logUserOut() {
 		const cookies = new Cookies();
@@ -655,7 +656,7 @@ class App extends React.Component {
 		var body = '', bodyClass = 'mx-auto';
 		if (this.state.activeGame) {
 			body = (
-				<Suspense fallback={<div>Loading...</div>}>
+				<Suspense fallback={''}>
 					{this.state.activeGame}
 				</Suspense>
 			);
@@ -745,29 +746,29 @@ class App extends React.Component {
 		const body = this.getBody();
 		return (
 				<div className="app-wrapper p-0 m-0" onKeyDown={this.onKeyDown} tabIndex="0">
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<Navigation app={this} />
 					</Suspense>
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<RulesModal app={this} />
 					</Suspense>
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<LoginMenu app={this} loginCallback={this.setCurrentUser} />
 					</Suspense>
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<MobileMenu app={this} />
 					</Suspense>
 					{body}
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<NewGameMenu app={this} />
 					</Suspense>
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<UserProfile app={this} />
 					</Suspense>
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<JoinGameMenu app={this} />
 					</Suspense>
-					<Suspense fallback={<div>Loading...</div>}>
+					<Suspense fallback={''}>
 						<UserOptionsMenu app={this} />
 					</Suspense>
 				</div>

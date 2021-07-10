@@ -80,7 +80,7 @@ class Game extends React.Component {
 				var pieceId = props.captured[i];
 				var pieceColor = pieceId.split('-')[0];
 				var pieceRank = pieceId.split('-')[1];
-				this.addCaptured({color: pieceColor, rank: pieceRank },true);
+				this.addCaptured({color: pieceColor, rank: pieceRank });
 			}
 		}
 	}
@@ -284,20 +284,14 @@ class Game extends React.Component {
 		var captured = { blue: {}, red: {} };
 		this.setState({ captured: captured });
 	}
-	addCaptured(pieceInfo,loading) {
+	addCaptured(pieceInfo) {
 		var captured = this.state.captured;
 		var pieceCount = 1;
 		if (captured[pieceInfo.color][pieceInfo.rank]) {
 			pieceCount = captured[pieceInfo.color][pieceInfo.rank].props.count + 1;
 		}
 		captured[pieceInfo.color][pieceInfo.rank] = <GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} count={pieceCount} key={pieceInfo.color+'-'+pieceInfo.rank} extraClass="w-50 d-inline-block mb-2" />
-		if (loading) {
-			// this needs to go away 
-			this.state.captured = captured;
-		}
-		else {
-			this.setState({ captured: captured });
-		}
+		this.setState({ captured: captured });
 		// this.state.captured = captured;
 		// captured[pieceInfo.color].push(<GamePiece color={pieceInfo.color} rank={pieceInfo.rank} captured={true} game={this} />)
 	}

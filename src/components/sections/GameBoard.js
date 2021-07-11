@@ -61,7 +61,7 @@ class GameBoard extends React.Component {
 		var app = this.props.app;
 		app.gameBoard = this;
 		var spaces = this.props.game.props.spaces;
-		if (spaces && app.tileSpaces) {
+		if (!app.gameLoading && spaces && app.tileSpaces) {
 			for (var i in spaces) {
 				var space = spaces[i];
 				var targetSpace = null;
@@ -444,6 +444,9 @@ class GameBoard extends React.Component {
 	placePiece(pieceInfo,id,loading) {
 		var spaces = this.state.spaces;
 		var app = this.props.app;
+		if (app.gameLoading) {
+			return;
+		}
 		var game = this.props.game;
 		var battle = false;
 		var playerColor = app.tileRack.playerColor;
@@ -658,26 +661,35 @@ class GameBoard extends React.Component {
 		var game = this.props.game;
 		var app = this.props.app;
 		var classes = 'gameBoard';
-		var helpBar = game.state.started && !app.isMobile ? null : (<HelpBar game={game} app={app} wrapperClass={"xs-only w-100 d-table mt-1"} />);
-		if (!game.state.started) {
-			classes += ' placement mode-'+game.state.placementMode;
+		if (!app.gameLoading) {
+			if (!game.state.started) {
+				classes += ' placement mode-'+game.state.placementMode;
+			}
+			const helpBar = game.state.started && !app.isMobile ? null : (<HelpBar game={game} app={app} wrapperClass={"xs-only w-100 d-table mt-1"} />);	
+			return (
+				<div className={classes}>
+					<QuickLoadMenu app={app} game={game} />
+					<Modal
+						closeButton={true}
+						closeCallback={this.closeBattleModal}
+						id="battle-modal"
+						app={app}
+						content={this.state.battleContent}
+						open={this.state.battleModalOpen}
+						additionalClasses={"p-5 text-black"}
+					/>
+					{this.gameSpaceRows(1,10,10)}
+					{helpBar}
+				</div>
+			)
 		}
-		return (
-			<div className={classes}>
-				<QuickLoadMenu app={app} game={game} />
-				<Modal
-					closeButton={true}
-					closeCallback={this.closeBattleModal}
-					id="battle-modal"
-					app={app}
-					content={this.state.battleContent}
-					open={this.state.battleModalOpen}
-					additionalClasses={"p-5 text-black"}
-				/>
-				{this.gameSpaceRows(1,10,10)}
-				{helpBar}
-			</div>
-		)
+		else {
+			return (
+				<div className={classes}>
+
+				</div>
+			)
+		}
 	}
 }
 

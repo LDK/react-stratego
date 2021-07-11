@@ -22,11 +22,6 @@ div.captured-tiles {
 		text-align: center;
 	}
 	@include below_res($md) {
-	    position: fixed;
-	    width: 100%;
-	    height: 150px;
-	    bottom: 173px;
-	    background: var(--midtone1);
 		.go-button {
 		    position: fixed;
 		    top: 4rem;
@@ -35,6 +30,9 @@ div.captured-tiles {
 	}
 	@include below_res($sm) {
 	    height: 140px;
+		.go-button {
+			top: 40px;
+		}
 	}
 }
 .tileRack-col, .info-panel {
@@ -65,17 +63,13 @@ div.captured-tiles {
 		}
 	}
 	@include below_res($sm) {
-		height: 130px;
+		height: 150px;
 		left: 0px;
 		overflow: hidden;
-		.player-blue & {
-			bottom: 56px;
-			top: unset;
-		}
-		.player-red & {
-			top: 56px;
-			bottom: unset;
-		}
+		bottom: 215px !important;
+		top: unset !important;
+	    position: fixed;
+	    background: var(--midtone1);
 	}
 }
 .info-panel {

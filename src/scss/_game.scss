@@ -52,11 +52,17 @@
 		}
 	}
 	@include below_res($sm) {
+		&.placement {
+			position: fixed;
+			width: 100%;
+		}
 		.player-blue &.placement {
-			top: -160px;
+			top: unset;
+			bottom: 450px;
 		}
 		.player-red &.placement {
-			top: 75px;
+			top: 95px;
+			bottom: unset;
 		}
 	}
 	@include below_res($md) {

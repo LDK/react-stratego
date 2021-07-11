@@ -667,19 +667,21 @@ class GameBoard extends React.Component {
 			}
 			const helpBar = game.state.started && !app.isMobile ? null : (<HelpBar game={game} app={app} wrapperClass={"xs-only w-100 d-table mt-1"} />);	
 			return (
-				<div className={classes}>
+				<div className="game-board-wrapper">
 					<QuickLoadMenu app={app} game={game} />
-					<Modal
-						closeButton={true}
-						closeCallback={this.closeBattleModal}
-						id="battle-modal"
-						app={app}
-						content={this.state.battleContent}
-						open={this.state.battleModalOpen}
-						additionalClasses={"p-5 text-black"}
-					/>
-					{this.gameSpaceRows(1,10,10)}
-					{helpBar}
+					<div className={classes}>
+						<Modal
+							closeButton={true}
+							closeCallback={this.closeBattleModal}
+							id="battle-modal"
+							app={app}
+							content={this.state.battleContent}
+							open={this.state.battleModalOpen}
+							additionalClasses={"p-5 text-black"}
+						/>
+						{this.gameSpaceRows(1,10,10)}
+						{helpBar}
+					</div>
 				</div>
 			)
 		}

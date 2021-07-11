@@ -1,4 +1,5 @@
 import React from 'react';
+import Loader from "react-loader-spinner";
 import { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
@@ -8,6 +9,7 @@ import "./scss/main.scss";
 import { isMobile } from "react-device-detect";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import {debug} from './components/Helpers.js';
 
 const JoinGameMenu = React.lazy(() => import(/* webpackChunkName: "JoinGameMenu" */ './components/menus/JoinGame.js'));
 const LoginMenu = React.lazy(() => import(/* webpackChunkName: "LoginMenu" */ './components/menus/Login.js'));
@@ -41,6 +43,7 @@ class App extends React.Component {
 			requests: [],
 			invites: []
 		};
+		this.gameLoading = false;
 		this.isMobile = isMobile;
 		// this.isMobile = true;
 		this.pastOpponents = [];
@@ -64,7 +67,7 @@ class App extends React.Component {
 		this.openRulesModal = this.openRulesModal.bind(this);
 
 		// FOR DEBUG ONLY
-		// this.reportRenders = true;
+		// this.debug = true;
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
 
@@ -364,28 +367,20 @@ class App extends React.Component {
 		return;
 	}
 	loadGame(id){
-		if (isNaN(parseInt(id))) {
-			this.tileSpaces = null;
-			this.tileRack = null;
-			this.gameBoard = null;
+		this.tileSpaces = null;
+		this.tileRack = null;
+		this.gameBoard = null;
+		if (!isNaN(parseInt(id))) {
+			this.gameLoading = true;
+			debug(this,"Loading game.");
+			this.setState({ activeGame: null });
+		}
+		else {
+			this.gameLoading = false;
 			this.setState({ activeGame: null });
 			return;
 		}
 		var app = this;
-		if (app.gameBoard && app.gameOpened) {
-			app.gameBoard.setState({ spaces: []});
-		}
-		if (app.tileSpaces) {
-			for (var rank in this.tileSpaces) {
-				var space = this.tileSpaces[rank];
-				var initCount = app.Config.Pieces[rank].count;
-				space.remaining = initCount;
-				space.setState({ remaining: space.remaining });
-			}
-		}
-		if (app.tileRack) {
-			app.tileRack.remaining = 40;
-		}
 		var uid = this.state.currentUser.user_id;
 		var userKey = this.state.currentUser.userKey;
 		if (!uid || !userKey) {
@@ -457,7 +452,9 @@ class App extends React.Component {
 					}
 				}
 				app.gameOpened = (new Date()).getTime();
-				app.setState({activeGame: gm});
+				debug(app,"Done loading game.");
+				app.gameLoading = false;
+				app.setState({ activeGame: gm });
 				if (app.nav && app.nav.gameBrowser) {
 					app.nav.gameBrowser.setState({value: id});
 				}
@@ -654,13 +651,25 @@ class App extends React.Component {
 	}
 	getBody() {
 		var body = '', bodyClass = 'mx-auto';
+		// this.gameLoading = true;
 		if (this.state.activeGame) {
+			const gameElement = this.state.appLoading ? null : this.state.activeGame;
 			body = (
 				<Suspense fallback={''}>
-					{this.state.activeGame}
+					{gameElement}
 				</Suspense>
 			);
 			bodyClass = 'game-bg px-0 pt-0';
+		}
+		else if (this.gameLoading) {
+			bodyClass = 'game-bg px-0 pt-0';
+			body = (
+				<div>
+					<Loader className="gameLoading" type="Grid" color="white" />
+					<div className={"dropdown-overlay open"} />
+				</div>
+			)
+
 		}
 		else if (this.state.currentUser) {
 			body = this.userMenuBody();
@@ -669,7 +678,7 @@ class App extends React.Component {
 			body = this.preLoginBody();
 		}
 		return (
-			<Container className={bodyClass} fluid={this.state.activeGame}>
+			<Container className={bodyClass} fluid={this.state.activeGame || this.gameLoading}>
 				<Row noGutters={!this.state.activeGame}>
 					{body}
 				</Row>

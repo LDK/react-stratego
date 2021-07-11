@@ -75,14 +75,6 @@ class Game extends React.Component {
 		this.clearCaptured = this.clearCaptured.bind(this);
 		this.pollOpponentStatus = this.pollOpponentStatus.bind(this);
 		this.polled = false;
-		if (props.captured) {
-			for (var i in props.captured) {
-				var pieceId = props.captured[i];
-				var pieceColor = pieceId.split('-')[0];
-				var pieceRank = pieceId.split('-')[1];
-				this.addCaptured({color: pieceColor, rank: pieceRank });
-			}
-		}
 	}
 	setHelpText(text) {
 		let headline, subtext;
@@ -260,6 +252,15 @@ class Game extends React.Component {
 		}
 	}
 	componentDidMount() {
+		var props = this.props;
+		if (props.captured) {
+			for (var i in props.captured) {
+				var pieceId = props.captured[i];
+				var pieceColor = pieceId.split('-')[0];
+				var pieceRank = pieceId.split('-')[1];
+				this.addCaptured({color: pieceColor, rank: pieceRank });
+			}
+		}
 		this.HelpMessages = {
 			'clickSelected': {
 				headline: this.placementAction + ' any ' + this.props.app.tileRack.playerColor + ' tile to select that piece.',

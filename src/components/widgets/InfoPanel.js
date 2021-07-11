@@ -14,7 +14,13 @@ function InfoPanel({ game, app, playerColor }) {
 		mobileTileRack = <TileRack game={game} app={app} />;
 		tileRack = '';
 	}
-	if (!game.state.started) {
+	if (app.gameLoading) {
+		panel = (
+			<Col xs={{ span: 12, order: 3 }} lg={{ span: 3, order: 2 }} className="px-0 tileRack-col bg-md-white mt-lg-3 mr-xl-auto game-loading">
+			</Col>
+		);
+	}
+	else if (!game.state.started) {
 		panel = (
 			<Col xs={{ span: 12, order: 3 }} lg={{ span: 3, order: 2 }} className="px-0 tileRack-col bg-md-white mt-lg-3 mr-xl-auto">
 				<Row noGutters={true} className="pt-1 pt-md-3">

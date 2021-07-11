@@ -150,3 +150,9 @@ $percentages: [0,25,50,75,100];
 		}
 	}
 }
+.gameLoading {
+	position: fixed;
+	top: calc(50% - 40px);
+	left: calc(50% - 40px);
+	z-index: 2;
+}

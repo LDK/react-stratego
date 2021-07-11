@@ -654,9 +654,6 @@ class App extends React.Component {
 		// this.gameLoading = true;
 		if (this.state.activeGame) {
 			const gameElement = this.state.appLoading ? null : this.state.activeGame;
-			if (this.state.appLoading) {
-				
-			}
 			body = (
 				<Suspense fallback={''}>
 					{gameElement}

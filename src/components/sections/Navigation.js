@@ -55,16 +55,17 @@ class Navigation extends React.Component {
 			gameBrowser = (
 				<div className="col-4 col-lg-3">
 					<DataBrowser
-					 parentObj={this} 
-					 refName='gameBrowser' 
-					 label="Game:" 
-					 labelClass="mr-2 md-up" 
-					 emptyOption='- Select a Game -' 
-					 items={games.active} 
-					 view="select" 
-					 callback={this.gameChange} 
-					 id="gameList" 
-					 value={this.state.activeGame ? this.state.activeGame.props.id : null} />
+						parentObj={this} 
+						refName='gameBrowser' 
+						label="Game:" 
+						labelClass="mr-2 md-up" 
+						emptyOption='- Select a Game -' 
+						items={games.active} 
+						view="select" 
+						callback={this.gameChange} 
+						id="gameList" 
+						value={this.state.activeGame ? this.state.activeGame.props.id : null} 
+					/>
 				</div>
 			);
 		}

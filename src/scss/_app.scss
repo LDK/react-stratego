@@ -156,3 +156,20 @@ $percentages: [0,25,50,75,100];
 	left: calc(50% - 40px);
 	z-index: 2;
 }
+.userMenu {
+	@include between_res($sm, $md - 1) {
+		overflow: scroll;
+		max-height: calc(100vh - 2rem);
+		#userGameList {
+			margin-bottom: 0;
+		}
+		h2 {
+		    background: white;
+		    padding: 1rem 2rem;
+		    position: fixed;
+		    left: 50px;
+		    top: 0;
+		    width: 100%;
+		}
+	}
+}

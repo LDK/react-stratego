@@ -172,4 +172,22 @@ $percentages: [0,25,50,75,100];
 		    width: 100%;
 		}
 	}
+	@include below_res($sm) {
+		overflow: scroll;
+		max-height: calc(100vh - 2rem - 62px);
+		top: 2rem;
+		position: relative;
+		#userGameList {
+			margin-bottom: 0;
+		}
+		h2 {
+		    background: white;
+		    padding: 1rem 2rem;
+		    position: fixed;
+		    left: 0;
+			text-align: center;
+		    top: 0;
+		    width: 100%;
+		}
+	}
 }

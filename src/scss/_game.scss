@@ -19,9 +19,6 @@
 		background-color: var(--grass) !important;
 		height: 45vh;
 	}
-	@include between_res($sm, $md - 1) {
-		top: 4px !important;
-	}
 	&.zoom {
 		@include below_res($lg) {
 			transform: scale(1.6);

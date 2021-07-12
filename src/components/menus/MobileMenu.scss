@@ -13,12 +13,17 @@
 	&.active {
 		background-color: rgba(60,150,120,1);
 		height: 100%;
+		width: 100%;
 	}
 	& > div {
 		bottom: 1rem;
 		left: 1rem;
 		position: fixed !important;
 		cursor: pointer;
+	}
+	@include atleast_res($sm) {
+		width: 50px;
+		height: 100%;
 	}
 	@include atleast_res($md) {
 		display: none !important;

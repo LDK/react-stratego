@@ -659,10 +659,10 @@ class App extends React.Component {
 					{gameElement}
 				</Suspense>
 			);
-			bodyClass = 'game-bg px-0 pt-0';
+			bodyClass = 'game-bg px-0 pt-0 pt-sm-4 pt-md-0';
 		}
 		else if (this.gameLoading) {
-			bodyClass = 'game-bg px-0 pt-0';
+			bodyClass = 'game-bg px-0 pt-0 pt-sm-4 pt-md-0';
 			body = (
 				<div>
 					<Loader className="gameLoading" type="Grid" color="white" />

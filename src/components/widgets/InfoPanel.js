@@ -92,9 +92,9 @@ function InfoPanel({ game, app, playerColor }) {
 								<div className="captured-tiles player-red mt-3 md-up">
 									{captured.red.length ? captured.red : 'None'}
 								</div>
-								<div className="captured-tiles player-red sm-down">
+								<span className="captured-tiles player-red mt-3 sm-down d-sm-block">
 									{captured.red.length}
-								</div>
+								</span>
 							</Col>
 							<Col xs={6} className="px-3">
 								<span className="text-blue">
@@ -103,9 +103,9 @@ function InfoPanel({ game, app, playerColor }) {
 								<div className="captured-tiles player-blue mt-3 md-up">
 									{captured.blue.length ? captured.blue : 'None'}
 								</div>
-								<div className="captured-tiles player-blue sm-down">
+								<span className="captured-tiles player-blue mt-3 sm-down d-sm-block">
 									{captured.blue.length}
-								</div>
+								</span>
 							</Col>
 						</Row>
 					</Col>

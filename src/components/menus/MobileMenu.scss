@@ -13,12 +13,35 @@
 	&.active {
 		background-color: rgba(60,150,120,1);
 		height: 100%;
+		width: 100%;
 	}
 	& > div {
 		bottom: 1rem;
 		left: 1rem;
 		position: fixed !important;
 		cursor: pointer;
+	}
+	.mobile-menu-items { 
+		a {
+		    padding: .75rem;
+		    color: black !important;
+		    background: #cecece;
+		    border-bottom: 1px solid black;
+			border-left: 1px solid black;
+			border-right: 1px solid black;
+		    text-align: center;
+		    font-weight: 500;
+			&:nth-child(2), &:nth-child(4), &:nth-child(6) {
+				background: #efefef;
+			}
+			&:nth-child(1) {
+				border-top: 1px solid black;
+			}
+		}
+	}
+	@include atleast_res($sm) {
+		width: 50px;
+		height: 100%;
 	}
 	@include atleast_res($md) {
 		display: none !important;

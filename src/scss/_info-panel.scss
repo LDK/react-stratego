@@ -90,6 +90,9 @@ div.captured-tiles {
 	@include atleast_res($sm) {
 		border: 1px solid #333;
 	}
+	@include between_res($sm, $md - 1) {
+		left: 0rem;
+	}
 }
 .selected-rank {
 	.gamePiece {

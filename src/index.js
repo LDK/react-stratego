@@ -631,7 +631,7 @@ class App extends React.Component {
 	}
 	userMenuBody() {
 		return (
-			<div className="userMenu py-3">
+			<div className="userMenu py-3 pt-sm-5 mt-sm-3 pt-md-3 mt-md-0 px-sm-4 px-md-0">
 				<h2>Welcome to Stratego!</h2>
 				<Suspense fallback={<div>Loading...</div>}>
 					<DataBrowser label="Active and Open Games:" items={this.state.games.active} view="list" afterKeys={{ turn: 'Turn: %this%', last_move: 'Last Move: %this%' }} afterParentheses={true} callback={this.loadGame} id="userGameList" deleteEmpty={true} hideIfEmpty={true} />
@@ -659,10 +659,10 @@ class App extends React.Component {
 					{gameElement}
 				</Suspense>
 			);
-			bodyClass = 'game-bg px-0 pt-0';
+			bodyClass = 'game-bg px-0 pt-0 pt-sm-4 pt-md-0';
 		}
 		else if (this.gameLoading) {
-			bodyClass = 'game-bg px-0 pt-0';
+			bodyClass = 'game-bg px-0 pt-0 pt-sm-4 pt-md-0';
 			body = (
 				<div>
 					<Loader className="gameLoading" type="Grid" color="white" />

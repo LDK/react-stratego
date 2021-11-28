@@ -29,29 +29,29 @@ class MobileMenu extends React.Component {
 		if (this.state.menuOpen) {
 			if (app.gameOpened) {
 				menuItems.push(
-					<a key="0" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.nav.goHome(); }}>Home</a>
+					<a key="0" className="anchor d-block" onClick={() => { this.toggleMenu(); app.nav.goHome(); }}>Home</a>
 				);
 			}
 			menuItems.push(
-				<a key="1" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openRulesModal(); }}>View Rules</a>
+				<a key="1" className="anchor d-block" onClick={() => { this.toggleMenu(); app.openRulesModal(); }}>View Rules</a>
 			);
 			if (!uid) {
 				menuItems.push(
-					<a key="2" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openLoginMenu(); }}>Login</a>
+					<a key="2" className="anchor d-block" onClick={() => { this.toggleMenu(); app.openLoginMenu(); }}>Login</a>
 				);
 				menuItems.push(
-					<a key="3" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openRegistrationMenu(); }}>Register</a>
+					<a key="3" className="anchor d-block" onClick={() => { this.toggleMenu(); app.openRegistrationMenu(); }}>Register</a>
 				);
 			}
 			else {
 				menuItems.push(
-					<a key="4" className="anchor underline text-white d-block" onClick={() => { this.toggleMenu(); app.openNewGameMenu(); }}>New Game</a>
+					<a key="4" className="anchor d-block" onClick={() => { this.toggleMenu(); app.openNewGameMenu(); }}>New Game</a>
 				);
 				menuItems.push(
-					<UserLink key="5" app={app} className="anchor underline text-white d-block" user={{ id: uid, name: 'My Profile' }} />
+					<UserLink key="5" app={app} className="anchor d-block" user={{ id: uid, name: 'My Profile' }} />
 				);
 				menuItems.push(
-					<a key="6" className="anchor underline text-white d-block bottom-link" onClick={() => { this.toggleMenu(); app.logUserOut(); }}>Log Out</a>
+					<a key="6" className="anchor d-block bottom-link" onClick={() => { this.toggleMenu(); app.logUserOut(); }}>Log Out</a>
 				);
 			}
 		}

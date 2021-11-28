@@ -19,6 +19,9 @@
 		@include below_res($sm) {
 			height: 28px;
 		}
+		@include between_res($sm, $md - 1) {
+			font-size: 1.1rem;
+		}
 	}
 	.placement & {
 		margin-top: unset;

@@ -1,0 +1,60 @@
+.App {
+	header {
+	  background-color: #282c34;
+	  display: flex;
+	  flex-direction: row;
+	  align-items: center;
+	  justify-content: space-between;
+	  color: white;
+	  padding: 0.5rem 1rem;
+	}
+}
+
+
+ul.menu {
+  list-style: none;
+  li {
+    display: inline;
+    padding: 12px;
+  }
+
+  a {
+    color: #ffffff;
+  }
+}
+
+.page-home {
+  text-align: center;
+}
+
+.content {
+  text-align: left;
+  display: inline-block;
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 1232px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+h1 {
+  text-align: center;
+}
+
+.books table {
+  width: 100%;
+}
+
+.title-col {
+  max-width: 60%;
+}
+
+.search-input {
+  padding: 4px;
+  text-align: center;
+}
+
+.search-input input {
+  display: inline-block;
+  width: 50%;
+}

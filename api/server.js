@@ -1588,7 +1588,7 @@ restapi.post('/battle', function(req, res) {
 	);
 });
 
-var listenPort = 3000;
+var listenPort = 3002;
 restapi.listen(listenPort);
 
 console.log("Game server running on port "+listenPort+".");

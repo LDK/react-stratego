@@ -1084,20 +1084,12 @@ restapi.get('/users', function(req, res){
 });
 
 restapi.post('/login', function(req, res) {
-	var query = "SELECT id, userKey FROM `user` WHERE username = '" + req.body.username + "' and password = '" + req.body.password + "'";
+	var query = "SELECT id, userKey FROM `user` WHERE userKey = '" + req.body.userKey + "'";
 	db.get(query, function(err, row){
 		if (!row) {
-			var userQuery = "SELECT id FROM `user` WHERE username = '" + req.body.username + "'";
-			db.get(userQuery, function(userErr, userRow) {
-				var rv = {};
-				if (!!userRow) {
-					rv.error = 'wrong-password';
-				}
-				else {
-					rv.error = 'no-user';
-				}
-				res.status(401).json(rv);
-			});
+			var rv = {};
+			rv.error = 'key-not-found';
+			res.status(401).json(rv);
 		}
 		else {
 			getUserData(row['id']).then(function(user){

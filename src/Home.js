@@ -10,7 +10,24 @@ export function Home() {
 			setUserInfo(null);
 		} else {
 			oktaAuth.token.getUserInfo().then(info => {
-				setUserInfo(info);
+
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ userKey: info.sub })
+				};
+
+				if (!userInfo || !userInfo.username) {
+					fetch('http://localhost:3002/login', requestOptions)
+						.then(response => response.json())
+						.then(data => {
+							info.username = data.username;
+							info.id = data.user_id;
+							info.invite_available = data.invite_available;
+							info.random_available = data.random_available;
+							setUserInfo(info);
+					});
+				}
 			});
 		}
 	}, [authState, oktaAuth]); // Update if authState changes
@@ -37,7 +54,7 @@ export function Home() {
 	let userText = '';
 	if (authState.isAuthenticated) {
 		if (userInfo) {
-			userText = (<div><p>Welcome, {userInfo.given_name}!</p><button onClick={ logout }>Logout</button></div>);
+			userText = (<div><p>Welcome, {userInfo.username}!</p><button onClick={ logout }>Logout</button></div>);
 		}
 		else {
 			userText = (<div><p>Loading user info...</p></div>);

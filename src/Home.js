@@ -3,29 +3,32 @@ import { useOktaAuth } from '@okta/okta-react';
 
 export function Home() {
 	const { authState, oktaAuth } = useOktaAuth();
-    const [userInfo, setUserInfo] = useState(null);
+    const [ userInfo, setUserInfo ] = useState(null);
+    const [ unregistered, setUnregistered ] = useState(false);
 	useEffect(() => {
 		if (!authState || !authState.isAuthenticated) {
 			// When user isn't authenticated, forget any user info
 			setUserInfo(null);
 		} else {
 			oktaAuth.token.getUserInfo().then(info => {
-
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ userKey: info.sub })
-				};
-
 				if (!userInfo || !userInfo.username) {
+					const requestOptions = {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ userKey: info.sub, email: info.email })
+					};
 					fetch('http://localhost:3002/login', requestOptions)
 						.then(response => response.json())
 						.then(data => {
-							info.username = data.username;
-							info.id = data.user_id;
-							info.invite_available = data.invite_available;
-							info.random_available = data.random_available;
-							setUserInfo(info);
+							setUserInfo({
+								email: data.email,
+								id: data.user_id,
+								key: info.sub,
+								invite_available: data.invite_available,
+								random_available: data.random_available,
+								username: data.username
+							});
+							setUnregistered(!data.user_id);
 					});
 				}
 			});
@@ -53,7 +56,10 @@ export function Home() {
 	const logout = () => { oktaAuth.signOut(); }
 	let userText = '';
 	if (authState.isAuthenticated) {
-		if (userInfo) {
+		if (unregistered) {
+			userText = (<div><p>If you are seeing this, I should really open a modal to create your profile, new user.</p></div>);
+		}
+		else if (userInfo) {
 			userText = (<div><p>Welcome, {userInfo.username}!</p><button onClick={ logout }>Logout</button></div>);
 		}
 		else {

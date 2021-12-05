@@ -1084,7 +1084,7 @@ restapi.get('/users', function(req, res){
 });
 
 restapi.post('/login', function(req, res) {
-	var query = "SELECT id, userKey FROM `user` WHERE userKey = '" + req.body.userKey + "'";
+	var query = "SELECT id, userKey FROM `user` WHERE userKey = '" + req.body.userKey + "' and email = '" + req.body.email + "'";
 	db.get(query, function(err, row){
 		if (!row) {
 			var rv = {};
@@ -1095,7 +1095,25 @@ restapi.post('/login', function(req, res) {
 			getUserData(row['id']).then(function(user){
 				user.user_id = user.id;
 				delete user.id;
-				res.status(200).json(user);
+				getRecentGames(user.user_id).then(
+					function(recentGames) {
+						var query = "SELECT g.id, g.title, g.starting_user_id as starter_uid, su.username as starter_name, g.opponent_user_id as opponent_uid, ou.username as opponent_name, g.started, g.turn, g.last_move_ts, g.status FROM `game` g INNER JOIN `user` su ON su.id = g.starting_user_id LEFT JOIN `user` ou ON ou.id = g.opponent_user_id WHERE g.status IN ('active','open') AND (starting_user_id = '" + user.user_id + "' OR opponent_user_id = '" + user.user_id + "') ORDER BY g.started DESC, g.last_move_ts DESC";
+						db.all(query, [], (err, rows) => {
+							if (err) {
+								throw err;
+							}
+							user.recentGames = recentGames;
+							user.activeGames = rows;
+							res.status(200).json(user);
+						});
+					},
+					function(err) {
+						res.status(401).json({ 'error': err });
+					}
+				);
+			},
+			function(err) {
+				res.status(401).json({ 'error': err });
 			});
 		}
 	});

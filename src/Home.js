@@ -34,7 +34,18 @@ export function Home(props) {
 
 	const logout = () => { oktaAuth.signOut(); }
 	let userText = '';
-	let gamesList = '';
+	let recentGames = '';
+	let activeGames = '';
+	const GamesList = (list, listId, header) => {
+		return (
+			<div id={listId}>
+				<h3>{ header }</h3>
+				<ul>
+					{list.map(game => <li key={`game-${listId}-${game.id}`}><a href={"/game/" + game.id}>{ game.title }</a></li>)}
+				</ul>
+			</div>
+		);
+	}
 	if (authState.isAuthenticated) {
 		if (unregistered) {
 			userText = (<div><p>If you are seeing this, I should really open a modal to create your profile, new user.</p></div>);
@@ -42,11 +53,10 @@ export function Home(props) {
 		else if (userInfo) {
 			userText = (<div><p>Welcome, {userInfo.username}!</p><button onClick={ logout }>Logout</button></div>);
 			if (userInfo.recent_games) {
-				gamesList = (<ul>
-					(
-						{userInfo.recent_games.map(game => <li key="game-{game.id}"><a href={"/game/" + game.id}>{game.title}</a></li>)}
-					)
-					</ul>);
+				recentGames = GamesList(userInfo.recent_games, 'recent-games', 'Recent Games');
+			}
+			if (userInfo.active_games) {
+				activeGames = GamesList(userInfo.active_games, 'active-games', 'Active Games');
 			}
 		}
 		else {
@@ -57,7 +67,7 @@ export function Home(props) {
 		userText = (<div><p>You need to sign in to use the application!</p><LoginButton /></div>);
 	}
 	
-	return (<div className="page-home"><h1>Welcome to Stratego</h1>{ userText }{ gamesList }</div>);
+	return (<div className="page-home"><h1>Welcome to Stratego</h1>{ userText }{ activeGames }{ recentGames }</div>);
 }
 
 Home.propTypes = {

@@ -6,9 +6,21 @@ import Container from 'react-bootstrap/Container';
 import { useParams } from "react-router-dom";
 import { useOktaAuth } from '@okta/okta-react';
 import PropTypes from "prop-types";
+import { GamePiece } from './GamePiece.js';
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { useDrop } from 'react-dnd';
+
 const blockedSpaces = [43,44,47,48,53,54,57,58];
 const GameSpace = (props) => {
 	const { x, y, id, data } = props;
+    const [{ isOver }, dropRef] = useDrop({
+        accept: 'GamePiece',
+        drop: (item) => { console.log('dropped',item,'on',id); },
+        collect: (monitor) => ({
+            isOver: monitor.isOver()
+        })
+    })
 	if (blockedSpaces.includes(id)) {
 		return (
 			<Col className="game-space unpassable text-center" data-x={x} data-y={y} data-id={id} data-passable={false}>X</Col>
@@ -19,19 +31,18 @@ const GameSpace = (props) => {
 		rank = props.data.rank;
 		color = props.data.color;
 	}
-	if (data) {
-		console.log('game space',id,props.data,rank,color);
-	}
 	return (
-		<Col className="game-space" data-x={x} data-y={y} data-id={id}>{id}: { color || '' } { rank || '?' }</Col>
+		<Col className="game-space" data-x={x} data-y={y} data-id={id} ref={dropRef}>
+			<GamePiece rank={rank} color={color} squareId={id} />
+		</Col>
 	);
 };
 GameSpace.propTypes = {
 	territory: PropTypes.string,
 	passable: PropTypes.any,
 	id: PropTypes.number,
-	col: PropTypes.number,
-	row: PropTypes.number
+	x: PropTypes.number,
+	y: PropTypes.number
 };
 
 const BoardRow = (props) => {
@@ -69,7 +80,9 @@ const GameBoard = (props) => {
 	return (
 		<Container className="game-board">
 			<p>game board, last checked { props.lastChecked }</p>
+			<DndProvider backend={HTML5Backend}>
 			{ rows }
+			</DndProvider>
 		</Container>
 	);
 };
@@ -115,7 +128,6 @@ export function Game(props) {
 						setBluePlayer(data.starter_name);
 						setRedPlayer(data.opponent_name);
 						setLastChecked(Date.now());
-						console.log('setting game data');
 						setGameData(data);
 					}
 				)

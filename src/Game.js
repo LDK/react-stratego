@@ -13,7 +13,7 @@ import { useDrop } from 'react-dnd';
 
 const blockedSpaces = [43,44,47,48,53,54,57,58];
 const GameSpace = (props) => {
-	const { x, y, id, data } = props;
+	const { x, y, id, data, playerColor, turn } = props;
     const [{ isOver }, dropRef] = useDrop({
         accept: 'GamePiece',
         drop: (item) => { console.log('dropped',item,'on',id); },
@@ -33,7 +33,7 @@ const GameSpace = (props) => {
 	}
 	return (
 		<Col className="game-space" data-x={x} data-y={y} data-id={id} ref={dropRef}>
-			<GamePiece rank={rank} color={color} squareId={id} />
+			<GamePiece rank={rank} turn={turn} color={color} squareId={id} playerColor={playerColor} />
 		</Col>
 	);
 };
@@ -46,12 +46,12 @@ GameSpace.propTypes = {
 };
 
 const BoardRow = (props) => {
-	const { y, spaces } = props;
+	const { y, spaces, playerColor, turn } = props;
 	let i = 1;
 	let gameSpaces = [];
 	while (i <= 10) {
 		let id = ((y - 1) * 10) + i;
-		gameSpaces.push(<GameSpace key={id} y={y} x={i} id={id} data={spaces[id]} />);
+		gameSpaces.push(<GameSpace turn={turn} playerColor={playerColor} key={id} y={y} x={i} id={id} data={spaces[id]} />);
 		i++;
 	}
 	return (
@@ -74,7 +74,7 @@ const GameBoard = (props) => {
 	}
 	let y = 1;
 	while (y <= 10) {
-		rows.push(<BoardRow key={"row-"+y} spaces={spaces} y={y} />);
+		rows.push(<BoardRow turn={props.turn} playerColor={props.color} key={"row-"+y} spaces={spaces} y={y} />);
 		y++;
 	}
 	return (

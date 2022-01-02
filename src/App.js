@@ -1,4 +1,5 @@
 import './App.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { LoginCallback, Security } from '@okta/okta-react';
@@ -25,7 +26,16 @@ const oktaAuth = new OktaAuth(config);
 const originalUri = toRelativeUrl(window.location.href, window.location.origin);
 oktaAuth.setOriginalUri(originalUri);
 
-function App() {
+const HeaderNav = () => {
+	return (
+		<header>
+			<div>Stratego</div>
+			<ul className="menu"><li><Link to="/">Home</Link></li></ul>
+		</header>
+	);
+};
+
+const App = () => {
     const [ userInfo, setUserInfo ] = useState(null);
     const [ unregistered, setUnregistered ] = useState(false);
 	const restoreOriginalUri = () => {
@@ -73,10 +83,7 @@ function App() {
 	return (
 		<div className="App">
 			<Router>
-				<header>
-					<div>Stratego</div>
-					<ul className="menu"><li><Link to="/">Home</Link></li></ul>
-				</header>
+				<HeaderNav />
 				<Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
 					<Route exact path='/'>
 						<Home app={app} />

@@ -6,89 +6,10 @@ import Container from 'react-bootstrap/Container';
 import { useParams } from "react-router-dom";
 import { useOktaAuth } from '@okta/okta-react';
 import PropTypes from "prop-types";
-import { GamePiece } from './GamePiece.js';
+import { GameBoard } from './GameBoard.js';
+import { TileRack } from './TileRack.js';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { useDrop } from 'react-dnd';
-
-const blockedSpaces = [43,44,47,48,53,54,57,58];
-const GameSpace = (props) => {
-	const { x, y, id, data, playerColor, turn } = props;
-    const [{ isOver }, dropRef] = useDrop({
-        accept: 'GamePiece',
-        drop: (item) => { console.log('dropped',item,'on',id); },
-        collect: (monitor) => ({
-            isOver: monitor.isOver()
-        })
-    })
-	if (blockedSpaces.includes(id)) {
-		return (
-			<Col className="game-space unpassable text-center" data-x={x} data-y={y} data-id={id} data-passable={false}>X</Col>
-		);
-	}
-	let rank, color;
-	if (props.data) {
-		rank = props.data.rank;
-		color = props.data.color;
-	}
-	return (
-		<Col className="game-space" data-x={x} data-y={y} data-id={id} ref={dropRef}>
-			<GamePiece rank={rank} turn={turn} color={color} squareId={id} playerColor={playerColor} />
-		</Col>
-	);
-};
-GameSpace.propTypes = {
-	territory: PropTypes.string,
-	passable: PropTypes.any,
-	id: PropTypes.number,
-	x: PropTypes.number,
-	y: PropTypes.number
-};
-
-const BoardRow = (props) => {
-	const { y, spaces, playerColor, turn } = props;
-	let i = 1;
-	let gameSpaces = [];
-	while (i <= 10) {
-		let id = ((y - 1) * 10) + i;
-		gameSpaces.push(<GameSpace turn={turn} playerColor={playerColor} key={id} y={y} x={i} id={id} data={spaces[id]} />);
-		i++;
-	}
-	return (
-		<Row className="board-row">
-			{ gameSpaces }
-		</Row>
-	);
-};
-BoardRow.propTypes = {
-	y: PropTypes.number
-};
-const GameBoard = (props) => {
-	if (!props || !props.data) {
-		return null;
-	}
-	let rows = [];
-	let spaces = {};
-	if (props.data.spaces) {
-		spaces = JSON.parse(props.data.spaces);
-	}
-	let y = 1;
-	while (y <= 10) {
-		rows.push(<BoardRow turn={props.turn} playerColor={props.color} key={"row-"+y} spaces={spaces} y={y} />);
-		y++;
-	}
-	return (
-		<Container className="game-board">
-			<p>game board, last checked { props.lastChecked }</p>
-			<DndProvider backend={HTML5Backend}>
-			{ rows }
-			</DndProvider>
-		</Container>
-	);
-};
-GameBoard.propTypes = {
-  lastChecked: PropTypes.any
-};
 
 export function Game(props) {
 	const { game_id } = useParams();
@@ -170,14 +91,23 @@ export function Game(props) {
 			if (turn) {
 				turnLabel = (<p>{ turn == 'red' ? redPlayer : bluePlayer }&apos;s turn.</p>);
 			}
-			return (<div className="game-wrapper">
+			return (<Container fluid className="game-wrapper">
 				Game: { game_id }.
 				You are { userInfo.username }.
 				Your opponent is { opponent }.
 				You use { color } tiles.
 				{ turnLabel }
-				<GameBoard data={gameData} lastChecked={lastChecked} color={color} turn={turn} />
-				</div>);
+			<DndProvider backend={HTML5Backend}>
+				<Row>
+					<Col xs={12} md={8} lg={9}>
+						<GameBoard data={gameData} lastChecked={lastChecked} color={color} turn={turn} />
+					</Col>
+					<Col xs={12} md={4} lg={3}>
+						<TileRack />
+					</Col>
+				</Row>
+			</DndProvider>
+				</Container>);
 		}
 		else {
 			return (<div><p>Loading...</p></div>);

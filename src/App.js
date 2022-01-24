@@ -1,3 +1,4 @@
+/* eslint-disable */
 import './App.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
@@ -6,6 +7,7 @@ import { LoginCallback, Security } from '@okta/okta-react';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { Home } from './Home';
 import { Game } from './Game';
+import { NewGame } from './NewGame';
 import { toRelativeUrl } from '@okta/okta-auth-js';
 
 const ClientId = '0oa2t6lqn7Qsg1T3g5d7';
@@ -38,6 +40,7 @@ const HeaderNav = () => {
 const App = () => {
     const [ userInfo, setUserInfo ] = useState(null);
     const [ unregistered, setUnregistered ] = useState(false);
+    const [ openMenu, setOpenMenu ] = useState(null);
 	const restoreOriginalUri = () => {
 		window.location='/';
 	};
@@ -55,19 +58,25 @@ const App = () => {
 						body: JSON.stringify({ userKey: info.sub, email: info.email })
 					};
 					fetch('http://localhost:3002/login', requestOptions)
-						.then(response => response.json())
-						.then(data => {
-							setUserInfo({
-								email: data.email,
-								id: data.user_id,
-								key: info.sub,
-								invite_available: data.invite_available,
-								random_available: data.random_available,
-								username: data.username,
-								recent_games: data.recentGames,
-								active_games: data.activeGames
-							});
-							setUnregistered(!data.user_id);
+					.then(response => response.json())
+					.then(data => {
+						setUserInfo({
+							email: data.email,
+							id: data.user_id,
+							key: info.sub,
+							invite_available: data.invite_available,
+							random_available: data.random_available,
+							username: data.username,
+							recent_games: data.recentGames,
+							active_games: data.activeGames
+						});
+						setUnregistered(!data.user_id);
+					})
+					.catch(error => {
+						console.log('ERROR',error);
+						setUserInfo({
+							error: 'no-server'
+						});
 					});
 				});
 			}
@@ -78,7 +87,8 @@ const App = () => {
 		setUserInfo: setUserInfo,
 		unregistered: unregistered,
 		setUnregistered: setUnregistered,
-		checkAuth: checkAuth
+		checkAuth: checkAuth,
+		setOpenMenu: setOpenMenu
 	};
 	return (
 		<div className="App">
@@ -94,6 +104,7 @@ const App = () => {
 					<Route path='/login-callback' component={LoginCallback}/>
 				</Security>
 			</Router>
+			<NewGame visible={openMenu === 'NewGame'} app={app} openMenu={openMenu} />
 		</div>
 	);
 }

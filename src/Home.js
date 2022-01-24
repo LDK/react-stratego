@@ -1,10 +1,12 @@
+/* eslint-disable */
 import React, { useEffect } from "react";
 import { useOktaAuth } from '@okta/okta-react';
 import PropTypes from "prop-types";
+import Button from "react-bootstrap/Button";
 
 export function Home(props) {
 	const { authState, oktaAuth } = useOktaAuth();
-    const { userInfo, setUserInfo, unregistered, setUnregistered, checkAuth } = props.app;
+    const { userInfo, setUserInfo, unregistered, setUnregistered, checkAuth, setOpenMenu } = props.app;
 
 	useEffect(() => checkAuth({
 		authState: authState,
@@ -36,6 +38,7 @@ export function Home(props) {
 	let userText = '';
 	let recentGames = '';
 	let activeGames = '';
+	let newGameButton = '';
 	const GamesList = (list, listId, header) => {
 		return (
 			<div id={listId}>
@@ -50,13 +53,22 @@ export function Home(props) {
 		if (unregistered) {
 			userText = (<div><p>If you are seeing this, I should really open a modal to create your profile, new user.</p></div>);
 		}
-		else if (userInfo) {
+		else if (userInfo && !userInfo.error) {
 			userText = (<div><p>Welcome, {userInfo.username}!</p><button onClick={ logout }>Logout</button></div>);
 			if (userInfo.recent_games) {
 				recentGames = GamesList(userInfo.recent_games, 'recent-games', 'Recent Games');
 			}
 			if (userInfo.active_games) {
 				activeGames = GamesList(userInfo.active_games, 'active-games', 'Active Games');
+			}
+			newGameButton = (<Button variant="primary" onClick={() => { setOpenMenu('NewGame'); }}>New Game</Button>);
+		}
+		else if (userInfo && userInfo.error) {
+			userText = (<div><p>The game server could not be found.  Please try again later.</p></div>)
+			switch (userInfo.error) {
+				case 'no-server':
+					userText = (<div><p>The game server could not be found.  Please try again later.</p></div>)
+				break;
 			}
 		}
 		else {
@@ -66,8 +78,15 @@ export function Home(props) {
 	else {
 		userText = (<div><p>You need to sign in to use the application!</p><LoginButton /></div>);
 	}
-	
-	return (<div className="page-home"><h1>Welcome to Stratego</h1>{ userText }{ activeGames }{ recentGames }</div>);
+	return (
+		<div className="page-home">
+			<h1>Welcome to Stratego</h1>
+			{ userText }
+			{ activeGames }
+			{ recentGames }
+			{ newGameButton }
+		</div>
+	);
 }
 
 Home.propTypes = {

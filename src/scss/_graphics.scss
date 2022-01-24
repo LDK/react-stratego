@@ -1,12 +1,12 @@
 // Layout tile graphics
 .gameSpace {
-	background-image: url(img/tiles/sand.png);
+	background-image: url(../img/tiles/sand.png);
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
 }
 #gameSpace-1 {
-	background-image: url(img/tiles/top-left-corner.png);	
+	background-image: url(../img/tiles/top-left-corner.png);	
 }
 #gameSpace-12,
 #gameSpace-19,
@@ -14,11 +14,11 @@
 #gameSpace-72,
 #gameSpace-78,
 #gameSpace-86 {
-	background-image: url(img/tiles/sand-2.png);
+	background-image: url(../img/tiles/sand-2.png);
 }
 #gameSpace-14,
 #gameSpace-89 {
-	background-image: url(img/tiles/sand-3.png);
+	background-image: url(../img/tiles/sand-3.png);
 }
 #gameSpace-2,
 #gameSpace-3, 
@@ -28,10 +28,10 @@
 #gameSpace-7, 
 #gameSpace-8, 
 #gameSpace-9 {
-	background-image: url(img/tiles/top-row.png);	
+	background-image: url(../img/tiles/top-row.png);	
 } 
 #gameSpace-10 {
-	background-image: url(img/tiles/top-right-corner.png);
+	background-image: url(../img/tiles/top-right-corner.png);
 }
 #gameSpace-11, 
 #gameSpace-21, 
@@ -41,36 +41,36 @@
 #gameSpace-61, 
 #gameSpace-71, 
 #gameSpace-81 {
-	background-image: url(img/tiles/left-row.png);
+	background-image: url(../img/tiles/left-row.png);
 }
 #gameSpace-32, #gameSpace-36 {
-	background-image: url(img/tiles/top-left-edge.png);
+	background-image: url(../img/tiles/top-left-edge.png);
 }
 #gameSpace-33, #gameSpace-34, #gameSpace-37, #gameSpace-38 {
-	background-image: url(img/tiles/top-edge.png);
+	background-image: url(../img/tiles/top-edge.png);
 }
 #gameSpace-35, #gameSpace-39 {
-	background-image: url(img/tiles/top-right-edge.png);
+	background-image: url(../img/tiles/top-right-edge.png);
 }
 #gameSpace-42, #gameSpace-52, #gameSpace-46, #gameSpace-56 {
-	background-image: url(img/tiles/left-edge.png);
+	background-image: url(../img/tiles/left-edge.png);
 }
 #gameSpace-45, #gameSpace-55, #gameSpace-49, #gameSpace-59 {
-	background-image: url(img/tiles/right-edge.png);
+	background-image: url(../img/tiles/right-edge.png);
 }
 #gameSpace-62, #gameSpace-66 {
-	background-image: url(img/tiles/bottom-left-edge.png);
+	background-image: url(../img/tiles/bottom-left-edge.png);
 }
 #gameSpace-63, #gameSpace-64, #gameSpace-67, #gameSpace-68 {
 	border-top-color: var(--unpassable);
 	border-top-style: solid;
-	background-image: url(img/tiles/bottom-edge.png);
+	background-image: url(../img/tiles/bottom-edge.png);
 }
 #gameSpace-65, #gameSpace-69 {
-	background-image: url(img/tiles/bottom-right-edge.png);
+	background-image: url(../img/tiles/bottom-right-edge.png);
 }
 #gameSpace-91 {
-	background-image: url(img/tiles/bottom-left-corner.png);	
+	background-image: url(../img/tiles/bottom-left-corner.png);	
 }
 #gameSpace-20, 
 #gameSpace-30, 
@@ -80,7 +80,7 @@
 #gameSpace-70, 
 #gameSpace-80, 
 #gameSpace-90 {
-	background-image: url(img/tiles/right-row.png);
+	background-image: url(../img/tiles/right-row.png);
 }
 #gameSpace-92,
 #gameSpace-93, 
@@ -90,10 +90,10 @@
 #gameSpace-97, 
 #gameSpace-98, 
 #gameSpace-99 {
-	background-image: url(img/tiles/bottom-row.png);	
+	background-image: url(../img/tiles/bottom-row.png);	
 } 
 #gameSpace-100 {
-	background-image: url(img/tiles/bottom-right-corner.png);
+	background-image: url(../img/tiles/bottom-right-corner.png);
 }
 #gameSpace-44, #gameSpace-48, #gameSpace-54, #gameSpace-58 {
 	border-left-width: 0;
@@ -102,29 +102,29 @@
 	border-top-width: 0;
 }
 #top-border .gameSpace {
-	background-image: url(img/tiles/top-coast.png);
+	background-image: url(../img/tiles/top-coast.png);
 }
 #bottom-border .gameSpace {
-	background-image: url(img/tiles/bottom-coast.png);
+	background-image: url(../img/tiles/bottom-coast.png);
 }
 .gameSpace.left-border {
-	background-image: url(img/tiles/left-coast.png);
+	background-image: url(../img/tiles/left-coast.png);
 }
 .gameSpace.right-border {
-	background-image: url(img/tiles/right-coast.png);
+	background-image: url(../img/tiles/right-coast.png);
 }
 
 #top-border .gameSpace#top-border-1 {
-	background-image: url(img/tiles/top-left-coast.png);
+	background-image: url(../img/tiles/top-left-coast.png);
 }
 #top-border .gameSpace#top-border-12 {
-	background-image: url(img/tiles/top-right-coast.png);
+	background-image: url(../img/tiles/top-right-coast.png);
 }
 #bottom-border .gameSpace#bottom-border-1 {
-	background-image: url(img/tiles/bottom-left-coast.png);
+	background-image: url(../img/tiles/bottom-left-coast.png);
 }
 #bottom-border .gameSpace#bottom-border-12 {
-	background-image: url(img/tiles/bottom-right-coast.png);
+	background-image: url(../img/tiles/bottom-right-coast.png);
 }
 
 .gameSpace:not(.borderSpace):not(.passable) {
@@ -140,15 +140,15 @@
 }
 .gameSpace:not(.borderSpace):not(.passable)#gameSpace-44,
 .gameSpace:not(.borderSpace):not(.passable)#gameSpace-58 {
-	background-image: url(img/tiles/water-rocks.png);
+	background-image: url(../img/tiles/water-rocks.png);
 }
 .gameSpace:not(.borderSpace):not(.passable)#gameSpace-54,
 .gameSpace:not(.borderSpace):not(.passable)#gameSpace-48 {
-	background-image: url(img/tiles/water-ripple.png);
+	background-image: url(../img/tiles/water-ripple.png);
 }
 .gameSpace:not(.borderSpace):not(.passable)#gameSpace-43,
 .gameSpace:not(.borderSpace):not(.passable)#gameSpace-57 {
-	background-image: url(img/tiles/water-deep.png);
+	background-image: url(../img/tiles/water-deep.png);
 }
 .gameSpace.borderSpace {
 	border: none !important;

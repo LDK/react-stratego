@@ -1,7 +1,9 @@
 /* eslint-disable */
 import React from "react";
+import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import { useDrag } from 'react-dnd'
+import "./scss/game.scss";
 
 export const GamePiece = (props) => {
 	const { rank, color, squareId, playerColor, turn } = props;
@@ -14,7 +16,11 @@ export const GamePiece = (props) => {
         })
     })
 	return (
-		<div className="game-piece" ref={dragRef} data-rank={rank} data-color={color} data-square={squareId}>{ color || '' } { rank && color ? (rank || '?') : '' }{isDragging && '😱'}</div>
+		<div className="gamePiece-wrapper" ref={dragRef} data-rank={rank} data-color={color} data-square={squareId}>
+			<div className={"gamePiece " + (color || '')}>
+				{ rank && color ? <div className={`tileFace rank-${rank}`} /> : '' }{isDragging && '😱'}
+			</div>
+		</div>
 	);
 };
 GamePiece.propTypes = {

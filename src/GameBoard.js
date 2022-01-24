@@ -22,7 +22,7 @@ const GameSpace = (props) => {
     })
 	if (blockedSpaces.includes(id)) {
 		return (
-			<Col className="game-space unpassable text-center" data-x={x} data-y={y} data-id={id} data-passable={false}>X</Col>
+			<Col className="gameSpace-wrapper unpassable text-center" data-x={x} data-y={y} data-id={id} data-passable={false}>X</Col>
 		);
 	}
 	let rank, color;
@@ -31,7 +31,7 @@ const GameSpace = (props) => {
 		color = props.data.color;
 	}
 	return (
-		<Col className="game-space" data-x={x} data-y={y} data-id={id} ref={dropRef}>
+		<Col className="gameSpace-wrapper" data-x={x} data-y={y} data-id={id} ref={dropRef}>
 			<GamePiece rank={rank} turn={turn} color={color} squareId={id} playerColor={playerColor} />
 		</Col>
 	);
@@ -54,7 +54,7 @@ const BoardRow = (props) => {
 		i++;
 	}
 	return (
-		<Row className="board-row">
+		<Row className="gameSpaceRow">
 			{ gameSpaces }
 		</Row>
 	);
@@ -77,9 +77,11 @@ export const GameBoard = (props) => {
 		y++;
 	}
 	return (
-		<Container className="game-board">
+		<Container className="game-board-wrapper">
 			<p>game board, last checked { props.lastChecked }</p>
-			{ rows }
+			<div className="gameBoard">
+				{ rows }
+			</div>
 		</Container>
 	);
 };

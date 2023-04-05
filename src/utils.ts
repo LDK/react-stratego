@@ -4,7 +4,7 @@ import { GamePieceData, PieceColor, Rank } from "./types";
 const randomUnusedSquare = (usedSquares: Set<number>) => {
   let square;
   do {
-    square = Math.floor(Math.random() * 64) + 1;
+    square = Math.floor(Math.random() * 100) + 1;
   } while (usedSquares.has(square));
   usedSquares.add(square);
   return square;
@@ -13,6 +13,10 @@ const randomUnusedSquare = (usedSquares: Set<number>) => {
 export const generateInitialSquares = () => {
   const initialSquares: { [key: number]: { color: PieceColor; rank: Rank } } = {};
   const usedSquares = new Set<number>();
+
+  roadblocks.forEach((value:number) => {
+    usedSquares.add(value);
+  });
 
   for (const color of ["red", "blue"]) {
     for (const rank of [3, 7, "S", 9]) {
@@ -51,6 +55,11 @@ export const isDroppable = (
   squares: { [key: number]: GamePieceData }
 ) => {
   const { rank } = sourcePiece;
+
+  // Roadblocks can't be dropped on
+  if (roadblocks.indexOf(targetId) !== -1) {
+    return false;
+  }
 
   // F & B cannot move
   if (rank === "F" || rank === "B") {
@@ -92,7 +101,13 @@ const canMoveInStraightLine = (
     if (squares[id]) {
       return false;
     }
+    // Check if there's a roadblock on the current square
+    if (roadblocks.includes(id)) {
+      return false;
+    }
   }
 
   return !targetPiece || targetPiece.color !== sourcePiece.color;
 };
+
+export const roadblocks = [43, 44, 47, 48, 53, 54, 57, 58];

@@ -1,16 +1,12 @@
 // GameSquare.tsx
-import { Box } from "@mui/material";
+import { Box, rgbToHex } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { toggleTurn, updateSquares } from "./actions";
 import GamePiece from "./GamePiece";
-import { GamePieceData, PieceColor, Rank, RootState } from "./types";
+import { GamePieceData, GameSquareData, PieceColor, Rank, RootState } from "./types";
 import { clearDroppables, isDroppable } from "./utils";
-
-interface GameSquareProps {
-  id: number;
-}
 
 const getSource = (event:React.DragEvent<HTMLDivElement>) => {
   const sourceId = Number(event.dataTransfer.getData("text/plain"));
@@ -24,7 +20,7 @@ const getSource = (event:React.DragEvent<HTMLDivElement>) => {
   return { sourceId, sourcePiece };
 }
 
-const GameSquare: React.FC<GameSquareProps> = ({ id }) => {
+const GameSquare: React.FC<GameSquareData> = ({ id, row, col, roadblock, territory }) => {
   const dispatch = useDispatch();
   
   const squares = useSelector((state: RootState) => state.squares);
@@ -42,7 +38,7 @@ const GameSquare: React.FC<GameSquareProps> = ({ id }) => {
 
     const { sourceId, sourcePiece } = getSource(event);
 
-    if (sourceId !== id) {
+    if (sourceId !== id && !roadblock) {
       // Check if the move is allowed
       if (isDroppable(sourceId, id, sourcePiece, piece, squaresRef.current)) {
         dispatch(updateSquares(sourceId, id));
@@ -74,7 +70,7 @@ const GameSquare: React.FC<GameSquareProps> = ({ id }) => {
         paddingBottom: "100%",
         justifyContent: "center",
         border: "1px solid rgba(0, 0, 0, 0.2)",
-        backgroundColor: "#f0f0f0",
+        backgroundColor: roadblock ? 'rgb(75,20,20)' : "#f0f0f0",
       }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

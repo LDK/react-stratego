@@ -19,7 +19,7 @@ export const generateInitialSquares = () => {
   });
 
   for (const color of ["red", "blue"]) {
-    for (const rank of [3, 7, "S", 9]) {
+    for (const rank of [3, 7, "S", 9, "F"]) {
       const square = randomUnusedSquare(usedSquares);
       initialSquares[square] = { color: (color as PieceColor), rank: (rank as Rank) };
     }

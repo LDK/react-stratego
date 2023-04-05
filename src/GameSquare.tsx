@@ -1,9 +1,9 @@
 // GameSquare.tsx
-import { Box, rgbToHex } from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { toggleTurn, updateSquares } from "./actions";
+import { placePiece, toggleTurn, updateSquares, updateTilePool } from "./actions";
 import GamePiece from "./GamePiece";
 import { GamePieceData, GameSquareData, PieceColor, Rank, RootState } from "./types";
 import { clearDroppables, isDroppable } from "./utils";
@@ -33,22 +33,24 @@ const GameSquare: React.FC<GameSquareData> = ({ id, row, col, roadblock, territo
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-
-    clearDroppables();
-
-    const { sourceId, sourcePiece } = getSource(event);
-
-    if (sourceId !== id && !roadblock) {
-      // Check if the move is allowed
-      if (isDroppable(sourceId, id, sourcePiece, piece, squaresRef.current)) {
-        dispatch(updateSquares(sourceId, id));
   
-        // Dispatch the toggleTurn and updateSquares actions to update the state in the Redux store
-        dispatch(toggleTurn());
+    clearDroppables();
+  
+    const { sourceId, sourcePiece } = getSource(event);
+  
+    if (sourceId !== id && !roadblock) {
+      if (isDroppable(sourceId, id, sourcePiece, piece, squaresRef.current)) {
+        if (sourceId === -1) {
+          dispatch(placePiece(sourceId, id, sourcePiece));
+          dispatch(updateTilePool(sourcePiece.rank, -1));
+        } else {
+          dispatch(updateSquares(sourceId, id));
+          dispatch(toggleTurn());
+        }
       }
     }
   };
-  
+
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.currentTarget.style.backgroundColor = "";
   };

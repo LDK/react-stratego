@@ -67,7 +67,7 @@ const GamePiece: React.FC<GamePieceProps> = ({ color, squareId, rank }) => {
   const draggable = (turn === color) && !(['F','B'].includes(rank));
 
   return (
-    <div style={{ backgroundColor: draggable ? 'rgba(255,255,0,.6)' : undefined }} draggable={color === turn} onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+    <div className="game-piece" style={{ backgroundColor: draggable ? 'rgba(255,255,0,.6)' : undefined }} draggable={color === turn} onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
         <polygon points="50,0 100,100 0,100" fill={color} />
         <text x="50" y="65" textAnchor="middle" fontSize="30" fontWeight="bold" fill="white">

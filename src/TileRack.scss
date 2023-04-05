@@ -1,0 +1,106 @@
+.tile-rack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.tile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  .game-piece {
+    max-height: 60px;
+    max-width: 60px;
+    margin: auto;
+  }
+}
+
+.tile-count {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.tile-row {
+  display: flex;
+  gap: 8px;
+}
+
+.tile {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  border: 2px solid black;
+  border-radius: 4px;
+}
+
+.tile-1,
+.tile-2,
+.tile-3,
+.tile-4,
+.tile-5,
+.tile-6,
+.tile-7,
+.tile-8,
+.tile-9 {
+  background-color: #f2f2f2;
+}
+
+.tile-S,
+.tile-F,
+.tile-B {
+  background-color: #c9c9c9;
+}
+
+.tile-1 {
+  color: #ff0000;
+}
+
+.tile-2 {
+  color: #ff7f00;
+}
+
+.tile-3 {
+  color: #ffff00;
+}
+
+.tile-4 {
+  color: #00ff00;
+}
+
+.tile-5 {
+  color: #0000ff;
+}
+
+.tile-6 {
+  color: #4b0082;
+}
+
+.tile-7 {
+  color: #9400d3;
+}
+
+.tile-8 {
+  color: #e600e6;
+}
+
+.tile-9 {
+  color: #ff1493;
+}
+
+.tile-S {
+  color: #8b0000;
+}
+
+.tile-F {
+  color: #007777;
+}
+
+.tile-B {
+  color: #696969;
+}

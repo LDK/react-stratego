@@ -1,32 +1,5 @@
 // utils.ts
-import { GamePieceData, PieceColor, Rank } from "./types";
-
-const randomUnusedSquare = (usedSquares: Set<number>) => {
-  let square;
-  do {
-    square = Math.floor(Math.random() * 100) + 1;
-  } while (usedSquares.has(square));
-  usedSquares.add(square);
-  return square;
-};
-
-export const generateInitialSquares = () => {
-  const initialSquares: { [key: number]: { color: PieceColor; rank: Rank } } = {};
-  const usedSquares = new Set<number>();
-
-  roadblocks.forEach((value:number) => {
-    usedSquares.add(value);
-  });
-
-  for (const color of ["red", "blue"]) {
-    for (const rank of [3, 7, "S", 9, "F"]) {
-      const square = randomUnusedSquare(usedSquares);
-      initialSquares[square] = { color: (color as PieceColor), rank: (rank as Rank) };
-    }
-  }
-
-  return initialSquares;
-};
+import { GamePieceData } from "./types";
 
 export const clearDroppables = () => {
   const squares = document.querySelectorAll("[id^=game-square-]");
@@ -34,6 +7,8 @@ export const clearDroppables = () => {
     square.classList.remove("droppable");
   });
 }
+
+export const squareTerritory = (id:number) => id > 60 ? 'red' : (id > 40 ? 'neutral' : 'blue');
 
 const isAdjacent = (id1: number, id2: number, gridSize: number): boolean => {
   const row1 = Math.floor((id1 - 1) / gridSize);
@@ -54,7 +29,14 @@ export const isDroppable = (
   targetPiece: GamePieceData | undefined,
   squares: { [key: number]: GamePieceData }
 ) => {
-  const { rank } = sourcePiece;
+  const { rank, color } = sourcePiece;
+  const territory = squareTerritory(targetId);
+
+  // If a space is empty, the source piece is from the tile rack, 
+  // and the space's territory matches the piece's color, it is droppable.
+  if (sourceId === -1 && !targetPiece && color === territory) {
+    return true;
+  }
 
   // Roadblocks can't be dropped on
   if (roadblocks.indexOf(targetId) !== -1) {

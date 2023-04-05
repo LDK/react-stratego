@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Grid } from "@mui/material";
 import GameSquare from "./GameSquare";
-import { roadblocks } from "./utils";
+import { roadblocks, squareTerritory } from "./utils";
 
 const GameBoard: React.FC = () => {
   const gridSize = 10;
@@ -13,7 +13,7 @@ const GameBoard: React.FC = () => {
         Array.from({ length: gridSize }, (_, col) => {
           const id = row * gridSize + col + 1;
           const roadblock = roadblocks.indexOf(id) !== -1;
-          const territory = (id > 60) ? 'red' : (id > 40 ? 'neutral' : 'blue');
+          const territory = squareTerritory(id);
 
           return (
             <Grid item key={id} xs={12 / gridSize}>

@@ -1,9 +1,9 @@
 // types.ts
 export type PieceColor = 'red' | 'blue';
 
-type Range1to9 = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type Range1to9 = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
-export type Rank = Range1to9 & 'S' | 'F' | 'B';
+export type Rank = Range1to9 | 'S' | 'F' | 'B';
 
 export type GamePieceData = {
   color: PieceColor;
@@ -13,7 +13,8 @@ export type GamePieceData = {
 export interface RootState {
   turn: string;
   gameId: number | null;
-  squares: {[key: number]: GamePieceData};
+  squares: { [key: number]: GamePieceData };
+  tilePool: TilePool;
 }
 
 export interface GameSquareData {
@@ -23,3 +24,7 @@ export interface GameSquareData {
   roadblock: boolean;
   territory: PieceColor | 'neutral';
 }
+
+export type TilePool = {
+  [rank in Rank]: number;
+};
